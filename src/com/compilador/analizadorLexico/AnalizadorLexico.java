@@ -111,13 +111,13 @@ public class AnalizadorLexico {
             //FILA 15
             {AS5,AS5,AS5,AS5,AS5,AS5,AS5,AS5,AS5,AS5,AS5,AS5,AS5,AS5,AS5,AS2,AS5,AS5,null},
             //FILA 16
-            {AS11, AS2, AS2, AS2, AS2, AS11, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2,AS11, AS2, AS2, AS2,null},
+            {AS8, AS2, AS2, AS2, AS2, AS11, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2,AS11, AS2, AS2, AS2,null},
             //FILA 17
             {null, null,null,null,null,null,null,null,null,null,null,null,null,null,AS2,null,null,null,null},
             //FILA 18
-            {null, null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null},
+            {AS2, AS2,AS2,AS2,AS2,AS11,AS2,AS2,AS2,AS2,AS2,AS2,AS2,AS2,null,AS2,AS2,AS2,null},
             //FILA 19
-            {AS11, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2,null, AS2, AS2, AS2,null}
+            {AS8, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2,null, AS2, AS2, AS2,null}
     };
 
 
