@@ -11,18 +11,13 @@ public class AS14 extends AccionSemantica {
         AnalizadorLexico.reading += input;
 
         switch (AnalizadorLexico.reading) {
-            case ">=":
-                AnalizadorLexico.token = 275;
+            case "&&":
+                AnalizadorLexico.token = 281;
                 break;
-            case "<=":
-                AnalizadorLexico.token = 276;
+            case "||":
+                AnalizadorLexico.token = 282;
                 break;
-            case "==":
-                AnalizadorLexico.token = 273;
-                break;
-            default:
-                AnalizadorLexico.token = 274; // "<>"
-                break;
+
         }
 
         AnalizadorLexico.indexArchivo++;

@@ -11,6 +11,7 @@ public class AnalizadorLexico {
     public static String reading = "";
     public static int indexArchivo = 0;
     public static int token = -1;
+    public static int refTDS = -1;
     private int estado = 0;
     public static int numLinea = 1;
     public static int indexTDS = 0;
@@ -20,7 +21,7 @@ public class AnalizadorLexico {
     public static Vector<String> listaDeWarnings = new Vector<>();
 
     public static final int MAX_ID_VALUE = 22;
-    public static final int MAX_TOKEN_ID = 283;
+    public static final int MAX_TOKEN_ID = 282;
 
     private AccionSemantica AS1 = new AS1();
     private AccionSemantica AS2 = new AS2();
@@ -62,9 +63,8 @@ public class AnalizadorLexico {
         listaDeTokens.put(278, "TRY");
         listaDeTokens.put(279, "CATCH");
         listaDeTokens.put(280, "IF");
-        listaDeTokens.put(281, "CTE");
-        listaDeTokens.put(282, "&&");
-        listaDeTokens.put(283, "||");
+        listaDeTokens.put(281, "&&");
+        listaDeTokens.put(282, "||");
         listaDeTokens.put((int) '=', "=");
         listaDeTokens.put((int) '>', ">");
         listaDeTokens.put((int) '<', "<");
@@ -212,6 +212,13 @@ public class AnalizadorLexico {
         }
         return -1;
     }
+
+    public static int yylex(){
+    return 1;
+    }
+
+
+
 
 
 

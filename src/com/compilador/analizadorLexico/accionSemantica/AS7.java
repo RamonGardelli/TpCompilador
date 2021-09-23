@@ -17,13 +17,13 @@ public class AS7 extends AccionSemantica{
         if( _reading >= MIN_LONG && _reading <= MAX_LONG){
             int _indexTDS = AnalizadorLexico.indexTDS;
             if(!AnalizadorLexico.existeEnTDS(AnalizadorLexico.reading)){
-                AnalizadorLexico.tablaDeSimbolos.put(_indexTDS,new TDSObject(AnalizadorLexico.reading,"LONG")); //está bien poner long?
+                AnalizadorLexico.tablaDeSimbolos.put(_indexTDS,new TDSObject(AnalizadorLexico.reading,"LONG"));
                 AnalizadorLexico.indexTDS++;
             }
 
             //return token
-            //AnalizadorLexico.token = cte
-            //ref a tabla de simbolos
+            AnalizadorLexico.token = AnalizadorLexico.esPalabraReservada("CTE");
+            AnalizadorLexico.refTDS = _indexTDS;
 
 
         }else{
