@@ -448,7 +448,7 @@ public class AnalizadorLexico {
             tokenList.add(new Token(token,reading,numLinea));
         }
 
-        if (indexArchivo == archivo.length() && archivo.charAt(archivo.length()-1) != '$'){
+        if (indexArchivo == archivo.length()){
             finArchivo = true;
         }
 
