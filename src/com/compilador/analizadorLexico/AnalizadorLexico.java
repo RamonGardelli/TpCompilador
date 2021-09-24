@@ -3,6 +3,7 @@ package com.compilador.analizadorLexico;
 import com.compilador.analizadorLexico.accionSemantica.*;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 public class AnalizadorLexico {
@@ -15,10 +16,15 @@ public class AnalizadorLexico {
     public static int estado = 0;
     public static int numLinea = 1;
     public static int indexTDS = 0;
+    public static boolean finArchivo =false;
 
     public static HashMap<Integer, TDSObject> tablaDeSimbolos = new HashMap<>();
     public static Vector<String> listaDeErrores = new Vector<>();
     public static Vector<String> listaDeWarnings = new Vector<>();
+
+    //TEST
+    public static Vector<Token> tokenList = new Vector<>();
+
 
     public static final int MAX_ID_VALUE = 22;
     public static final int MAX_TOKEN_ID = 283;
@@ -38,7 +44,10 @@ public class AnalizadorLexico {
     private static AccionSemantica AS13 = new AS13();
     private static AccionSemantica AS14 = new AS14();
 
-    public static HashMap<Integer, String> listaDeTokens = new HashMap<>() {{
+
+    public static Map<Integer, String> listaDeTokens;
+    static {
+        listaDeTokens = new HashMap<>();
         listaDeTokens.put(257, "ELSE");
         listaDeTokens.put(258, "THEN");
         listaDeTokens.put(259, "ENDIF");
@@ -81,7 +90,9 @@ public class AnalizadorLexico {
         listaDeTokens.put((int) '*', "*");
         listaDeTokens.put((int) '/', "/");
         listaDeTokens.put((int) '%', "%");
-    }};
+    }
+
+
 
 
     private static final int[][] MatrizTransicionEstados = {
@@ -172,13 +183,6 @@ public class AnalizadorLexico {
     };
 
 
-    public String getArchivo() {
-        return archivo;
-    }
-
-    public void setArchivo(String archivo) {
-        this.archivo = archivo;
-    }
 
     public int getToken() {
         return token;
@@ -214,6 +218,9 @@ public class AnalizadorLexico {
         estado = 0;
 
         while ((indexArchivo < archivo.length()) && (token == -1) && (token != 0)) {
+
+            System.out.println("Leo: " + archivo.charAt(indexArchivo));
+            System.out.println("Estado actual: " + estado);
 
             switch (archivo.charAt(indexArchivo)) {
 
@@ -414,6 +421,7 @@ public class AnalizadorLexico {
                     if (estado == 0) {
                         token = 0;
                         indexArchivo = 0;
+                        finArchivo=true;
                     } else {
                         listaDeErrores.add("ERROR(19) Linea " + numLinea + ": caracter $ (EOF) invalido.");
                         indexArchivo++;
@@ -435,6 +443,17 @@ public class AnalizadorLexico {
                 estado = 0;
             }
         }
+
+        if (token != 0 && token != -1) {
+            tokenList.add(new Token(token,reading,numLinea));
+        }
+
+        if (indexArchivo == archivo.length() && archivo.charAt(archivo.length()-1) != '$'){
+            finArchivo = true;
+        }
+
+
+
         return token;
     }
 
