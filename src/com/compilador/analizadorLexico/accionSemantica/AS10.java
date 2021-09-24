@@ -20,6 +20,9 @@ public class AS10 extends AccionSemantica{
             case "==":
                 AnalizadorLexico.token = 273;
                 break;
+            case ":=":
+                AnalizadorLexico.token = 283;
+                break;
             default:
                 AnalizadorLexico.token = 274; // "<>"
                 break;
