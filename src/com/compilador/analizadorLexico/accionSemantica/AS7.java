@@ -31,7 +31,7 @@ public class AS7 extends AccionSemantica{
             AnalizadorLexico.listaDeErrores.add("ERROR Linea " + AnalizadorLexico.numLinea + " : constante LONG fuera de rango.");
         }
 
-        AnalizadorLexico.indexArchivo++;
+        //AnalizadorLexico.indexArchivo++;
 
 
     }

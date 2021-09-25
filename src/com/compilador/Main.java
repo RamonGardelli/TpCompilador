@@ -20,6 +20,7 @@ public class Main {
             String entrada = Files.readString(Paths.get(path));
 
             AnalizadorLexico.archivo = entrada + "$";
+            System.out.println(AnalizadorLexico.archivo);
             while (AnalizadorLexico.finArchivo == false)
                 AnalizadorLexico.yylex();
             Vector<Token> tokens = AnalizadorLexico.tokenList;

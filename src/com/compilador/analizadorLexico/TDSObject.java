@@ -26,4 +26,5 @@ public class TDSObject {
     public void setTipoVariable(String tipoVariable) {
         this.tipoVariable = tipoVariable;
     }
+    
 }

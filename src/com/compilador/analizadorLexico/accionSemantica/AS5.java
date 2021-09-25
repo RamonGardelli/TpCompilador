@@ -26,8 +26,9 @@ public class AS5 extends AccionSemantica {
         }
 
         if (enRango){
+
             AnalizadorLexico.tablaDeSimbolos.put(AnalizadorLexico.indexTDS,new TDSObject(AnalizadorLexico.reading,"FLOAT"));
-            AnalizadorLexico.token = AnalizadorLexico.esPalabraReservada("FLOAT");
+            AnalizadorLexico.token = AnalizadorLexico.esPalabraReservada("CTE");
             AnalizadorLexico.refTDS = AnalizadorLexico.indexTDS;
             AnalizadorLexico.indexTDS++;
 

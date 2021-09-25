@@ -163,11 +163,11 @@ public class AnalizadorLexico {
             // 10
             {AS7, AS7, AS7, AS7, AS7, AS7, AS7, AS7, AS7, AS7, AS7, AS7, AS7, AS7, AS7, AS2, AS2, AS7, null},
             // 11
-            {AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS2, AS5, AS2, null},
+            {AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS2, AS5, AS2, null},
             // 12
             {null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, AS2, null, null, null},
             // 13
-            {null, null, null, null, AS2, AS2, null, null, null, null, null, null, null, null, null, AS2, null, null, null},
+            {null, null, null, null, null, AS2, AS2, null, null, null, null, null, null, null, null, AS2, null, null, null},
             // 14
             {null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, AS2, null, null, null},
             // 15
@@ -236,22 +236,28 @@ public class AnalizadorLexico {
                 case '9':
                     if (MatrizAccionSemantica[estado][15] != null) {
                         ((AccionSemantica) MatrizAccionSemantica[estado][15]).ejecutar(archivo.charAt(indexArchivo));
+                        System.out.println(MatrizAccionSemantica[estado][15]);
                     }
                     estado = MatrizTransicionEstados[estado][15];
+                    System.out.println("Nuevo Estado: " + estado);
                     break;
 
                 case '*':
                     if (MatrizAccionSemantica[estado][7] != null) {
                         ((AccionSemantica) MatrizAccionSemantica[estado][7]).ejecutar(archivo.charAt(indexArchivo));
+                        System.out.println(MatrizAccionSemantica[estado][7]);
                     }
                     estado = MatrizTransicionEstados[estado][7];
+                    System.out.println("Nuevo Estado: " + estado);
                     break;
 
                 case '/':
                     if (MatrizAccionSemantica[estado][4] != null) {
                         ((AccionSemantica) MatrizAccionSemantica[estado][4]).ejecutar(archivo.charAt(indexArchivo));
+                        System.out.println(MatrizAccionSemantica[estado][4]);
                     }
                     estado = MatrizTransicionEstados[estado][4];
+                    System.out.println("Nuevo Estado: " + estado);
                     break;
 
                 case '(':
@@ -262,100 +268,128 @@ public class AnalizadorLexico {
                 case ';':
                     if (MatrizAccionSemantica[estado][13] != null) {
                         ((AccionSemantica) MatrizAccionSemantica[estado][13]).ejecutar(archivo.charAt(indexArchivo));
+                        System.out.println(MatrizAccionSemantica[estado][13]);
                     }
                     estado = MatrizTransicionEstados[estado][13];
+                    System.out.println("Nuevo Estado: " + estado);
                     break;
 
                 case ':':
                     if (MatrizAccionSemantica[estado][1] != null) {
                         ((AccionSemantica) MatrizAccionSemantica[estado][1]).ejecutar(archivo.charAt(indexArchivo));
+                        System.out.println(MatrizAccionSemantica[estado][1]);
                     }
                     estado = MatrizTransicionEstados[estado][1];
+                    System.out.println("Nuevo Estado: " + estado);
                     break;
 
                 case '.':
                     if (MatrizAccionSemantica[estado][16] != null) {
                         ((AccionSemantica) MatrizAccionSemantica[estado][16]).ejecutar(archivo.charAt(indexArchivo));
+                        System.out.println(MatrizAccionSemantica[estado][16]);
                     }
                     estado = MatrizTransicionEstados[estado][16];
+                    System.out.println("Nuevo Estado: " + estado);
                     break;
 
                 case '|':
                     if (MatrizAccionSemantica[estado][11] != null) {
                         ((AccionSemantica) MatrizAccionSemantica[estado][11]).ejecutar(archivo.charAt(indexArchivo));
+                        System.out.println(MatrizAccionSemantica[estado][11]);
                     }
                     estado = MatrizTransicionEstados[estado][11];
+                    System.out.println("Nuevo Estado: " + estado);
                     break;
 
                 case '&':
                     if (MatrizAccionSemantica[estado][12] != null) {
                         ((AccionSemantica) MatrizAccionSemantica[estado][12]).ejecutar(archivo.charAt(indexArchivo));
+                        System.out.println(MatrizAccionSemantica[estado][12]);
                     }
                     estado = MatrizTransicionEstados[estado][12];
+                    System.out.println("Nuevo Estado: " + estado);
                     break;
 
                 case '>':
                     if (MatrizAccionSemantica[estado][9] != null) {
                         ((AccionSemantica) MatrizAccionSemantica[estado][9]).ejecutar(archivo.charAt(indexArchivo));
+                        System.out.println(MatrizAccionSemantica[estado][9]);
                     }
                     estado = MatrizTransicionEstados[estado][9];
+                    System.out.println("Nuevo Estado: " + estado);
                     break;
 
                 case '<':
                     if (MatrizAccionSemantica[estado][8] != null) {
                         ((AccionSemantica) MatrizAccionSemantica[estado][8]).ejecutar(archivo.charAt(indexArchivo));
+                        System.out.println(MatrizAccionSemantica[estado][8]);
                     }
                     estado = MatrizTransicionEstados[estado][8];
+                    System.out.println("Nuevo Estado: " + estado);
                     break;
 
                 case '=':
                     if (MatrizAccionSemantica[estado][10] != null) {
                         ((AccionSemantica) MatrizAccionSemantica[estado][10]).ejecutar(archivo.charAt(indexArchivo));
+                        System.out.println(MatrizAccionSemantica[estado][10]);
                     }
                     estado = MatrizTransicionEstados[estado][10];
+                    System.out.println("Nuevo Estado: " + estado);
                     break;
 
                 case '+':
                     if (MatrizAccionSemantica[estado][5] != null) {
                         ((AccionSemantica) MatrizAccionSemantica[estado][5]).ejecutar(archivo.charAt(indexArchivo));
+                        System.out.println(MatrizAccionSemantica[estado][5]);
                     }
                     estado = MatrizTransicionEstados[estado][5];
+                    System.out.println("Nuevo Estado: " + estado);
                     break;
 
                 case '-':
                     if (MatrizAccionSemantica[estado][6] != null) {
                         ((AccionSemantica) MatrizAccionSemantica[estado][6]).ejecutar(archivo.charAt(indexArchivo));
+                        System.out.println(MatrizAccionSemantica[estado][6]);
                     }
                     estado = MatrizTransicionEstados[estado][6];
+                    System.out.println("Nuevo Estado: " + estado);
                     break;
 
                 case '%':
                     if (MatrizAccionSemantica[estado][0] != null) {
                         ((AccionSemantica) MatrizAccionSemantica[estado][0]).ejecutar(archivo.charAt(indexArchivo));
+                        System.out.println(MatrizAccionSemantica[estado][0]);
                     }
                     estado = MatrizTransicionEstados[estado][0];
+                    System.out.println("Nuevo Estado: " + estado);
                     break;
 
                 case '_':
                     if (MatrizAccionSemantica[estado][3] != null) {
                         ((AccionSemantica) MatrizAccionSemantica[estado][3]).ejecutar(archivo.charAt(indexArchivo));
+                        System.out.println(MatrizAccionSemantica[estado][3]);
                     }
                     estado = MatrizTransicionEstados[estado][3];
+                    System.out.println("Nuevo Estado: " + estado);
                     break;
 
                 case 'S':
                     if (MatrizAccionSemantica[estado][17] != null) {
                         ((AccionSemantica) MatrizAccionSemantica[estado][17]).ejecutar(archivo.charAt(indexArchivo));
+                        System.out.println(MatrizAccionSemantica[estado][17]);
                     }
                     estado = MatrizTransicionEstados[estado][17];
+                    System.out.println("Nuevo Estado: " + estado);
                     break;
 
                 case ' ':
                 case '	':
                     if (MatrizAccionSemantica[estado][14] != null) {
                         ((AccionSemantica) MatrizAccionSemantica[estado][14]).ejecutar(archivo.charAt(indexArchivo));
+                        System.out.println(MatrizAccionSemantica[estado][14]);
                     }
                     estado = MatrizTransicionEstados[estado][14];
+                    System.out.println("Nuevo Estado: " + estado);
                     break;
 
                 case 'A':
@@ -411,8 +445,10 @@ public class AnalizadorLexico {
                 case 'z':
                     if (MatrizAccionSemantica[estado][2] != null) {
                         ((AccionSemantica) MatrizAccionSemantica[estado][2]).ejecutar(archivo.charAt(indexArchivo));
+                        System.out.println(MatrizAccionSemantica[estado][2]);
                     }
                     estado = MatrizTransicionEstados[estado][2];
+                    System.out.println("Nuevo Estado: " + estado);
                     break;
 
                 case '\n':
@@ -422,14 +458,19 @@ public class AnalizadorLexico {
                         token = 0;
                         indexArchivo = 0;
                         finArchivo=true;
+                        System.out.println("Final de archivo: " );
+
                     } else {
                         listaDeErrores.add("ERROR(19) Linea " + numLinea + ": caracter $ (EOF) invalido.");
                         indexArchivo++;
+                        System.out.println("$ invalido: " );
+
                     }
                     break;
 
                 default:
                     listaDeErrores.add("ERROR Linea " + numLinea + ": caracter invalido \"" + archivo.charAt(indexArchivo) + "\"");
+                    System.out.println("CHAR NO DETECTADO : " + archivo.charAt(indexArchivo) );
                     indexArchivo++;
                     break;
 
@@ -438,6 +479,7 @@ public class AnalizadorLexico {
             if (estado == -1) {//RESINCRONIZACION
                 listaDeErrores.add("ERROR Linea " + numLinea + ": token \"" + reading + archivo.charAt(indexArchivo) + "\" no reconocido");
                 if (archivo.charAt(indexArchivo) != ';' && archivo.charAt(indexArchivo) != '\n') {
+                    System.out.println("RESYNNC  " );
                     indexArchivo++;
                 }
                 estado = 0;
@@ -449,6 +491,7 @@ public class AnalizadorLexico {
         }
 
         if (indexArchivo == archivo.length()){
+            System.out.println("fina rchivo, se leyo el ultimo :"+ archivo.charAt(indexArchivo) );
             finArchivo = true;
         }
 
