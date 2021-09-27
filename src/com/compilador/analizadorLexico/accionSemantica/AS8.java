@@ -9,14 +9,14 @@ public class AS8 extends AccionSemantica{
     @Override
     public void ejecutar(char input) {
 
-        AnalizadorLexico.reading += String.valueOf(input);
-        String s7 = AnalizadorLexico.reading.replaceAll("-\n","");
+        //AnalizadorLexico.reading += String.valueOf(input);
+        String _reading = AnalizadorLexico.reading.replaceAll("-\n","");
 
         //Agregar a TDS si no existe
         int _indexTDS = AnalizadorLexico.indexTDS;
 
-        if(!AnalizadorLexico.existeEnTDS(AnalizadorLexico.reading)){
-            AnalizadorLexico.tablaDeSimbolos.put(_indexTDS,new TDSObject(AnalizadorLexico.reading,"CADENA")); //está bien poner CADENA?
+        if(!AnalizadorLexico.existeEnTDS(_reading)){
+            AnalizadorLexico.tablaDeSimbolos.put(_indexTDS,new TDSObject(_reading,"CADENA")); //está bien poner CADENA?
             AnalizadorLexico.indexTDS++;
         }
 

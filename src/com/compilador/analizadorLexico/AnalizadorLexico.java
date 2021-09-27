@@ -97,89 +97,89 @@ public class AnalizadorLexico {
 
     private static final int[][] MatrizTransicionEstados = {
             // 0    -1 ERROR , 0 FINAL/inic
-            {16, 2, 1, 1, 0, 0, 0, 3, 5, 6, 7, 8, 9, 0, 0, 10, 12, 1, -1},
+            {16, 2, 1, 1, 0, 0, 0, 3, 5, 6, 7, 8, 9, 0, 0, 0,10, 12, 1, -1},
             // 1
-            {0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, -1},
+            {0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,1, 0, 1, -1},
             // 2
-            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0, 0, 0, 0},
             // 3
-            {0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1},
+            {0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0,0, 0, -1},
             // 4
-            {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 4, 4, 4, -1},
+            {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 4,4, 4, 4, -1},
             // 5
-            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0, 0, -1},
             // 6
-            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0, 0, -1},
             // 7
-            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1},
+            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1,-1, -1, -1, -1, -1},
             // 8
-            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1},
+            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1,-1, -1, -1, -1, -1},
             // 9
-            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1},
+            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1,-1 ,-1, -1, -1, -1},
             // 10
-            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 11, 0, -1},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0, 10, 11, 0, -1},
             // 11
-            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 13, -1},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0, 11, 0, 13, -1},
             //12
-            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 11, -1, -1, -1},
+            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,-1, 11, -1, -1, -1},
             // 13
-            {-1, -1, -1, -1, -1, 14, 14, -1, -1, -1, -1, -1, -1, -1, -1, 15, -1, -1, -1},
+            {-1, -1, -1, -1, -1, 14, 14, -1, -1, -1, -1, -1, -1, -1, -1,-1, 15, -1, -1, -1},
             // 14
-            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 15, -1, -1, -1},
+            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,-1, 15, -1, -1, -1},
             // 15
-            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 0, 0, -1},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0, 15, 0, 0, -1},
             // 16
-            {0, 16, 16, 16, 16, 17, 16, 16, 16, 16, 16, 16, 16, 16, 19, 16, 16, 16, -1},
+            {0, 16, 16, 16, 16, 17, 16, 16, 16, 16, 16, 16, 16, 16, 19,16, 16, 16, 16, -1},
             // 17
-            {16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18, 16, 16, 16, -1},
+            {16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18, 16,16, 16, 16, -1},
             // 18
-            {19, 19, 19, 19, 19, 16, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, -1},
+            {19, 19, 19, 19, 19, 16, 19, 19, 19, 19, 19, 19, 19, 19, -1,19, 19, 19, 19, -1},
             // 19
-            {0, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, -1, 16, 16, 16, -1},
+            {0, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, -1,16,16, 16, 16, -1},
 
     };
 
     private static final Object[][] MatrizAccionSemantica = {
             // 0
-            {AS11, AS1, AS1, AS1, AS12, AS12, AS12, AS12, AS1, AS1, AS1, AS1, AS1, AS12, AS11, AS1, AS1, AS1, null},
+            {AS11, AS1, AS1, AS1, AS12, AS12, AS12, AS1 , AS1, AS1, AS1, AS1, AS1, AS12, AS11,AS11, AS1, AS1, AS1, null},
             // 1
-            {AS13, AS13, AS2, AS2, AS13, AS13, AS13, AS13, AS13, AS13, AS13, AS13, AS13, AS13, AS13, AS2, AS13, AS13, null},
+            {AS13, AS13, AS2, AS2, AS13, AS13, AS13, AS13, AS13, AS13, AS13, AS13, AS13, AS13, AS13,AS13, AS2, AS13, AS13, null},
             // 2
-            {AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS10, AS9, AS9, AS9, AS9, AS9, AS9, AS9, null},
+            {AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS10, AS9, AS9, AS9, AS9,AS9, AS9, AS9, AS9, null},
             // 3
-            {AS12, AS12, AS12, AS12, AS12, AS12, AS12, AS6, AS12, AS12, AS12, AS12, AS12, AS12, AS12, AS12, AS12, AS12, null},
+            {AS12, AS12, AS12, AS12, AS12, AS12, AS12, AS6, AS12, AS12, AS12, AS12, AS12, AS12, AS12,AS12, AS12, AS12, AS12, null},
             // 4
-            {AS11, AS11, AS11, AS11, AS11, AS11, AS11, AS11, AS11, AS11, AS11, AS11, AS11, AS11, AS6, AS11, AS11, AS11, null},
+            {AS11, AS11, AS11, AS11, AS11, AS11, AS11, AS11, AS11, AS11, AS11, AS11, AS11, AS11, AS6,AS11, AS11, AS11, AS11, null},
             //5
-            {AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS10, AS10, AS9, AS9, AS9, AS9, AS9, AS9, AS9, null},
+            {AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS10, AS10, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, null},
             //6
-            {AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS10, AS9, AS9, AS9, AS9, AS9, AS9, AS9, null},
+            {AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS10, AS9, AS9, AS9, AS9,AS9, AS9, AS9, AS9, null},
             // 7
-            {null, null, null, null, null, null, null, null, null, null, AS10, null, null, null, null, null, null, null, null},
+            {null, null, null, null, null, null, null, null, null, null, AS10, null, null, null, null, null, null, null, null,null},
             // 8
-            {null, null, null, null, null, null, null, null, null, null, null, AS14, null, null, null, null, null, null, null},
+            {null, null, null, null, null, null, null, null, null, null, null, AS14, null, null, null, null, null, null, null,null},
             // 9
-            {null, null, null, null, null, null, null, null, null, null, null, null, AS14, null, null, null, null, null, null},
+            {null, null, null, null, null, null, null, null, null, null, null, null, AS14, null, null, null, null, null, null,null},
             // 10
-            {AS7, AS7, AS7, AS7, AS7, AS7, AS7, AS7, AS7, AS7, AS7, AS7, AS7, AS7, AS7, AS2, AS2, AS7, null},
+            {AS7, AS7, AS7, AS7, AS7, AS7, AS7, AS7, AS7, AS7, AS7, AS7, AS7, AS7, AS7,AS7, AS2, AS2, AS7, null},
             // 11
-            {AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS2, AS5, AS2, null},
+            {AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5,AS5, AS2, AS5, AS2, null},
             // 12
-            {null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, AS2, null, null, null},
+            {null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,null, AS2, null, null, null},
             // 13
-            {null, null, null, null, null, AS2, AS2, null, null, null, null, null, null, null, null, AS2, null, null, null},
+            {null, null, null, null, null, AS2, AS2, null, null, null, null, null, null, null, null,null, AS2, null, null, null},
             // 14
-            {null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, AS2, null, null, null},
+            {null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,null, AS2, null, null, null},
             // 15
-            {AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS2, AS5, AS5, null},
+            {AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS5,AS5, AS2, AS5, AS5, null},
             // 16
-            {AS8, AS2, AS2, AS2, AS2, AS11, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS11, AS2, AS2, AS2, null},
+            {AS8, AS2, AS2, AS2, AS2, AS11, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS11,AS2, AS2, AS2, AS2, null},
             // 17
-            {null, null, null, null, null, null, null, null, null, null, null, null, null, null, AS2, null, null, null, null},
+            {null, null, null, null, null, null, null, null, null, null, null, null, null, null, AS11,AS2, null, null, null, null},
             // 18
-            {AS2, AS2, AS2, AS2, AS2, AS11, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2, null, AS2, AS2, AS2, null},
+            {AS2, AS2, AS2, AS2, AS2, AS11, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2, null, AS2,AS2, AS2, AS2, null},
             // 19
-            {AS8, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2, null, AS2, AS2, AS2, null}
+            {AS8, AS2, AS2, AS2, AS2, AS11, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2, null,AS2, AS2, AS2, AS2, null}
     };
 
 
@@ -221,6 +221,7 @@ public class AnalizadorLexico {
 
             System.out.println("Leo: " + archivo.charAt(indexArchivo));
             System.out.println("Estado actual: " + estado);
+            System.out.println("index Archivo: " + indexArchivo);
 
             switch (archivo.charAt(indexArchivo)) {
 
@@ -234,11 +235,14 @@ public class AnalizadorLexico {
                 case '7':
                 case '8':
                 case '9':
-                    if (MatrizAccionSemantica[estado][15] != null) {
-                        ((AccionSemantica) MatrizAccionSemantica[estado][15]).ejecutar(archivo.charAt(indexArchivo));
-                        System.out.println(MatrizAccionSemantica[estado][15]);
+                    if (MatrizAccionSemantica[estado][16] != null) {
+                        ((AccionSemantica) MatrizAccionSemantica[estado][16]).ejecutar(archivo.charAt(indexArchivo));
+                        System.out.println(MatrizAccionSemantica[estado][16]);
                     }
-                    estado = MatrizTransicionEstados[estado][15];
+                    if(estado == 18){
+                        listaDeWarnings.add("WARNING Linea " + numLinea +": falta el simbolo + despues de salto de linea en la cadena.");
+                    }
+                    estado = MatrizTransicionEstados[estado][16];
                     System.out.println("Nuevo Estado: " + estado);
                     break;
 
@@ -246,6 +250,9 @@ public class AnalizadorLexico {
                     if (MatrizAccionSemantica[estado][7] != null) {
                         ((AccionSemantica) MatrizAccionSemantica[estado][7]).ejecutar(archivo.charAt(indexArchivo));
                         System.out.println(MatrizAccionSemantica[estado][7]);
+                    }
+                    if(estado == 18){
+                        listaDeWarnings.add("WARNING Linea " + numLinea +": falta el simbolo + despues de salto de linea en la cadena.");
                     }
                     estado = MatrizTransicionEstados[estado][7];
                     System.out.println("Nuevo Estado: " + estado);
@@ -255,6 +262,9 @@ public class AnalizadorLexico {
                     if (MatrizAccionSemantica[estado][4] != null) {
                         ((AccionSemantica) MatrizAccionSemantica[estado][4]).ejecutar(archivo.charAt(indexArchivo));
                         System.out.println(MatrizAccionSemantica[estado][4]);
+                    }
+                    if(estado == 18){
+                        listaDeWarnings.add("WARNING Linea " + numLinea +": falta el simbolo + despues de salto de linea en la cadena.");
                     }
                     estado = MatrizTransicionEstados[estado][4];
                     System.out.println("Nuevo Estado: " + estado);
@@ -270,6 +280,9 @@ public class AnalizadorLexico {
                         ((AccionSemantica) MatrizAccionSemantica[estado][13]).ejecutar(archivo.charAt(indexArchivo));
                         System.out.println(MatrizAccionSemantica[estado][13]);
                     }
+                    if(estado == 18){
+                        listaDeWarnings.add("WARNING Linea " + numLinea +": falta el simbolo + despues de salto de linea en la cadena.");
+                    }
                     estado = MatrizTransicionEstados[estado][13];
                     System.out.println("Nuevo Estado: " + estado);
                     break;
@@ -279,16 +292,22 @@ public class AnalizadorLexico {
                         ((AccionSemantica) MatrizAccionSemantica[estado][1]).ejecutar(archivo.charAt(indexArchivo));
                         System.out.println(MatrizAccionSemantica[estado][1]);
                     }
+                    if(estado == 18){
+                        listaDeWarnings.add("WARNING Linea " + numLinea +": falta el simbolo + despues de salto de linea en la cadena.");
+                    }
                     estado = MatrizTransicionEstados[estado][1];
                     System.out.println("Nuevo Estado: " + estado);
                     break;
 
                 case '.':
-                    if (MatrizAccionSemantica[estado][16] != null) {
-                        ((AccionSemantica) MatrizAccionSemantica[estado][16]).ejecutar(archivo.charAt(indexArchivo));
-                        System.out.println(MatrizAccionSemantica[estado][16]);
+                    if (MatrizAccionSemantica[estado][17] != null) {
+                        ((AccionSemantica) MatrizAccionSemantica[estado][17]).ejecutar(archivo.charAt(indexArchivo));
+                        System.out.println(MatrizAccionSemantica[estado][17]);
                     }
-                    estado = MatrizTransicionEstados[estado][16];
+                    if(estado == 18){
+                        listaDeWarnings.add("WARNING Linea " + numLinea +": falta el simbolo + despues de salto de linea en la cadena.");
+                    }
+                    estado = MatrizTransicionEstados[estado][17];
                     System.out.println("Nuevo Estado: " + estado);
                     break;
 
@@ -296,6 +315,9 @@ public class AnalizadorLexico {
                     if (MatrizAccionSemantica[estado][11] != null) {
                         ((AccionSemantica) MatrizAccionSemantica[estado][11]).ejecutar(archivo.charAt(indexArchivo));
                         System.out.println(MatrizAccionSemantica[estado][11]);
+                    }
+                    if(estado == 18){
+                        listaDeWarnings.add("WARNING Linea " + numLinea +": falta el simbolo + despues de salto de linea en la cadena.");
                     }
                     estado = MatrizTransicionEstados[estado][11];
                     System.out.println("Nuevo Estado: " + estado);
@@ -306,6 +328,9 @@ public class AnalizadorLexico {
                         ((AccionSemantica) MatrizAccionSemantica[estado][12]).ejecutar(archivo.charAt(indexArchivo));
                         System.out.println(MatrizAccionSemantica[estado][12]);
                     }
+                    if(estado == 18){
+                        listaDeWarnings.add("WARNING Linea " + numLinea +": falta el simbolo + despues de salto de linea en la cadena.");
+                    }
                     estado = MatrizTransicionEstados[estado][12];
                     System.out.println("Nuevo Estado: " + estado);
                     break;
@@ -314,6 +339,9 @@ public class AnalizadorLexico {
                     if (MatrizAccionSemantica[estado][9] != null) {
                         ((AccionSemantica) MatrizAccionSemantica[estado][9]).ejecutar(archivo.charAt(indexArchivo));
                         System.out.println(MatrizAccionSemantica[estado][9]);
+                    }
+                    if(estado == 18){
+                        listaDeWarnings.add("WARNING Linea " + numLinea +": falta el simbolo + despues de salto de linea en la cadena.");
                     }
                     estado = MatrizTransicionEstados[estado][9];
                     System.out.println("Nuevo Estado: " + estado);
@@ -324,6 +352,9 @@ public class AnalizadorLexico {
                         ((AccionSemantica) MatrizAccionSemantica[estado][8]).ejecutar(archivo.charAt(indexArchivo));
                         System.out.println(MatrizAccionSemantica[estado][8]);
                     }
+                    if(estado == 18){
+                        listaDeWarnings.add("WARNING Linea " + numLinea +": falta el simbolo + despues de salto de linea en la cadena.");
+                    }
                     estado = MatrizTransicionEstados[estado][8];
                     System.out.println("Nuevo Estado: " + estado);
                     break;
@@ -332,6 +363,9 @@ public class AnalizadorLexico {
                     if (MatrizAccionSemantica[estado][10] != null) {
                         ((AccionSemantica) MatrizAccionSemantica[estado][10]).ejecutar(archivo.charAt(indexArchivo));
                         System.out.println(MatrizAccionSemantica[estado][10]);
+                    }
+                    if(estado == 18){
+                        listaDeWarnings.add("WARNING Linea " + numLinea +": falta el simbolo + despues de salto de linea en la cadena.");
                     }
                     estado = MatrizTransicionEstados[estado][10];
                     System.out.println("Nuevo Estado: " + estado);
@@ -351,6 +385,9 @@ public class AnalizadorLexico {
                         ((AccionSemantica) MatrizAccionSemantica[estado][6]).ejecutar(archivo.charAt(indexArchivo));
                         System.out.println(MatrizAccionSemantica[estado][6]);
                     }
+                    if(estado == 18){
+                        listaDeWarnings.add("WARNING Linea " + numLinea +": falta el simbolo + despues de salto de linea en la cadena.");
+                    }
                     estado = MatrizTransicionEstados[estado][6];
                     System.out.println("Nuevo Estado: " + estado);
                     break;
@@ -360,7 +397,11 @@ public class AnalizadorLexico {
                         ((AccionSemantica) MatrizAccionSemantica[estado][0]).ejecutar(archivo.charAt(indexArchivo));
                         System.out.println(MatrizAccionSemantica[estado][0]);
                     }
+                    if(estado == 18){
+                        listaDeWarnings.add("WARNING Linea " + numLinea +": falta el simbolo + despues de salto de linea en la cadena.");
+                    }
                     estado = MatrizTransicionEstados[estado][0];
+
                     System.out.println("Nuevo Estado: " + estado);
                     break;
 
@@ -369,26 +410,36 @@ public class AnalizadorLexico {
                         ((AccionSemantica) MatrizAccionSemantica[estado][3]).ejecutar(archivo.charAt(indexArchivo));
                         System.out.println(MatrizAccionSemantica[estado][3]);
                     }
+                    if(estado == 18){
+                        listaDeWarnings.add("WARNING Linea " + numLinea +": falta el simbolo + despues de salto de linea en la cadena.");
+                    }
                     estado = MatrizTransicionEstados[estado][3];
+
                     System.out.println("Nuevo Estado: " + estado);
                     break;
 
                 case 'S':
-                    if (MatrizAccionSemantica[estado][17] != null) {
-                        ((AccionSemantica) MatrizAccionSemantica[estado][17]).ejecutar(archivo.charAt(indexArchivo));
-                        System.out.println(MatrizAccionSemantica[estado][17]);
+                    if (MatrizAccionSemantica[estado][18] != null) {
+                        ((AccionSemantica) MatrizAccionSemantica[estado][18]).ejecutar(archivo.charAt(indexArchivo));
+                        System.out.println(MatrizAccionSemantica[estado][18]);
                     }
-                    estado = MatrizTransicionEstados[estado][17];
+                    if(estado == 18){
+                        listaDeWarnings.add("WARNING Linea " + numLinea +": falta el simbolo + despues de salto de linea en la cadena.");
+                    }
+                    estado = MatrizTransicionEstados[estado][18];
                     System.out.println("Nuevo Estado: " + estado);
                     break;
 
                 case ' ':
                 case '	':
-                    if (MatrizAccionSemantica[estado][14] != null) {
-                        ((AccionSemantica) MatrizAccionSemantica[estado][14]).ejecutar(archivo.charAt(indexArchivo));
-                        System.out.println(MatrizAccionSemantica[estado][14]);
+                    if (MatrizAccionSemantica[estado][15] != null) {
+                        ((AccionSemantica) MatrizAccionSemantica[estado][15]).ejecutar(archivo.charAt(indexArchivo));
+                        System.out.println(MatrizAccionSemantica[estado][15]);
                     }
-                    estado = MatrizTransicionEstados[estado][14];
+                    if(estado == 18){
+                        listaDeWarnings.add("WARNING Linea " + numLinea +": falta el simbolo + despues de salto de linea en la cadena.");
+                    }
+                    estado = MatrizTransicionEstados[estado][15];
                     System.out.println("Nuevo Estado: " + estado);
                     break;
 
@@ -447,11 +498,27 @@ public class AnalizadorLexico {
                         ((AccionSemantica) MatrizAccionSemantica[estado][2]).ejecutar(archivo.charAt(indexArchivo));
                         System.out.println(MatrizAccionSemantica[estado][2]);
                     }
+                    if(estado == 18){
+                        listaDeWarnings.add("WARNING Linea " + numLinea +": falta el simbolo + despues de salto de linea en la cadena.");
+                    }
                     estado = MatrizTransicionEstados[estado][2];
                     System.out.println("Nuevo Estado: " + estado);
                     break;
 
                 case '\n':
+                    if (MatrizAccionSemantica[estado][14] != null) {
+                        ((AccionSemantica) MatrizAccionSemantica[estado][14]).ejecutar(archivo.charAt(indexArchivo));
+                        System.out.println(MatrizAccionSemantica[estado][14]);
+                    }
+                    if(estado == 0 || estado == 17 || estado == 16 || estado == 4){
+                        numLinea++;
+                    }
+                    if(estado == 16){
+                        listaDeWarnings.add("WARNING Linea " + numLinea +": falta el simbolo + antes de salto de linea en la cadena.");
+                    }
+                    estado = MatrizTransicionEstados[estado][14];
+                    System.out.println("Nuevo Estado: " + estado);
+                    break;
 
                 case '$':
                     if (estado == 0) {
@@ -461,9 +528,25 @@ public class AnalizadorLexico {
                         System.out.println("Final de archivo: " );
 
                     } else {
-                        listaDeErrores.add("ERROR(19) Linea " + numLinea + ": caracter $ (EOF) invalido.");
-                        indexArchivo++;
-                        System.out.println("$ invalido: " );
+                        if(indexArchivo == archivo.length() - 1 ){ //final de archivo y no hizo \n para cerrar comentario o cadena
+                            if(estado == 4){
+                                listaDeErrores.add("ERROR Linea "+ numLinea + " : comentario mal cerrado, falta salto de linea." );
+                                indexArchivo++;
+                                finArchivo=true;
+                                System.out.println("$ error comentario mal cerrado " );
+
+                            }else{
+                                listaDeErrores.add("ERROR Linea " + numLinea + ": caracter $ (EOF) invalido en posible cte/cadena/id.");
+                                indexArchivo++;
+                                finArchivo=true;
+                                System.out.println("$ invalido en posible cte/cadena/id " );
+
+                            }
+                        }else{
+                            listaDeErrores.add("ERROR Linea " + numLinea + ": caracter $ (EOF) invalido.");
+                            indexArchivo++;
+                            System.out.println("$ invalido " );
+                        }
 
                     }
                     break;
@@ -490,10 +573,10 @@ public class AnalizadorLexico {
             tokenList.add(new Token(token,reading,numLinea));
         }
 
-        if (indexArchivo == archivo.length()){
+       /* if (indexArchivo == archivo.length()){
             System.out.println("fina rchivo, se leyo el ultimo :"+ archivo.charAt(indexArchivo) );
             finArchivo = true;
-        }
+        }*/
 
 
 

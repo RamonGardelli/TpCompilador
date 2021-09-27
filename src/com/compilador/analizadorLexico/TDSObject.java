@@ -26,5 +26,9 @@ public class TDSObject {
     public void setTipoVariable(String tipoVariable) {
         this.tipoVariable = tipoVariable;
     }
+
+    public String imprimir(){
+        return "Lexema: " + lexema + " ; Tipo Variable: "+ tipoVariable;
+    }
     
 }
