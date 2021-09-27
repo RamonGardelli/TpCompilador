@@ -20,10 +20,9 @@ public class Main {
             String path = scanner.next();
             String entrada = Files.readString(Paths.get(path));
 
-            //C:\Users\ramon\Documents\TpCompilador\archivos\flotante.txt
+            //C:\Users\ramon\Documents\TpCompilador\archivos\validos\literales.txt
+            entrada = entrada.replaceAll("\r\n", "\n");
             AnalizadorLexico.archivo = entrada + "$";
-            System.out.println(AnalizadorLexico.archivo);
-            System.out.println(AnalizadorLexico.archivo.length());
             while (AnalizadorLexico.finArchivo == false)
                 AnalizadorLexico.yylex();
             HashMap<Integer,TDSObject> data = AnalizadorLexico.tablaDeSimbolos;

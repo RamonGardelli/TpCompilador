@@ -15,6 +15,9 @@ public class AS9 extends AccionSemantica {
             case "<":
                 AnalizadorLexico.token = 60;
                 break;
+            case "*":
+                AnalizadorLexico.token = 42;
+                break;
             default:
                 AnalizadorLexico.token = 58; //':'
                 break;

@@ -23,6 +23,10 @@ public class AS5 extends AccionSemantica {
             enRango =true;
         }else{
             AnalizadorLexico.listaDeErrores.add("ERROR Linea " + AnalizadorLexico.numLinea + " : la constante FLOAT esta fuera de rango.");
+            AnalizadorLexico.token = 0;
+            AnalizadorLexico.finArchivo =true;
+            AnalizadorLexico.indexArchivo=0;
+            AnalizadorLexico.numLinea=0;
         }
 
         if (enRango){

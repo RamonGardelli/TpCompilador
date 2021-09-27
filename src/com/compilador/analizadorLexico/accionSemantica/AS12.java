@@ -17,9 +17,6 @@ public class AS12  extends AccionSemantica{
             case "-":
                 AnalizadorLexico.token = 45;
                 break;
-            case "*":
-                AnalizadorLexico.token = 42;
-                break;
             case "/":
                 AnalizadorLexico.token = 47;
                 break;
