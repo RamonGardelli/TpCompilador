@@ -22,8 +22,6 @@ public class AnalizadorLexico {
     public static Vector<String> listaDeErrores = new Vector<>();
     public static Vector<String> listaDeWarnings = new Vector<>();
 
-    //TEST
-    public static Vector<Token> tokenList = new Vector<>();
 
 
     public static final int MAX_ID_VALUE = 22;
@@ -217,7 +215,7 @@ public class AnalizadorLexico {
         reading = "";
         estado = 0;
 
-        while ((indexArchivo < archivo.length()) && (token == -1) && (token != 0)) {
+        while ((indexArchivo < archivo.length()) && (token == -1)) {
 
             System.out.println("Leo: " + archivo.charAt(indexArchivo));
             System.out.println("Estado actual: " + estado);
@@ -568,17 +566,7 @@ public class AnalizadorLexico {
                 estado = 0;
             }
         }
-
-        if (token != 0 && token != -1) {
-            tokenList.add(new Token(token,reading,numLinea));
-        }
-
-       /* if (indexArchivo == archivo.length()){
-            System.out.println("fina rchivo, se leyo el ultimo :"+ archivo.charAt(indexArchivo) );
-            finArchivo = true;
-        }*/
-
-
+        System.out.println("Devuelvo token: " +token);
 
         return token;
     }

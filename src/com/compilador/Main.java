@@ -1,7 +1,6 @@
 package com.compilador;
 import com.compilador.analizadorLexico.AnalizadorLexico;
 import com.compilador.analizadorLexico.TDSObject;
-import com.compilador.analizadorLexico.Token;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -27,7 +26,6 @@ public class Main {
             System.out.println(AnalizadorLexico.archivo.length());
             while (AnalizadorLexico.finArchivo == false)
                 AnalizadorLexico.yylex();
-            //Vector<Token> tokens = AnalizadorLexico.tokenList;
             HashMap<Integer,TDSObject> data = AnalizadorLexico.tablaDeSimbolos;
             if (data.isEmpty()) {
                 System.out.println("----------------");
@@ -36,12 +34,16 @@ public class Main {
             data.forEach((k,v)->{
                 System.out.println("RefID: " + k + "Data: " + v.imprimir());
             });
-            /*for (Token token : tokens) {
-                System.out.println("----------------");
-                System.out.println("Token: " + token.getTokenId());
-                System.out.println("Lexema: " + token.getReading());
-                System.out.println("Linea: " + token.getNumLine());
-            }*/
+            Vector<String> errores= AnalizadorLexico.listaDeErrores;
+            Vector<String> warn= AnalizadorLexico.listaDeWarnings;
+
+            errores.forEach((err) ->{
+                System.out.println(err);
+            });
+            warn.forEach((err) ->{
+                System.out.println(err);
+            });
+
 
         } catch(IOException e) {}
 
