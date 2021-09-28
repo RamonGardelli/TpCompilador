@@ -14,14 +14,16 @@ public class AS8 extends AccionSemantica{
 
         //Agregar a TDS si no existe
         int _indexTDS = AnalizadorLexico.indexTDS;
-
-        if(!AnalizadorLexico.existeEnTDS(_reading)){
+        int result = AnalizadorLexico.existeEnTDS(_reading);
+        if(result == -1){
             AnalizadorLexico.tablaDeSimbolos.put(_indexTDS,new TDSObject(_reading,"CADENA")); //está bien poner CADENA?
             AnalizadorLexico.indexTDS++;
+        }else{
+            _indexTDS = result;
         }
 
         //return token
-        AnalizadorLexico.token = AnalizadorLexico.esPalabraReservada("CADENA");
+        AnalizadorLexico.token = AnalizadorLexico.getIdToken("CADENA");
         AnalizadorLexico.refTDS = _indexTDS;
 
         // Avanzar el iterador

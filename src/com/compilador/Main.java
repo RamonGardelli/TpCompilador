@@ -23,7 +23,7 @@ public class Main {
             //C:\Users\ramon\Documents\TpCompilador\archivos\validos\literales.txt
             entrada = entrada.replaceAll("\r\n", "\n");
             AnalizadorLexico.archivo = entrada + "$";
-            while (AnalizadorLexico.finArchivo == false)
+            while (!AnalizadorLexico.finArchivo)
                 AnalizadorLexico.yylex();
             HashMap<Integer,TDSObject> data = AnalizadorLexico.tablaDeSimbolos;
             if (data.isEmpty()) {

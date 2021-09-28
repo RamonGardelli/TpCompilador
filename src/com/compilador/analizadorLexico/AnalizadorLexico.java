@@ -22,8 +22,6 @@ public class AnalizadorLexico {
     public static Vector<String> listaDeErrores = new Vector<>();
     public static Vector<String> listaDeWarnings = new Vector<>();
 
-
-
     public static final int MAX_ID_VALUE = 22;
     public static final int MAX_TOKEN_ID = 283;
 
@@ -181,26 +179,16 @@ public class AnalizadorLexico {
     };
 
 
-
-    public int getToken() {
-        return token;
-    }
-
-    public void setToken(int token) {
-        this.token = token;
-    }
-
-
-    public static boolean existeEnTDS(String input) {
+    public static int existeEnTDS(String input) {
         for (int i : tablaDeSimbolos.keySet()) {
             if (tablaDeSimbolos.get(i).getLexema().equals(input)) {
-                return true;
+                return i;
             }
         }
-        return false;
+        return -1;
     }
 
-    public static int esPalabraReservada(String input) {
+    public static int getIdToken(String input) {
         for (int i = 257; i < MAX_TOKEN_ID; i++) {
             if (input.equals(listaDeTokens.get(i))) {
                 return i;
@@ -216,7 +204,7 @@ public class AnalizadorLexico {
         estado = 0;
         boolean errorCadena=false;
 
-        while ((indexArchivo < archivo.length()) && (token == -1) && (token != 0)) {
+        while ((indexArchivo < archivo.length()) && (token == -1)) {
 
             System.out.println("Leo: " + archivo.charAt(indexArchivo));
             System.out.println("Estado actual: " + estado);
@@ -577,7 +565,7 @@ public class AnalizadorLexico {
             if (estado == -1) {//RESINCRONIZACION
                 listaDeErrores.add("ERROR Linea " + numLinea + ": token \"" + reading + archivo.charAt(indexArchivo) + "\" no reconocido");
                 if (archivo.charAt(indexArchivo) != ';' && archivo.charAt(indexArchivo) != '\n') {
-                    System.out.println("RESYNNC  " );
+                    System.out.println("RESYNC");
                     indexArchivo++;
                 }
                 estado = 0;

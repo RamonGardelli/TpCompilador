@@ -28,7 +28,7 @@ public class TDSObject {
     }
 
     public String imprimir(){
-        return "Lexema: " + lexema + " ; Tipo Variable: "+ tipoVariable;
+        return "Lexema: " + lexema + " | Tipo Variable: "+ tipoVariable;
     }
     
 }

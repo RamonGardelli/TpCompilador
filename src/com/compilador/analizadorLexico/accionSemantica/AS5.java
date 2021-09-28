@@ -31,9 +31,18 @@ public class AS5 extends AccionSemantica {
 
         if (enRango){
 
-            AnalizadorLexico.tablaDeSimbolos.put(AnalizadorLexico.indexTDS,new TDSObject(AnalizadorLexico.reading,"FLOAT"));
-            AnalizadorLexico.token = AnalizadorLexico.esPalabraReservada("CTE");
-            AnalizadorLexico.refTDS = AnalizadorLexico.indexTDS;
+            int _indexTDS = AnalizadorLexico.indexTDS;
+            int result = AnalizadorLexico.existeEnTDS(AnalizadorLexico.reading);
+
+            if (result == -1) {
+                AnalizadorLexico.tablaDeSimbolos.put(_indexTDS, new TDSObject(AnalizadorLexico.reading,"FLOAT"));
+                AnalizadorLexico.indexTDS++;
+            }else{
+                _indexTDS = result;
+            }
+
+            AnalizadorLexico.token = AnalizadorLexico.getIdToken("CTE");
+            AnalizadorLexico.refTDS = _indexTDS;
             AnalizadorLexico.indexTDS++;
 
         }

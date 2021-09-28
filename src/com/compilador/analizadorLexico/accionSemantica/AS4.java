@@ -7,7 +7,6 @@ public class AS4 extends AccionSemantica {
     //Validar palabra reservada
     @Override
     public void ejecutar(char input) {
-        boolean result=false;
 
         switch (AnalizadorLexico.reading){
             case "ELSE":
@@ -27,12 +26,10 @@ public class AS4 extends AccionSemantica {
             case "TRY":
             case "CATCH":
             case "IF":
-                result = true;
+                AnalizadorLexico.token = AnalizadorLexico.getIdToken(AnalizadorLexico.reading);
         }
 
 
-        if (result) {
-            AnalizadorLexico.token = AnalizadorLexico.esPalabraReservada(AnalizadorLexico.reading);
-        }
+
     }
 }

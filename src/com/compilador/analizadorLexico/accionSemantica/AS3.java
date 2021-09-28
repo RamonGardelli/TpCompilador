@@ -33,13 +33,16 @@ public class AS3 extends AccionSemantica {
                 }
                 //Agregar a TDS si no existe
                 int _indexTDS = AnalizadorLexico.indexTDS;
+                int result = AnalizadorLexico.existeEnTDS(_reading);
 
-                if (!AnalizadorLexico.existeEnTDS(_reading)) {
+                if (result == -1) {
                     AnalizadorLexico.tablaDeSimbolos.put(_indexTDS, new TDSObject(_reading, "ID"));
                     AnalizadorLexico.indexTDS++;
+                }else{
+                    _indexTDS = result;
                 }
                 //return token
-                AnalizadorLexico.token = AnalizadorLexico.esPalabraReservada("ID");
+                AnalizadorLexico.token = AnalizadorLexico.getIdToken("ID");
                 AnalizadorLexico.refTDS = _indexTDS;
             }
         }

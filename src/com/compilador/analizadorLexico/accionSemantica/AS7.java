@@ -16,13 +16,16 @@ public class AS7 extends AccionSemantica{
         long _reading = Long.parseLong(AnalizadorLexico.reading);
         if( _reading >= MIN_LONG && _reading <= MAX_LONG){
             int _indexTDS = AnalizadorLexico.indexTDS;
-            if(!AnalizadorLexico.existeEnTDS(AnalizadorLexico.reading)){
+            int result = AnalizadorLexico.existeEnTDS(AnalizadorLexico.reading);
+            if(result == -1){
                 AnalizadorLexico.tablaDeSimbolos.put(_indexTDS,new TDSObject(AnalizadorLexico.reading,"LONG"));
                 AnalizadorLexico.indexTDS++;
+            }else{
+                _indexTDS = result;
             }
 
             //return token
-            AnalizadorLexico.token = AnalizadorLexico.esPalabraReservada("CTE");
+            AnalizadorLexico.token = AnalizadorLexico.getIdToken("CTE");
             AnalizadorLexico.refTDS = _indexTDS;
 
 
