@@ -1,0 +1,5 @@
+programaTest
+LONG prueba;
+BEGIN
+prueba := 4;
+END

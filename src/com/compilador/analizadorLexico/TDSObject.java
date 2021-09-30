@@ -2,21 +2,21 @@ package com.compilador.analizadorLexico;
 
 public class TDSObject {
 
-    private String lexema;
+    private int refID;
     private String tipoVariable;
 
-    public TDSObject(String lexema, String tipoVariable){
-        this.lexema = lexema;
+    public TDSObject(int refID, String tipoVariable){
+        this.refID = refID;
         this.tipoVariable = tipoVariable;
 
     }
 
-    public String getLexema() {
-        return lexema;
+    public int getRefId() {
+        return refID;
     }
 
-    public void setLexema(String lexema) {
-        this.lexema = lexema;
+    public void setRefID(int refID) {
+        this.refID = refID;
     }
 
     public String getTipoVariable() {
@@ -28,7 +28,7 @@ public class TDSObject {
     }
 
     public String imprimir(){
-        return "Lexema: " + lexema + " | Tipo Variable: "+ tipoVariable;
+        return "RefID: " + refID + " | Tipo Variable: "+ tipoVariable;
     }
     
 }

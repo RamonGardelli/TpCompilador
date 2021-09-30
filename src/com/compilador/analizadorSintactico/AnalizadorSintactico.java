@@ -45,9 +45,9 @@ public class AnalizadorSintactico {
                 listaAnalisis.forEach((data)->{
                     System.out.println(data);
                 });
-                HashMap<Integer, TDSObject> data = AnalizadorLexico.tablaDeSimbolos;
+                HashMap<String, TDSObject> data = AnalizadorLexico.tablaDeSimbolos;
                 data.forEach((k,v)->{
-                    System.out.println("RefID: " + k + "Data: " + v.imprimir());
+                    System.out.println("Lexema: " + k + " | " + v.imprimir());
                 });
             }else{
                 System.out.println("Parser no finalizo");

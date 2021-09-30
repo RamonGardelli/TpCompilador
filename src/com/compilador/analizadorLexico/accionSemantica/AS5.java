@@ -35,7 +35,7 @@ public class AS5 extends AccionSemantica {
             int result = AnalizadorLexico.existeEnTDS(AnalizadorLexico.reading);
 
             if (result == -1) {
-                AnalizadorLexico.tablaDeSimbolos.put(_indexTDS, new TDSObject(AnalizadorLexico.reading,"FLOAT"));
+                AnalizadorLexico.tablaDeSimbolos.put(AnalizadorLexico.reading, new TDSObject(_indexTDS,"FLOAT"));
                 AnalizadorLexico.indexTDS++;
             }else{
                 _indexTDS = result;

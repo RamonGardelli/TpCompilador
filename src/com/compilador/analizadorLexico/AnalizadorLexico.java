@@ -18,7 +18,7 @@ public class AnalizadorLexico {
     public static int indexTDS = 0;
     public static boolean finArchivo =false;
 
-    public static HashMap<Integer, TDSObject> tablaDeSimbolos = new HashMap<>();
+    public static HashMap<String, TDSObject> tablaDeSimbolos = new HashMap<>();
     public static Vector<String> listaDeErrores = new Vector<>();
     public static Vector<String> listaDeWarnings = new Vector<>();
 
@@ -95,7 +95,7 @@ public class AnalizadorLexico {
             // 0    -1 ERROR , 0 FINAL/inic
             {16, 2, 1, 1, 0, 0, 0, 3, 5, 6, 7, 8, 9, 0, 0, 0,10, 12, 1, -1},
             // 1
-            {0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,1, 0, 1, -1},
+            {0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,1, 0, 1, 0},
             // 2
             {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0, 0, 0, 0},
             // 3
@@ -139,7 +139,7 @@ public class AnalizadorLexico {
             // 0
             {AS11, AS1, AS1, AS1, AS12, AS12, AS12, AS1 , AS1, AS1, AS1, AS1, AS1, AS12, AS11,AS11, AS1, AS1, AS1, null},
             // 1
-            {AS13, AS13, AS2, AS2, AS13, AS13, AS13, AS13, AS13, AS13, AS13, AS13, AS13, AS13, AS13,AS13, AS2, AS13, AS2, null},
+            {AS13, AS13, AS2, AS2, AS13, AS13, AS13, AS13, AS13, AS13, AS13, AS13, AS13, AS13, AS13,AS13, AS2, AS13, AS2, AS13},
             // 2
             {AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS10, AS9, AS9, AS9, AS9,AS9, AS9, AS9, AS9, null},
             // 3
@@ -180,10 +180,9 @@ public class AnalizadorLexico {
 
 
     public static int existeEnTDS(String input) {
-        for (int i : tablaDeSimbolos.keySet()) {
-            if (tablaDeSimbolos.get(i).getLexema().equals(input)) {
-                return i;
-            }
+        TDSObject result = tablaDeSimbolos.get(input);
+        if(result != null){
+            return result.getRefId();
         }
         return -1;
     }
@@ -524,6 +523,12 @@ public class AnalizadorLexico {
                     break;
 
                 case '$':
+                    if (MatrizAccionSemantica[estado][19] != null) {
+                        ((AccionSemantica) MatrizAccionSemantica[estado][19]).ejecutar(archivo.charAt(indexArchivo));
+                        System.out.println(MatrizAccionSemantica[estado][19]);
+                        estado = MatrizTransicionEstados[estado][19];
+                        break;
+                    }
                     if (estado == 0) {
                         token = 0;
                         indexArchivo = 0;
@@ -538,13 +543,12 @@ public class AnalizadorLexico {
                                 finArchivo=true;
                                 System.out.println("$ error comentario mal cerrado " );
 
-                            }else{
+                            }/*else{
                                 listaDeErrores.add("ERROR Linea " + numLinea + ": caracter $ (EOF) invalido en posible cte/cadena/id.");
                                 indexArchivo++;
                                 finArchivo=true;
                                 System.out.println("$ invalido en posible cte/cadena/id " );
-
-                            }
+                            }*/
                         }else{
                             listaDeErrores.add("ERROR Linea " + numLinea + ": caracter $ (EOF) invalido.");
                             indexArchivo++;
