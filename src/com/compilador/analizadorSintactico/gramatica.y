@@ -3,6 +3,7 @@
 package com.compilador;
 
 import com.compilador.analizadorLexico.AnalizadorLexico;
+import com.compilador.analizadorSintactico.AnalizadorSintactico;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,42 +20,43 @@ import java.util.Vector;
 
 %%
 
-programa:ID bloqueDeclarativo bloqueEjecutable {aSintactico.agregarAnalisis("Programa reconocido. (Linea " + AnalizadorLexico.numLinea + ")");}
+programa:ID bloqueDeclarativo bloqueEjecutable {AnalizadorSintactico.agregarAnalisis("Programa reconocido. (Linea " + AnalizadorLexico.numLinea + ")");}
 	;
 
-bloqueDeclarativo:	bloqueDeclarativo sentenciasDeclarativas
-			| 		sentenciasDeclarativas
-	;
+bloqueDeclarativo:bloqueDeclarativo sentenciasDeclarativas
+		 | sentenciasDeclarativas
+		 ;
 
-bloqueEjecutable : 'BEGIN' sentSoloEjecutables 'END'
-	         | sentSoloEjecutables 'END' error {aSintactico.addErrorSint("Error sintactico en (Linea " + AnalizadorLexico.numLinea +"): falta 'BEGIN' al abrir bloque."); }
-		 | 'BEGIN' sentSoloEjecutables error {aSintactico.addErrorSint("Error sintactico en (Linea " + AnalizadorLexico.numLinea +"): falta 'END' al cerrar bloque."); }
+bloqueEjecutable :TRY sentEjecutables CATCH BEGIN sentSoloEjecutables END
+		 |BEGIN sentSoloEjecutables END
+		 ;
+
+bloqueEjecutableFunc: BEGIN sentEjecutableFunc RETURN '(' retorno ')' END
+		    ;
+
+sentEjecutableFunc: sentEjecutableFunc sentEjecutables;
+		  | sentEjecutableFunc CONTRACT ':' '(' condicion ')' ';'  //no se si una funcion puede solo tener contract
+		  | sentEjecutables
+		  ;
 
 
-sentSoloEjecutables : sentEjecutables sentSoloEjecutables
-		    | 		  sentEjecutables
+
+sentSoloEjecutables : sentSoloEjecutables sentEjecutables 
+		    | sentEjecutables
 		    ; 
 
-sentenciasDeclarativas : tipo listaVariables ';' {aSintactico.agregarAnalisis("Declaracion de variable. (Linea " + AnalizadorLexico.numLinea + ")");}
-		       | listaVariables ';' error {aSintactico.addErrorSintactico("Error sintactico en (Linea " + AnalizadorLexico.numLinea + "):falta el tipo de 			variable. ");}
-		       | tipo ';' error {aSintactico.addErrorSintactico("Error sintactico en (Linea " + AnalizadorLexico.numLinea + "):falta de identificadores.");}
-		       | tipo listaVariables error {aSintactico.addErrorSintactico("Error sintactico en(Linea " +(AnalizadorLexico.numLinea -1)+"):falta ';' para finalizar la sentencia.");}
-		       | declaracionFunc bloqueDeclarativo 'BEGIN' bloqueEjecutable 'RETURN' '(' retorno ')'  'END' {if (!aSintactico.getErrorFunc())
-								{
-								  aSintactico.agregarAnalisis("Funcion reconocida en. (Linea " + AnalizadorLexico.numLinea + ")");	
-								}
-							else {
-								aSintactico.addErrorSintactico("Error sintactico en (Linea " + AnalizadorLexico.numLinea + "):funcion mal declarada");
-								aSintactico.setErrorFunc(true); //todavia no se como se emplea
-							     }
-							}
-		       |declaracionFunc bloqueDeclarativo bloqueEjecutable 'END' error {aSintactico.addErrorSintactico("Error sintactico en (Linea" + AnalizadorLexico.numLinea + "): falta BEGIN ");}
-		       |declaracionFunc bloqueDeclarativo 'BEGIN' bloqueEjecutable error  {aSintactico.addErrorSintactico("Error sintactico en (Linea" + AnalizadorLexico.numLinea + "): falta END ");}
-		       |declaracionFunc bloqueDeclarativo 'BEGIN' 'END' error {aSintactico.addErrorSintactico("Warning (Linea" + AnalizadorLexico.numLinea + "): la funcion esta vacia ");}
+sentenciasDeclarativas : tipo listaVariables ';' {AnalizadorSintactico.agregarAnalisis("Declaracion de variable. (Linea " + AnalizadorLexico.numLinea + ")");}
+
+		       | declaracionFunc bloqueDeclarativo bloqueEjecutableFunc {AnalizadorSintactico.agregarAnalisis("Funcion reconocida en. (Linea " + AnalizadorLexico.numLinea + ")");}
+		       | encabezadoFunc listaVariables ';' {AnalizadorSintactico.agregarAnalisis("Declaracion de variable. (Linea " + AnalizadorLexico.numLinea + ")");}
 		       ;
+
+encabezadoFunc: tipo FUNC '(' tipo ')'
+	      ;
 
 
 retorno : expAritmetica
+	| tipo '(' expAritmetica ')'
 	;
 
 
@@ -70,71 +72,44 @@ termino : termino '*' factor
 
 factor  : ID
 	| CTE
-	| ID '(' parametro ')'    //Funcion
-	| ID '(' ')' // Funcion que no usa un parametro
-	| ID '(' parametro error {aSintactico.addErrorSintactico("Error sintactico en (Linea" + AnalizadorLexico.numLinea + "): falta ')' ");}
-	| ID parametro ')' error {aSintactico.addErrorSintactico("Error sintactico en (Linea" + AnalizadorLexico.numLinea + "): falta '(' ");}
+	| llamadoFunc
 	;
 
+llamadoFunc: ID '(' parametro ')'
+	   | ID '(' ')'
+	   ; 
 
 
-declaracionFunc : tipo FUNC ID '(' parametro ')' {aSintactico.agregarAnalisis("Declaracion de funcion en (Linea " + AnalizadorLexico.numLinea + ")");}
-		|tipo FUNC ID '(' ')' {aSintactico.agregarAnalisis("Declaracion de funcion en (Linea " + AnalizadorLexico.numLinea + ")");}
-		| FUNC ID '(' parametro ')' error {aSintactico.addErrorSintactico("Error sintactico en (Linea" + AnalizadorLexico.numLinea + "): falta tipo ");}
-		| tipo ID '(' parametro ')' error {aSintactico.addErrorSintactico("Error sintactico en (Linea" + AnalizadorLexico.numLinea + "): falta 'FUNC' ");}
-		| tipo FUNC ID '(' parametro  error {aSintactico.addErrorSintactico("Error sintactico en (Linea" + AnalizadorLexico.numLinea + "): falta ')' ");}
-		| tipo FUNC ID  parametro ')' error {aSintactico.addErrorSintactico("Error sintactico en (Linea" + AnalizadorLexico.numLinea + "): falta '(' ");}
+
+declaracionFunc : tipo FUNC ID '(' parametro ')' {AnalizadorSintactico.agregarAnalisis("Declaracion de funcion en (Linea " + AnalizadorLexico.numLinea + ")");}
+		|tipo FUNC ID '(' ')' {AnalizadorSintactico.agregarAnalisis("Declaracion de funcion en (Linea " + AnalizadorLexico.numLinea + ")");}
 		;
 
 parametro : tipo ID
-	  | tipo error {aSintactico.addErrorSintactico("Error sintactico en (Linea" + AnalizadorLexico.numLinea + "): falta IDparametro ");}
-	  | ID error {aSintactico.addErrorSintactico("Error sintactico en (Linea" + AnalizadorLexico.numLinea + "): falta tipo parametro ");}
 	  ;
 
-sentEjecutables : ID ':''=' expAritmetica ';' {aSintactico.agregarAnalisis("Sentencia ejecutable (Linea " + AnalizadorLexico.numLinea + ")");}
-		| IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF ';' {aSintactico.agregarAnalisis("sentencia 'IF' (Linea " + 				AnalizadorLexico.numLinea + ")");}
-		| IF condicion  THEN bloqueEjecutable ENDIF ';'{aSintactico.agregarAnalisis("sentencia 'IF' (Linea " + AnalizadorLexico.numLinea + ")");}
-		| PRINT '(' CADENA ')';
-		| WHILE condicion DO bloqueEjecutable; {aSintactico.agregarAnalisis("sentencia 'WHILE' (Linea " + AnalizadorLexico.numLinea + ")");}
-		|':''=' expAritmetica ';' error {aSintactico.addErrorSintactico("Error sintactico en (Linea" + AnalizadorLexico.numLinea + "): falta ID ");}
-		| ID expAritmetica ';' error {aSintactico.addErrorSintactico("Error sintactico en (Linea" + AnalizadorLexico.numLinea + "): falta ':=' ");}
-		| ID ':''=' ';' error {aSintactico.addErrorSintactico("Error sintactico en (Linea" + AnalizadorLexico.numLinea + "): falta expAritmetica ");}
-		| ID ':''=' expAritmetica error {aSintactico.addErrorSintactico("Error sintactico en (Linea" + AnalizadorLexico.numLinea + "): falta ';' ");}
-		| condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF error {aSintactico.addErrorSintactico("Error sintactico en (Linea" + 				AnalizadorLexico.numLinea + "): falta IF ");}
-		|IF THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF ';' error {aSintactico.addErrorSintactico("Error sintactico en (Linea" + 						AnalizadorLexico.numLinea + "): falta condicion");}
-		|IF condicion bloqueEjecutable ELSE bloqueEjecutable ENDIF ';' error {aSintactico.addErrorSintactico("Error sintactico en (Linea" + 					AnalizadorLexico.numLinea + "):falta THEN ");}
-		|IF condicion THEN ELSE bloqueEjecutable ENDIF ';' {aSintactico.addErrorSintactico("Warning (Linea"+ AnalizadorLexico.numLinea +"):IF vacio");}
-		|IF condicion THEN bloqueEjecutable ELSE ENDIF ';' {aSintactico.addErrorSintactico("Warning(Linea"+ AnalizadorLexico.numLinea +"):ELSE 				vacio");}
-		|IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable ';' error {aSintactico.addErrorSintactico("Error sintactico en (Linea" + 					AnalizadorLexico.numLinea + "):falta  ENDIF ");}
-		|IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF error {aSintactico.addErrorSintactico("Error sintactico en (Linea" + 					AnalizadorLexico.numLinea + "):falta ';' ");}
-		| condicion THEN bloqueEjecutable ENDIF ';' error {aSintactico.addErrorSintactico("Error sintactico en (Linea" + 							AnalizadorLexico.numLinea + "):falta 'IF' ");}
-		| IF THEN bloqueEjecutable ENDIF ';' error {aSintactico.addErrorSintactico("Error sintactico en (Linea" + AnalizadorLexico.numLinea + "):falta 				'condicion' ");}
-		| IF condicion bloqueEjecutable ENDIF ';' error {aSintactico.addErrorSintactico("Error sintactico en (Linea" + AnalizadorLexico.numLinea + 				"):falta 'THEN' ");}
-		| IF condicion THEN ENDIF ';' {aSintactico.addErrorSintactico("Warning (Linea" + AnalizadorLexico.numLinea + "):IF vacio ");}
-		| IF condicion THEN bloqueEjecutable';' error {aSintactico.addErrorSintactico("Error sintactico en (Linea" + AnalizadorLexico.numLinea + 				"):falta ENDIF ");}
-		| IF condicion THEN bloqueEjecutable ENDIF error {aSintactico.addErrorSintactico("Error sintactico en (Linea" + AnalizadorLexico.numLinea + 				"):falta ';' ");}
-		|PRINT '(' CADENA error {aSintactico.addErrorSintactico("Error sintactico en (Linea" + AnalizadorLexico.numLinea + "):falta ')' ");}
-		|PRINT CADENA ')' error {aSintactico.addErrorSintactico("Error sintactico en (Linea" + AnalizadorLexico.numLinea + "):falta '(' ");}
-		|PRINT '('')' {aSintactico.addErrorSintactico("Warning (Linea" + AnalizadorLexico.numLinea + "):Print vacio ");}
-		| condicion DO bloqueEjecutable; error {aSintactico.addErrorSintactico("Error sintactico en (Linea" + AnalizadorLexico.numLinea + "):falta WHILE ");}
-		|WHILE DO bloqueEjecutable error {aSintactico.addErrorSintactico("Error sintactico en (Linea" + AnalizadorLexico.numLinea + "):falta condicion ");}
-		|WHILE condicion bloqueEjecutable error {aSintactico.addErrorSintactico("Error sintactico en (Linea" + AnalizadorLexico.numLinea + "):falta do ");}
-		|WHILE condicion DO error{aSintactico.addErrorSintactico("Error sintactico en (Linea" + AnalizadorLexico.numLinea + "):while vacio infinito ");}
+sentEjecutables : ID ASIGN expAritmetica ';' {AnalizadorSintactico.agregarAnalisis("Sentencia ejecutable (Linea " + AnalizadorLexico.numLinea + ")");}
+		| ID ASIGN tipo '(' expAritmetica ')' ';'
+		| IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF ';' {AnalizadorSintactico.agregarAnalisis("sentencia 'IF' (Linea " + 				AnalizadorLexico.numLinea + ")");}
+		| IF condicion  THEN bloqueEjecutable ENDIF ';'{AnalizadorSintactico.agregarAnalisis("sentencia 'IF' (Linea " + AnalizadorLexico.numLinea + ")");}
+		| PRINT '(' CADENA ')' ';'
+		| PRINT '(' ID ')' ';'
+		| PRINT '(' CTE ')' ';'
+		| WHILE condicion DO bloqueEjecutable; {AnalizadorSintactico.agregarAnalisis("sentencia 'WHILE' (Linea " + AnalizadorLexico.numLinea + ")");}
 		;
 
 
-condicion: '(' comparacion ')'
-	 | '('comparacion error {aSintactico.addErrorSintactico("Error sintactico en (Linea" + AnalizadorLexico.numLinea + "):falta ')' ");}
-	 | comparacion ')' error {aSintactico.addErrorSintactico("Error sintactico en (Linea" + AnalizadorLexico.numLinea + "):falta '(' ");}
-	 | '(' ')'error {aSintactico.addErrorSintactico("Error sintactico en (Linea" + AnalizadorLexico.numLinea + "):no hay comparacion ");}
+condicion: '(' comparaciones ')'
 	 ;
 
+comparaciones: comparaciones opLogico comparacion
+	     | comparacion
+	     ;
+
 comparacion: expAritmetica comparador expAritmetica
-	   | comparacion opLogico comparacion
-	   | expAritmetica comparador error {aSintactico.addErrorSintactico("Error sintactico en (Linea" + AnalizadorLexico.numLinea + "):falta una expAritmetica");}
-	   | comparacion opLogico error {aSintactico.addErrorSintactico("Error sintactico en (Linea" + AnalizadorLexico.numLinea + "):falta otra comparacion");}
-	   | comparador comparador error {aSintactico.addErrorSintactico("Error sintactico en (Linea" + AnalizadorLexico.numLinea + "):falta un opLogico");}
-	   | expAritmetica expAritmetica error {aSintactico.addErrorSintactico("Error sintactico en (Linea" + AnalizadorLexico.numLinea + "):falta un comparador");}
+	   | tipo '(' expAritmetica ')' comparador expAritmetica
+	   | expAritmetica comparador tipo '(' expAritmetica ')'
+	   | tipo '(' expAritmetica ')' comparador tipo '(' expAritmetica ')'
 	   ;
 
 comparador: '>'
@@ -155,9 +130,8 @@ tipo: LONG
     ;
 
 
-listaVariables: ID
-	      | listaVariables ',' ID
-	      | listaVariables ID error {aSintactico.addErrorSintactico("Error sintactico en (Linea" + AnalizadorLexico.numLinea + "):falta ','");}
+listaVariables: listaVariables ',' ID
+	      |ID
 	      ;
 
 
@@ -169,5 +143,5 @@ public int yylex() {
 }
 
 public void yyerror(String string) {
-	AnalizadorLexico.listaDeErrores("par: " + string);
+	AnalizadorSintactico.agregarError("Parser: " + string);
 }

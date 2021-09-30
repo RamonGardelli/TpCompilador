@@ -13,9 +13,11 @@ public class Main {
 
     public static void main(String[] args) {
 
-        try {
-            System.out.println("----------ANALIZADOR LÉXICO-----------");
-            System.out.println("Ingrese la ruta del archivo a analizar:");
+
+        //TEST LEXICO
+/*        try {
+            System.out.println("Analisis lexico:");
+            System.out.println("Ingrese la ruta del archivo:");
             Scanner scanner = new Scanner(System.in);
             String path = scanner.next();
             String entrada = Files.readString(Paths.get(path));
@@ -23,12 +25,13 @@ public class Main {
             //C:\Users\ramon\Documents\TpCompilador\archivos\validos\literales.txt
             entrada = entrada.replaceAll("\r\n", "\n");
             AnalizadorLexico.archivo = entrada + "$";
+            
             while (!AnalizadorLexico.finArchivo)
                 AnalizadorLexico.yylex();
             HashMap<Integer,TDSObject> data = AnalizadorLexico.tablaDeSimbolos;
             if (data.isEmpty()) {
                 System.out.println("----------------");
-                System.out.println("No se detectaron tokens.");
+                System.out.println("No hay entradas en la tabla de simbolos.");
             }
             data.forEach((k,v)->{
                 System.out.println("RefID: " + k + "Data: " + v.imprimir());
@@ -44,7 +47,7 @@ public class Main {
             });
 
 
-        } catch(IOException e) {}
+        } catch(IOException e) {}*/
 
     }
 }
