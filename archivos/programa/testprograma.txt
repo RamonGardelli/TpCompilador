@@ -1,5 +1,6 @@
 programaTest
-LONG prueba;
+LONG prueba,prueba1;
 BEGIN
 prueba := 4;
+prueba1 := 4;
 END
