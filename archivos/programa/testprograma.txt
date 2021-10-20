@@ -1,6 +1,10 @@
-programaTest
-LONG prueba,prueba1;
+progCteRangoAcept
+LONG aux ;
+SINGLE aux2;
 BEGIN
-prueba := 4;
-prueba1 := 4;
+	aux := -2147483647;
+	aux := 2147483646 ;
+	aux2 := 3.40282346S+37 ;
+	aux2 := 1.17549436S-37 ;
+
 END
