@@ -22,7 +22,7 @@ public class AnalizadorSintactico {
     public static Parser p = new Parser();
 
 
-    public enum Reglas  // se accede al numero asi:  ejemplo : Reglas.ASIGNACION.ordinal()
+    public enum ReglasExpAsign  // se accede al numero asi:  ejemplo : ReglasExpAsign.ASIGNACION.ordinal()
     {
         ASIGNACION, EXPRESION, TERMINO, FACTOR;
     }
