@@ -4,6 +4,7 @@ package com.compilador;
 
 import com.compilador.analizadorLexico.AnalizadorLexico;
 import com.compilador.analizadorSintactico.AnalizadorSintactico;
+import com.compilador.arbolSintactico.Nodo;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -110,19 +111,20 @@ retorno : expAritmetica
 	;
 
 
-expAritmetica: expAritmetica '+' termino
-	     | expAritmetica '-' termino
-	     | termino
+expAritmetica: expAritmetica '+' termino  {AnalizadorSintactico.crearNodo('+',ReglasExpAsign.EXPRESION.ordinal()), ReglasExpAsign.TERMINO.ordinal());}
+	     | expAritmetica '-' termino  {AnalizadorSintactico.crearNodo('-',ReglasExpAsign.EXPRESION.ordinal()), ReglasExpAsign.TERMINO.ordinal());}
+	     | termino			  {AnalizadorSintactico.igualarNodo(ReglasExpAsign.TERMINO.ordinal()), ReglasExpAsign.FACTOR.ordinal());}
 	     ;
 
-termino : termino '*' factor
-	| termino '/' factor
-	| factor
+termino : termino '*' factor	{AnalizadorSintactico.crearNodo('*',ReglasExpAsign.TERMINO.ordinal()), ReglasExpAsign.FACTOR.ordinal());}
+	| termino '/' factor	{AnalizadorSintactico.crearNodo('/',ReglasExpAsign.TERMINO.ordinal()), ReglasExpAsign.FACTOR.ordinal());}
+	| factor		{AnalizadorSintactico.igualarNodo(ReglasExpAsign.TERMINO.ordinal()), ReglasExpAsign.FACTOR.ordinal());}
 	;
 
-factor  : ID
-	| CTE
-	| '-' CTE
+factor  : ID  		{AnalizadorSintactico.Arbol = new Nodo($1);}  //ID da lexema??
+	| CTE		{AnalizadorSintactico.Arbol = new Nodo($1);}
+	| '-' CTE	{AnalizadorLexico.agregarNegativoTDS($2);
+			AnalizadorSintactico.Arbol = new Nodo($2);}
 	| llamadoFunc
 	;
 
@@ -153,7 +155,9 @@ sentEjecutables : asignacion
 		| sentenciaWHILE
 		;
 
-asignacion: ID ASIGN expAritmetica ';' {AnalizadorSintactico.agregarAnalisis("Sentencia ejecutable asignacion (Linea " + AnalizadorLexico.numLinea + ")");}
+asignacion: ID ASIGN expAritmetica ';' {AnalizadorSintactico.agregarAnalisis("Sentencia ejecutable asignacion (Linea " + AnalizadorLexico.numLinea + ")");
+					AnalizadorSintactico.crearNodo(':=', ReglasExpAsign.ASIGNACION.ordinal()), ReglasExpAsign.EXPRESION.ordinal());}
+
 	  | ID ASIGN tipo '(' expAritmetica ')' ';' {AnalizadorSintactico.agregarAnalisis("Sentencia ejecutable asignacion casteada (Linea " + AnalizadorLexico.numLinea + ")");}
 	  | ASIGN expAritmetica ';' {AnalizadorSintactico.agregarError("Error falta ID (Linea " + AnalizadorLexico.numLinea + ")");}
 	  | ID expAritmetica ';' {AnalizadorSintactico.agregarError("Error falta ASIGN (Linea " + AnalizadorLexico.numLinea + ")");}

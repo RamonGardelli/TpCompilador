@@ -184,10 +184,13 @@ public class AnalizadorLexico {
     public static int existeEnTDS(String input) {
         TDSObject result = tablaDeSimbolos.get(input);
         if(result != null){
+        	result.setContRef(result.getContRef()+1);
             return result.getRefId();
         }
         return -1;
     }
+    
+
 
     public static int getIdToken(String input) {
         for (int i = 257; i < MAX_TOKEN_ID; i++) {
@@ -196,6 +199,42 @@ public class AnalizadorLexico {
             }
         }
         return -1;
+    }
+    
+    public static void agregarNegativoTDS(String ref)
+    {
+    	TDSObject result = tablaDeSimbolos.get(ref);
+        if(result != null){
+        	if (result.getContRef()==1)
+        		{
+        			tablaDeSimbolos.put("-"+ref, new TDSObject (result.getRefId(), result.getTipoVariable()));
+        			tablaDeSimbolos.remove(ref);
+        		}
+        	else 
+        	{
+        		TDSObject result2 = tablaDeSimbolos.get("-"+ref);
+        		if (result2 != null)
+        			{
+        			result2.setContRef(result2.getContRef()+1);
+        			result.setContRef(result.getContRef()-1);
+        			}
+        		else 
+        		{
+        			tablaDeSimbolos.put("-"+ref, new TDSObject (indexTDS, result.getTipoVariable()));
+        			indexTDS++;
+        			result.setContRef(result.getContRef()-1);
+        		}
+        		
+        	}
+        }
+        else 
+        	{
+        	TDSObject result2 = tablaDeSimbolos.get("-"+ref);
+    		if (result2 != null)
+    			{
+    			result2.setContRef(result2.getContRef()+1);
+    			}
+        	}
     }
 
     public static int yylex() {

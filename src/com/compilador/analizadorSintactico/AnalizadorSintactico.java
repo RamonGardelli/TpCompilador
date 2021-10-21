@@ -20,8 +20,10 @@ public class AnalizadorSintactico {
     public static Vector<String> listaErroresSintacticos = new Vector<>();
 
     public static Parser p = new Parser();
+    
+    public static Nodo arbol;
 
-
+/*
     public enum ReglasExpAsign  // se accede al numero asi:  ejemplo : ReglasExpAsign.ASIGNACION.ordinal()
     {
         ASIGNACION, EXPRESION, TERMINO, FACTOR;
@@ -31,13 +33,19 @@ public class AnalizadorSintactico {
     public static Nodo[] listaRefReglas = {null,null,null,null}; // 0: ASIGNACION // 1: EXPRESION // 2: TERMINO // 3: FACTOR
 
     public static void crearHoja(String refTDS,int regla){
-        listaRefReglas[regla] = new Nodo(refTDS);
+    	new Nodo(refTDS);
+    }
+    
+    
+    public static void igualarNodo(int regla1,int regla2){
+        listaRefReglas[regla1] = listaRefReglas[regla2];
     }
 
-    public static void crearNodo(String aritmetic, int reglaIzq, int reglaDer1, int reglaDer2){
-        listaRefReglas[reglaIzq] = new Nodo(aritmetic,listaRefReglas[reglaDer1],listaRefReglas[reglaDer2]);
+    public static void crearNodo(String aritmetic, int regla1, int regla2){
+    	//saque la tercera regla porque siempre se guarda en la posiciond de la regla1 :)
+        listaRefReglas[regla1] = new Nodo(aritmetic,listaRefReglas[regla1],listaRefReglas[regla2]);
     }
-
+*/
     public static void agregarAnalisis(String analisis){
         listaAnalisis.add(analisis);
     }
