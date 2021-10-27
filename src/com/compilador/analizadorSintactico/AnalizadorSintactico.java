@@ -87,6 +87,7 @@ public class AnalizadorSintactico {
 
             if (p.yyparse() == 0){
                 System.out.println("Parser finalizo");
+                
             }else{
                 System.out.println("Parser no finalizo");
             }
@@ -116,7 +117,7 @@ public class AnalizadorSintactico {
                 Path fileErrorSint = Paths.get(archivoASerror);
                 Files.write(fileErrorSint,listaErroresSintacticos, StandardCharsets.UTF_8);
             }
-
+            imprimirArbol(arbol);
             String archivoTDSName = originalPath + fileName + "_tablaDeSimbolos.txt";
             Path file3 = Paths.get(archivoTDSName);
             Vector<String> tdsData = new Vector<>();
@@ -130,6 +131,19 @@ public class AnalizadorSintactico {
 
 
 
+    }
+    
+    public static void imprimirArbol(Nodo n) {
+    	if (n != null)
+    	{
+    		imprimirArbol(n.getLeft());
+    		System.out.printf(n.getRef());
+    		imprimirArbol(n.getRight());
+    	}
+    	else 
+    	{
+    		System.out.printf("Null");
+    	}
     }
 
 

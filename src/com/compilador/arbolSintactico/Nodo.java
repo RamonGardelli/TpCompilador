@@ -52,6 +52,7 @@ public class Nodo {
     public void setEsHoja(boolean esHoja) {
         this.esHoja = esHoja;
     }
+    
 
 
 }

@@ -111,20 +111,20 @@ retorno : expAritmetica
 	;
 
 
-expAritmetica: expAritmetica '+' termino  {AnalizadorSintactico.crearNodo('+',ReglasExpAsign.EXPRESION.ordinal()), ReglasExpAsign.TERMINO.ordinal());}
-	     | expAritmetica '-' termino  {AnalizadorSintactico.crearNodo('-',ReglasExpAsign.EXPRESION.ordinal()), ReglasExpAsign.TERMINO.ordinal());}
-	     | termino			  {AnalizadorSintactico.igualarNodo(ReglasExpAsign.TERMINO.ordinal()), ReglasExpAsign.FACTOR.ordinal());}
+expAritmetica: expAritmetica '+' termino  {AnalizadorSintactico.arbol= new Nodo('+', $1, $3);}
+	     | expAritmetica '-' termino  {AnalizadorSintactico.arbol= new Nodo('-', $1, $3);}
+	     | termino			  {$$=$1 ;}
 	     ;
 
-termino : termino '*' factor	{AnalizadorSintactico.crearNodo('*',ReglasExpAsign.TERMINO.ordinal()), ReglasExpAsign.FACTOR.ordinal());}
-	| termino '/' factor	{AnalizadorSintactico.crearNodo('/',ReglasExpAsign.TERMINO.ordinal()), ReglasExpAsign.FACTOR.ordinal());}
-	| factor		{AnalizadorSintactico.igualarNodo(ReglasExpAsign.TERMINO.ordinal()), ReglasExpAsign.FACTOR.ordinal());}
+termino : termino '*' factor	{AnalizadorSintactico.arbol= new Nodo('*', $1, $3);}
+	| termino '/' factor	{AnalizadorSintactico.arbol= new Nodo('/',$1, $3);}
+	| factor		{$$ = $1;}
 	;
 
-factor  : ID  		{AnalizadorSintactico.Arbol = new Nodo($1);}  //ID da lexema??
-	| CTE		{AnalizadorSintactico.Arbol = new Nodo($1);}
+factor  : ID  		{AnalizadorSintactico.arbol = new Nodo($1);}  //ID da lexema??
+	| CTE		{AnalizadorSintactico.arbol = new Nodo($1);}
 	| '-' CTE	{AnalizadorLexico.agregarNegativoTDS($2);
-			AnalizadorSintactico.Arbol = new Nodo($2);}
+			AnalizadorSintactico.arbol = new Nodo(-$2);}
 	| llamadoFunc
 	;
 
@@ -156,7 +156,7 @@ sentEjecutables : asignacion
 		;
 
 asignacion: ID ASIGN expAritmetica ';' {AnalizadorSintactico.agregarAnalisis("Sentencia ejecutable asignacion (Linea " + AnalizadorLexico.numLinea + ")");
-					AnalizadorSintactico.crearNodo(':=', ReglasExpAsign.ASIGNACION.ordinal()), ReglasExpAsign.EXPRESION.ordinal());}
+					AnalizadorSintactico.arbol= new Nodo(':=', $1, $3);}
 
 	  | ID ASIGN tipo '(' expAritmetica ')' ';' {AnalizadorSintactico.agregarAnalisis("Sentencia ejecutable asignacion casteada (Linea " + AnalizadorLexico.numLinea + ")");}
 	  | ASIGN expAritmetica ';' {AnalizadorSintactico.agregarError("Error falta ID (Linea " + AnalizadorLexico.numLinea + ")");}
