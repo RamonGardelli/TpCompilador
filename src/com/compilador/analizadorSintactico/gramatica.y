@@ -121,8 +121,10 @@ termino : termino '*' factor	{AnalizadorSintactico.arbol= new Nodo('*', $1, $3);
 	| factor		{$$ = $1;}
 	;
 
-factor  : ID  		{AnalizadorSintactico.arbol = new Nodo($1);}  //ID da lexema??
-	| CTE		{AnalizadorSintactico.arbol = new Nodo($1);}
+factor  : ID  		{AnalizadorSintactico.arbol = new Nodo($1);
+			$$= new Nodo($1);}  //ID da lexema??
+	| CTE		{AnalizadorSintactico.arbol = new Nodo($1);
+			$$= new Nodo($1);}
 	| '-' CTE	{AnalizadorLexico.agregarNegativoTDS($2);
 			AnalizadorSintactico.arbol = new Nodo(-$2);}
 	| llamadoFunc
@@ -156,7 +158,8 @@ sentEjecutables : asignacion
 		;
 
 asignacion: ID ASIGN expAritmetica ';' {AnalizadorSintactico.agregarAnalisis("Sentencia ejecutable asignacion (Linea " + AnalizadorLexico.numLinea + ")");
-					AnalizadorSintactico.arbol= new Nodo(':=', $1, $3);}
+					AnalizadorSintactico.arbol= new Nodo('=', $1, $3);
+					$$= new Nodo('=', $1, $3);}
 
 	  | ID ASIGN tipo '(' expAritmetica ')' ';' {AnalizadorSintactico.agregarAnalisis("Sentencia ejecutable asignacion casteada (Linea " + AnalizadorLexico.numLinea + ")");}
 	  | ASIGN expAritmetica ';' {AnalizadorSintactico.agregarError("Error falta ID (Linea " + AnalizadorLexico.numLinea + ")");}
@@ -246,6 +249,7 @@ listaVariables: listaVariables ',' ID
 
 
 public int yylex() {
+
     return AnalizadorLexico.yylex();
 }
 
