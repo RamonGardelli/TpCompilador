@@ -26,7 +26,7 @@ public class AS7 extends AccionSemantica{
 
             //return token
             AnalizadorLexico.token = AnalizadorLexico.getIdToken("CTE");
-            AnalizadorLexico.refTDS = _indexTDS;
+            AnalizadorLexico.refTDS = AnalizadorLexico.reading;
 
 
         }else{

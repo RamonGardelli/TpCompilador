@@ -43,7 +43,7 @@ public class AS3 extends AccionSemantica {
                 }
                 //return token
                 AnalizadorLexico.token = AnalizadorLexico.getIdToken("ID");
-                AnalizadorLexico.refTDS = _indexTDS;
+                AnalizadorLexico.refTDS = _reading;
             }
         }
 

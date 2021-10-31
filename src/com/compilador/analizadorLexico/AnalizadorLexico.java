@@ -12,7 +12,7 @@ public class AnalizadorLexico {
     public static String reading = "";
     public static int indexArchivo = 0;
     public static int token = -1;
-    public static int refTDS = -1;
+    public static String refTDS = "";
     public static int estado = 0;
     public static int numLinea = 1;
     public static int indexTDS = 0;
@@ -239,7 +239,7 @@ public class AnalizadorLexico {
 
     public static int yylex() {
         token = -1;
-        refTDS = -1;
+        refTDS = "";
         reading = "";
         estado = 0;
         boolean errorCadena=false;

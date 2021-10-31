@@ -42,7 +42,7 @@ public class AS5 extends AccionSemantica {
             }
 
             AnalizadorLexico.token = AnalizadorLexico.getIdToken("CTE");
-            AnalizadorLexico.refTDS = _indexTDS;
+            AnalizadorLexico.refTDS = AnalizadorLexico.reading;
             AnalizadorLexico.indexTDS++;
 
         }

@@ -111,22 +111,24 @@ retorno : expAritmetica
 	;
 
 
-expAritmetica: expAritmetica '+' termino  {AnalizadorSintactico.arbol= new Nodo('+', $1, $3);}
-	     | expAritmetica '-' termino  {AnalizadorSintactico.arbol= new Nodo('-', $1, $3);}
+expAritmetica: expAritmetica '+' termino  {
+					  $$= new ParserVal(new Nodo("+", (Nodo)$1.obj, (Nodo)$3.obj));}
+	     | expAritmetica '-' termino  {
+					  $$= new ParserVal(new Nodo("-", (Nodo)$1.obj, (Nodo)$3.obj));}
 	     | termino			  {$$=$1 ;}
 	     ;
 
-termino : termino '*' factor	{AnalizadorSintactico.arbol= new Nodo('*', $1, $3);}
-	| termino '/' factor	{AnalizadorSintactico.arbol= new Nodo('/',$1, $3);}
+termino : termino '*' factor	{
+				$$= new ParserVal(new Nodo("*", (Nodo)$1.obj, (Nodo)$3.obj));}
+	| termino '/' factor	{
+				$$= new ParserVal(new Nodo("/", (Nodo)$1.obj, (Nodo)$3.obj));}
 	| factor		{$$ = $1;}
 	;
 
-factor  : ID  		{AnalizadorSintactico.arbol = new Nodo($1);
-			$$= new Nodo($1);}  //ID da lexema??
-	| CTE		{AnalizadorSintactico.arbol = new Nodo($1);
-			$$= new Nodo($1);}
-	| '-' CTE	{AnalizadorLexico.agregarNegativoTDS($2);
-			AnalizadorSintactico.arbol = new Nodo(-$2);}
+factor  : ID  		{$$= new ParserVal(new Nodo($1.sval));}  //ID da lexema??
+	| CTE		{$$= new ParserVal(new Nodo($1.sval));}
+	| '-' CTE	{AnalizadorLexico.agregarNegativoTDS($2.sval);
+			$$= new ParserVal(new Nodo("-"+$2.sval));}
 	| llamadoFunc
 	;
 
@@ -158,9 +160,7 @@ sentEjecutables : asignacion
 		;
 
 asignacion: ID ASIGN expAritmetica ';' {AnalizadorSintactico.agregarAnalisis("Sentencia ejecutable asignacion (Linea " + AnalizadorLexico.numLinea + ")");
-					AnalizadorSintactico.arbol= new Nodo('=', $1, $3);
-					$$= new Nodo('=', $1, $3);}
-
+					$$= new ParserVal(new Nodo("=", (Nodo)$1.obj, (Nodo)$3.obj));}
 	  | ID ASIGN tipo '(' expAritmetica ')' ';' {AnalizadorSintactico.agregarAnalisis("Sentencia ejecutable asignacion casteada (Linea " + AnalizadorLexico.numLinea + ")");}
 	  | ASIGN expAritmetica ';' {AnalizadorSintactico.agregarError("Error falta ID (Linea " + AnalizadorLexico.numLinea + ")");}
 	  | ID expAritmetica ';' {AnalizadorSintactico.agregarError("Error falta ASIGN (Linea " + AnalizadorLexico.numLinea + ")");}
@@ -249,8 +249,9 @@ listaVariables: listaVariables ',' ID
 
 
 public int yylex() {
-
-    return AnalizadorLexico.yylex();
+    int value = AnalizadorLexico.yylex();
+    yylval = new ParserVal(AnalizadorLexico.refTDS); 
+    return value;
 }
 
 public void yyerror(String string) {

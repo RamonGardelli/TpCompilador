@@ -24,7 +24,7 @@ public class AS8 extends AccionSemantica{
 
         //return token
         AnalizadorLexico.token = AnalizadorLexico.getIdToken("CADENA");
-        AnalizadorLexico.refTDS = _indexTDS;
+        AnalizadorLexico.refTDS = _reading;
 
         // Avanzar el iterador
         AnalizadorLexico.indexArchivo++;
