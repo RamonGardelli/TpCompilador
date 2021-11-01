@@ -1,6 +1,6 @@
 %{
 
-package com.compilador;
+package com.compilador.analizadorSintactico;
 
 import com.compilador.analizadorLexico.AnalizadorLexico;
 import com.compilador.analizadorSintactico.AnalizadorSintactico;
@@ -160,7 +160,10 @@ sentEjecutables : asignacion
 		;
 
 asignacion: ID ASIGN expAritmetica ';' {AnalizadorSintactico.agregarAnalisis("Sentencia ejecutable asignacion (Linea " + AnalizadorLexico.numLinea + ")");
-					$$= new ParserVal(new Nodo("=", (Nodo)$1.obj, (Nodo)$3.obj));}
+					ParserVal aux = new ParserVal(new Nodo($1.sval));
+					$$= new ParserVal(new Nodo("=", (Nodo)aux.obj, (Nodo)$3.obj));
+					AnalizadorSintactico.arbol = (Nodo)$$.obj;
+					AnalizadorSintactico.imprimirArbol((Nodo)$$.obj);}
 	  | ID ASIGN tipo '(' expAritmetica ')' ';' {AnalizadorSintactico.agregarAnalisis("Sentencia ejecutable asignacion casteada (Linea " + AnalizadorLexico.numLinea + ")");}
 	  | ASIGN expAritmetica ';' {AnalizadorSintactico.agregarError("Error falta ID (Linea " + AnalizadorLexico.numLinea + ")");}
 	  | ID expAritmetica ';' {AnalizadorSintactico.agregarError("Error falta ASIGN (Linea " + AnalizadorLexico.numLinea + ")");}

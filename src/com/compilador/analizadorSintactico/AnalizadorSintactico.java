@@ -140,10 +140,7 @@ public class AnalizadorSintactico {
     		System.out.printf(n.getRef());
     		imprimirArbol(n.getRight());
     	}
-    	else 
-    	{
-    		System.out.printf("Null");
-    	}
+
     }
 
 
