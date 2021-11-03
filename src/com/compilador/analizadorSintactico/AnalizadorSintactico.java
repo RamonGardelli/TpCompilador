@@ -23,29 +23,6 @@ public class AnalizadorSintactico {
     
     public static Nodo arbol;
 
-/*
-    public enum ReglasExpAsign  // se accede al numero asi:  ejemplo : ReglasExpAsign.ASIGNACION.ordinal()
-    {
-        ASIGNACION, EXPRESION, TERMINO, FACTOR;
-    }
-
-    //Lista referencias del arbol sintactico
-    public static Nodo[] listaRefReglas = {null,null,null,null}; // 0: ASIGNACION // 1: EXPRESION // 2: TERMINO // 3: FACTOR
-
-    public static void crearHoja(String refTDS,int regla){
-    	new Nodo(refTDS);
-    }
-    
-    
-    public static void igualarNodo(int regla1,int regla2){
-        listaRefReglas[regla1] = listaRefReglas[regla2];
-    }
-
-    public static void crearNodo(String aritmetic, int regla1, int regla2){
-    	//saque la tercera regla porque siempre se guarda en la posiciond de la regla1 :)
-        listaRefReglas[regla1] = new Nodo(aritmetic,listaRefReglas[regla1],listaRefReglas[regla2]);
-    }
-*/
     public static void agregarAnalisis(String analisis){
         listaAnalisis.add(analisis);
     }
@@ -140,7 +117,34 @@ public class AnalizadorSintactico {
     		System.out.printf(n.getRef());
     		imprimirArbol(n.getRight());
     	}
+    }
 
+    public static String calculadorTipo(String  op, String tipo1, String tipo2) {
+        String result = "";
+        if(op.equals("/")){//ver
+            result = "SINGLE";
+        }else if(op.equals("*")){
+            if(tipo1.equals("SINGLE") && tipo2.equals("SINGLE")){
+                result = "SINGLE";
+            }else if ((tipo1.equals("LONG") && tipo2.equals("SINGLE")) || (tipo1.equals("SINGLE") && tipo2.equals("LONG"))){
+                result = "SINGLE";
+            }else{
+                result = "LONG";
+            }
+        }else if(op.equals("+")){
+            if(tipo1.equals("LONG") && tipo2.equals("LONG")){
+                result = "LONG";
+            }else{
+                result = "SINGLE";
+            }
+        }else{//RESTA / ver
+            if(tipo1.equals("LONG") && tipo2.equals("LONG")){
+                result = "LONG";
+            }else{
+                result = "SINGLE";
+            }
+        }
+        return result;
     }
 
 

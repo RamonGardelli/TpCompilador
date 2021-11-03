@@ -189,6 +189,10 @@ public class AnalizadorLexico {
         }
         return -1;
     }
+
+    public static TDSObject getLexemaObject(String input) {
+        return tablaDeSimbolos.get(input);
+    }
     
 
 

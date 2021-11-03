@@ -3,6 +3,7 @@
 package com.compilador.analizadorSintactico;
 
 import com.compilador.analizadorLexico.AnalizadorLexico;
+import com.compilador.analizadorLexico.TDSObject;
 import com.compilador.analizadorSintactico.AnalizadorSintactico;
 import com.compilador.arbolSintactico.Nodo;
 
@@ -112,23 +113,63 @@ retorno : expAritmetica
 
 
 expAritmetica: expAritmetica '+' termino  {
-					  $$= new ParserVal(new Nodo("+", (Nodo)$1.obj, (Nodo)$3.obj));}
+					                      $$= new ParserVal(new Nodo("+", (Nodo)$1.obj, (Nodo)$3.obj));
+                                          String tipo = AnalizadorSintactico.calculadorTipo("+",((Nodo)$1.obj).getTipo(),((Nodo)$3.obj).getTipo());
+                                          ((Nodo)$$.obj).setTipo(tipo);
+                                          }
 	     | expAritmetica '-' termino  {
-					  $$= new ParserVal(new Nodo("-", (Nodo)$1.obj, (Nodo)$3.obj));}
-	     | termino			  {$$=$1 ;}
+					                  $$= new ParserVal(new Nodo("-", (Nodo)$1.obj, (Nodo)$3.obj));
+					                  String tipo = AnalizadorSintactico.calculadorTipo("-",((Nodo)$1.obj).getTipo(),((Nodo)$3.obj).getTipo());
+                                      ((Nodo)$$.obj).setTipo(tipo);
+					                  }
+	     | termino	 {
+	                 $$=$1;
+	                 }
 	     ;
 
 termino : termino '*' factor	{
-				$$= new ParserVal(new Nodo("*", (Nodo)$1.obj, (Nodo)$3.obj));}
+				                $$= new ParserVal(new Nodo("*", (Nodo)$1.obj, (Nodo)$3.obj));
+                                String tipo = AnalizadorSintactico.calculadorTipo("*",((Nodo)$1.obj).getTipo(),((Nodo)$3.obj).getTipo());
+                                ((Nodo)$$.obj).setTipo(tipo);
+				                }
 	| termino '/' factor	{
-				$$= new ParserVal(new Nodo("/", (Nodo)$1.obj, (Nodo)$3.obj));}
-	| factor		{$$ = $1;}
+				            $$= new ParserVal(new Nodo("/", (Nodo)$1.obj, (Nodo)$3.obj));
+                            String tipo = AnalizadorSintactico.calculadorTipo("/",((Nodo)$1.obj).getTipo(),((Nodo)$3.obj).getTipo());
+                            ((Nodo)$$.obj).setTipo(tipo);
+				            }
+	| factor		        {
+	                        $$ = $1;
+	                        }
 	;
 
-factor  : ID  		{$$= new ParserVal(new Nodo($1.sval));}  //ID da lexema??
-	| CTE		{$$= new ParserVal(new Nodo($1.sval));}
-	| '-' CTE	{AnalizadorLexico.agregarNegativoTDS($2.sval);
-			$$= new ParserVal(new Nodo("-"+$2.sval));}
+factor  : ID  	{    $$= new ParserVal(new Nodo($1.sval));
+                     TDSObject value = AnalizadorLexico.getLexemaObject($1.sval);
+                     if( value != null){
+                        ((Nodo)$$.obj).setTipo(value.getTipoVariable());
+                     }else{
+                        AnalizadorSintactico.agregarError("ID no definido (Linea " + AnalizadorLexico.numLinea + ")");
+                        //stop generacion de arbol
+                     }
+                }
+	| CTE		{   $$= new ParserVal(new Nodo($1.sval));
+	                TDSObject value = AnalizadorLexico.getLexemaObject($1.sval);
+	                if( value != null){
+                        ((Nodo)$$.obj).setTipo(value.getTipoVariable());
+                    }else{
+                        AnalizadorSintactico.agregarError("CTE no definida (Linea " + AnalizadorLexico.numLinea + ")");
+                        //stop generacion de arbol
+                    }
+	            }
+	| '-' CTE	{   AnalizadorLexico.agregarNegativoTDS($2.sval);
+			        $$= new ParserVal(new Nodo("-"+$2.sval));
+			        TDSObject value = AnalizadorLexico.getLexemaObject($1.sval);
+                    if( value != null){
+                        ((Nodo)$$.obj).setTipo(value.getTipoVariable());
+                    }else{
+                        AnalizadorSintactico.agregarError("CTE negativa no definida (Linea " + AnalizadorLexico.numLinea + ")");
+                        //stop generacion de arbol
+                    }
+			    }
 	| llamadoFunc
 	;
 
@@ -159,11 +200,25 @@ sentEjecutables : asignacion
 		| sentenciaWHILE
 		;
 
-asignacion: ID ASIGN expAritmetica ';' {AnalizadorSintactico.agregarAnalisis("Sentencia ejecutable asignacion (Linea " + AnalizadorLexico.numLinea + ")");
+asignacion: ID ASIGN expAritmetica ';' {
+                    AnalizadorSintactico.agregarAnalisis("Sentencia ejecutable asignacion (Linea " + AnalizadorLexico.numLinea + ")");
 					ParserVal aux = new ParserVal(new Nodo($1.sval));
-					$$= new ParserVal(new Nodo("=", (Nodo)aux.obj, (Nodo)$3.obj));
+					TDSObject value = AnalizadorLexico.getLexemaObject($1.sval);
+                    if( value != null){
+                        ((Nodo)aux.obj).setTipo(value.getTipoVariable());
+                    }else{
+                        AnalizadorSintactico.agregarError("ID no definido (Linea " + AnalizadorLexico.numLinea + ")");
+                        //stop generacion de arbol
+                        //return
+                    }
+					$$= new ParserVal(new Nodo(":=", (Nodo)aux.obj, (Nodo)$3.obj));
+					if(((Nodo)aux.obj).getTipo() == ((Nodo)$3.obj).getTipo()){
+					    ((Nodo)$$.obj).setTipo(((Nodo)aux.obj).getTipo());
+					}else{
+					    AnalizadorSintactico.agregarError("Tipo Incompatible (" + ((Nodo)aux.obj).getTipo() + "," +  ((Nodo)$3.obj).getTipo()  + ") (Linea " + AnalizadorLexico.numLinea + ")");
+					}
 					AnalizadorSintactico.arbol = (Nodo)$$.obj;
-					AnalizadorSintactico.imprimirArbol((Nodo)$$.obj);}
+					}
 	  | ID ASIGN tipo '(' expAritmetica ')' ';' {AnalizadorSintactico.agregarAnalisis("Sentencia ejecutable asignacion casteada (Linea " + AnalizadorLexico.numLinea + ")");}
 	  | ASIGN expAritmetica ';' {AnalizadorSintactico.agregarError("Error falta ID (Linea " + AnalizadorLexico.numLinea + ")");}
 	  | ID expAritmetica ';' {AnalizadorSintactico.agregarError("Error falta ASIGN (Linea " + AnalizadorLexico.numLinea + ")");}
