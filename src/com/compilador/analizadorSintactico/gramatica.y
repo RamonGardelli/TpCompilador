@@ -52,8 +52,8 @@ bloqueTRYCATCH: TRY sentEjecutables CATCH BEGIN sentSoloEjecutables END
 	      ;
 
 bloqueEjecutableNormal: BEGIN sentSoloEjecutables END 
-			{$$=$2;
-
+			{
+			    $$=$2;
 			}
 		      | sentSoloEjecutables END {AnalizadorSintactico.agregarError("error falta BEGIN (Linea " + AnalizadorLexico.numLinea + ")");}
 		      | BEGIN sentSoloEjecutables error {AnalizadorSintactico.agregarError("error falta END (Linea " + AnalizadorLexico.numLinea + ")");}
@@ -61,21 +61,38 @@ bloqueEjecutableNormal: BEGIN sentSoloEjecutables END
 
 
 bloqueEjecutableFunc: BEGIN sentEjecutableFunc RETURN '(' retorno ')' END
+            {
+                $$ = new ParserVal(new Nodo("BF",(Nodo)$2.obj,null)
+            }
 		    | sentEjecutableFunc RETURN '(' retorno ')' END {AnalizadorSintactico.agregarError("error falta BEGIN (Linea " + AnalizadorLexico.numLinea + ")");}
 		    | BEGIN sentEjecutableFunc '(' retorno ')' END {AnalizadorSintactico.agregarError("error falta RETURN (Linea " + AnalizadorLexico.numLinea + ")");}
 		    | BEGIN sentEjecutableFunc RETURN  retorno ')' END {AnalizadorSintactico.agregarError("error falta '(' (Linea " + AnalizadorLexico.numLinea + ")");}
 		    | BEGIN sentEjecutableFunc RETURN '(' ')' END {AnalizadorSintactico.agregarError("error falta retorno (Linea " + AnalizadorLexico.numLinea + ")");}
 		    | BEGIN sentEjecutableFunc RETURN '(' retorno END {AnalizadorSintactico.agregarError("error falta ')' (Linea " + AnalizadorLexico.numLinea + ")");}
-
 		    ;
 
 
-sentEjecutableFunc: sentEjecutableFunc sentEjecutables 
+sentEjecutableFunc: sentEjecutableFunc sentEjecutables
+				{ if (($1.obj != null) && ($2.obj != null))
+				 	{$$= new ParserVal(new Nodo("S", (Nodo)$2.obj, (Nodo)$1.obj));}
+				  else if(($1.obj == null)) {$$= new ParserVal(new Nodo("S", (Nodo)$2.obj, null));}
+				       else if (($2.obj == null)) {$$= new ParserVal(new Nodo("S", (Nodo)$1.obj, null));}
+				}
 		  | sentEjecutableFunc sentenciaCONTRACT
-		  | sentEjecutables 
+				{ if (($1.obj != null) && ($2.obj != null))
+				 	{$$= new ParserVal(new Nodo("S", (Nodo)$2.obj, (Nodo)$1.obj));}
+				  else if(($1.obj == null)) {$$= new ParserVal(new Nodo("S", (Nodo)$2.obj, null));}
+				       else if (($2.obj == null)) {$$= new ParserVal(new Nodo("S", (Nodo)$1.obj, null));}
+				}
+		  | sentEjecutables
+		  		{
+          		  $$= new ParserVal(new Nodo("S",((Nodo)$1.obj), null));
+          		}
 		  ;
 
-sentenciaCONTRACT: CONTRACT ':' '(' condicion ')' ';' {AnalizadorSintactico.agregarAnalisis("sent control (Linea " + AnalizadorLexico.numLinea + ")");}
+sentenciaCONTRACT: CONTRACT ':' '(' condicion ')' ';' {AnalizadorSintactico.agregarAnalisis("sent control (Linea " + AnalizadorLexico.numLinea + ")");
+            $$ =  new ParserVal(new Nodo("CONTRACT",(Nodo)$4.obj,null));
+            }
 		 | CONTRACT '(' condicion ')' ';'{AnalizadorSintactico.agregarError("error falta ':' (Linea " + AnalizadorLexico.numLinea + ")");}
 		 | CONTRACT ':' condicion ')' ';'{AnalizadorSintactico.agregarError("error falta '(' (Linea " + AnalizadorLexico.numLinea + ")");}
 		 | CONTRACT ':' '('')' ';'{AnalizadorSintactico.agregarError("error falta condicion (Linea " + AnalizadorLexico.numLinea + ")");}
@@ -111,7 +128,9 @@ declaraVariable: tipo listaVariables ';' {AnalizadorSintactico.agregarAnalisis("
 	       | tipo listaVariables error {AnalizadorSintactico.agregarError("error falta ';' (Linea " + AnalizadorLexico.numLinea + ")");}
 	       ;
 
-declaraFunc: declaracionFunc bloqueDeclarativo bloqueEjecutableFunc {AnalizadorSintactico.agregarAnalisis("Funcion reconocida en. (Linea " + AnalizadorLexico.numLinea + ")");}
+declaraFunc: declaracionFunc bloqueDeclarativo bloqueEjecutableFunc {
+        AnalizadorSintactico.agregarAnalisis("Funcion reconocida en. (Linea " + AnalizadorLexico.numLinea + ")");
+        }
 	   | declaracionFunc bloqueEjecutableFunc {AnalizadorSintactico.agregarAnalisis("Funcion reconocida en. (Linea " + AnalizadorLexico.numLinea + ")");}
 	   ;
 
@@ -346,7 +365,7 @@ listaVariables: listaVariables ',' ID
 			  $$= new ParserVal(new Nodo("V", aux, (Nodo)$1.obj));}
 		  else if(($1.obj == null)) { Nodo aux2 = new Nodo ($3.sval);
 				$$= new ParserVal(new Nodo("V", aux2, null));}
-			else if (($3.obj == null)) {$$= new ParserVal(new Nodo("S", (Nodo)$1.obj, null));}
+			else if (($3.obj == null)) {$$= new ParserVal(new Nodo("V", (Nodo)$1.obj, null));}
 		}
 	      |ID 	{$$= new ParserVal(new Nodo($1.sval));}
 	      | listaVariables ',' {AnalizadorSintactico.agregarError("falta ID (Linea " + AnalizadorLexico.numLinea + ")");}
