@@ -5,6 +5,8 @@ public class TDSObject {
     private int refID;
     private int contRef = 0;
     private String tipoVariable;
+    private String ambito;
+    private String tipoContenido;
 
     public TDSObject(int refID, String tipoVariable){
         this.refID = refID;
@@ -40,5 +42,21 @@ public class TDSObject {
     public String imprimir(){
         return "RefID: " + refID + " | Tipo Variable: "+ tipoVariable;
     }
+
+	public String getAmbito() {
+		return ambito;
+	}
+
+	public void setAmbito(String ambito) {
+		this.ambito = ambito;
+	}
+
+	public String getTipoContenido() {
+		return tipoContenido;
+	}
+
+	public void setTipoContenido(String tipoContenido) {
+		this.tipoContenido = tipoContenido;
+	}
     
 }
