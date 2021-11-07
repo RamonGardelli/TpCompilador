@@ -23,24 +23,29 @@ import java.util.Vector;
 %%
 
 programa:ID bloqueDeclarativo bloqueEjecutable {AnalizadorSintactico.agregarAnalisis("Programa reconocido. (Linea " + AnalizadorLexico.numLinea + ")");
-			$$= new ParserVal(new Nodo($1.sval,((Nodo)$2.obj), ((Nodo)$3.obj)));
+			$$= new ParserVal(new Nodo($1.sval, null, ((Nodo)$3.obj)));
 			AnalizadorSintactico.arbol = (Nodo)$$.obj;}
 	;
 
 bloqueDeclarativo:bloqueDeclarativo sentenciasDeclarativas 
-			{ if (($1.obj != null) && ($2.obj != null))
-				{$$= new ParserVal(new Nodo("SD", (Nodo)$2.obj, (Nodo)$1.obj));}
-			  else  if(($1.obj == null)) {$$= new ParserVal(new Nodo("SD", (Nodo)$2.obj, null));}
-				else if (($2.obj == null)) {$$= new ParserVal(new Nodo("SD", (Nodo)$1.obj, null));}
+			{
+			   if ($2.obj != null)
+			   { if ($1.obj != null)
+				 {$$= new ParserVal(new Nodo("Func", (Nodo)$2.obj, (Nodo)$1.obj));}
+			     else {$$= new ParserVal(new Nodo("Func", (Nodo)$2.obj, null));}
+			     AnalizadorSintactico.arbolFunc = (Nodo)$$.obj;
+			   }
+			   
 			}
-		 | sentenciasDeclarativas {$$= new ParserVal(new Nodo("SD",((Nodo)$1.obj), null));}
+		 | sentenciasDeclarativas {if ($1.obj != null){
+						$$= new ParserVal(new Nodo("Func", (Nodo)$1.obj, null));
+						AnalizadorSintactico.arbolFunc = (Nodo)$$.obj;}}
 		 ;
 
 
 
 bloqueEjecutable :bloqueTRYCATCH
-		 |bloqueEjecutableNormal {$$=$1;
-		  }
+		 |bloqueEjecutableNormal {$$=$1;}
 		 ;
 
 bloqueTRYCATCH: TRY sentEjecutables CATCH BEGIN sentSoloEjecutables END
@@ -60,9 +65,9 @@ bloqueEjecutableNormal: BEGIN sentSoloEjecutables END
 		      ;
 
 
-bloqueEjecutableFunc: BEGIN sentEjecutableFunc RETURN '(' retorno ')' END
+bloqueEjecutableFunc: BEGIN sentEjecutableFunc RETURN '(' retorno ')' ';' END
             {
-                $$ = new ParserVal(new Nodo("BF",(Nodo)$2.obj,null)
+                $$ = new ParserVal(new Nodo("BF",(Nodo)$2.obj,null));
             }
 		    | sentEjecutableFunc RETURN '(' retorno ')' END {AnalizadorSintactico.agregarError("error falta BEGIN (Linea " + AnalizadorLexico.numLinea + ")");}
 		    | BEGIN sentEjecutableFunc '(' retorno ')' END {AnalizadorSintactico.agregarError("error falta RETURN (Linea " + AnalizadorLexico.numLinea + ")");}
@@ -116,21 +121,19 @@ sentSoloEjecutables : sentSoloEjecutables sentEjecutables
 
 
 
-sentenciasDeclarativas : declaraVariable {$$=$1;}
-		       | declaraFunc
-		       | declaraVarFunc
+sentenciasDeclarativas : declaraVariable 
+		       | declaraFunc {$$=$1;}
+		       | declaraVarFunc 
 		       ;
 
-declaraVariable: tipo listaVariables ';' {AnalizadorSintactico.agregarAnalisis("Declaracion de variable. (Linea " + AnalizadorLexico.numLinea + ")");
-			Nodo aux= new Nodo($1.sval);
-			$$= new ParserVal (new Nodo("ST", (Nodo)$2.obj, aux));}
+declaraVariable: tipo listaVariables ';' {AnalizadorSintactico.agregarAnalisis("Declaracion de variable. (Linea " + AnalizadorLexico.numLinea + ")");}
 	       | listaVariables ';' {AnalizadorSintactico.agregarError("error falta 'tipo' (Linea " + AnalizadorLexico.numLinea + ")");}
 	       | tipo listaVariables error {AnalizadorSintactico.agregarError("error falta ';' (Linea " + AnalizadorLexico.numLinea + ")");}
 	       ;
 
 declaraFunc: declaracionFunc bloqueDeclarativo bloqueEjecutableFunc {
         AnalizadorSintactico.agregarAnalisis("Funcion reconocida en. (Linea " + AnalizadorLexico.numLinea + ")");
-        }
+        $$=new ParserVal (new Nodo($1.sval, (Nodo)$3.obj, null));}
 	   | declaracionFunc bloqueEjecutableFunc {AnalizadorSintactico.agregarAnalisis("Funcion reconocida en. (Linea " + AnalizadorLexico.numLinea + ")");}
 	   ;
 
@@ -139,7 +142,7 @@ declaraVarFunc:  encabezadoFunc listaVariables ';' {AnalizadorSintactico.agregar
 	      | encabezadoFunc listaVariables error {AnalizadorSintactico.agregarError("error falta ';' (Linea " + AnalizadorLexico.numLinea + ")");}
 	      ;
 
-encabezadoFunc: tipo FUNC '(' tipo ')'
+encabezadoFunc: tipo FUNC '(' tipo ')' 
 	      | FUNC '(' tipo ')' {AnalizadorSintactico.agregarError("error falta tipo antes de FUNC (Linea " + AnalizadorLexico.numLinea + ")");}
 	      | tipo FUNC tipo ')'{AnalizadorSintactico.agregarError("error falta '(' (Linea " + AnalizadorLexico.numLinea + ")");}
 	      | tipo FUNC '(' ')' {AnalizadorSintactico.agregarError("error falta tipo entre parentesis (Linea " + AnalizadorLexico.numLinea + ")");}
@@ -157,7 +160,7 @@ retorno : expAritmetica
 
 
 expAritmetica: expAritmetica '+' termino  {
-					                      $$= new ParserVal(new Nodo("+", (Nodo)$1.obj, (Nodo)$3.obj));
+					  $$= new ParserVal(new Nodo("+", (Nodo)$1.obj, (Nodo)$3.obj));
                                           String tipo = AnalizadorSintactico.calculadorTipo("+",((Nodo)$1.obj).getTipo(),((Nodo)$3.obj).getTipo());
                                           ((Nodo)$$.obj).setTipo(tipo);
                                           }
@@ -194,9 +197,10 @@ termino : termino '*' factor	{
 
 
 
-factor  : ID  	{    $$= new ParserVal(new Nodo($1.sval));
+factor  : ID  	{    $$= new ParserVal(new Nodo($1.sval));			
                      TDSObject value = AnalizadorLexico.getLexemaObject($1.sval);
                      if( value != null){
+			
                         ((Nodo)$$.obj).setTipo(value.getTipoVariable());
                      }else{
                         AnalizadorSintactico.agregarError("ID no definido (Linea " + AnalizadorLexico.numLinea + ")");
@@ -222,16 +226,26 @@ factor  : ID  	{    $$= new ParserVal(new Nodo($1.sval));
                         //stop generacion de arbol
                     }
 			    }
-	| llamadoFunc
+	| llamadoFunc {$$=$1;}
 	;
 
-llamadoFunc: ID '(' parametro ')'
-	   | ID '(' ')'
+llamadoFunc: ID '(' parametro ')' 
+		{ ParserVal aux= new ParserVal($1.sval);
+		  $$= new ParserVal(new Nodo("LF",(Nodo)aux.obj, (Nodo)$3.obj ));
+		  TDSObject value = AnalizadorLexico.getLexemaObject($1.sval);
+                     if( value != null){
+                        ((Nodo)$$.obj).setTipo(value.getTipoVariable());
+                     }else{
+                        AnalizadorSintactico.agregarError("ID no definido (Linea " + AnalizadorLexico.numLinea + ")");
+                        //stop generacion de arbol
+                     }}
+	   | ID '(' ')' ';'
 	   ; 
 
 
 
-declaracionFunc : tipo FUNC ID '(' parametro ')' {AnalizadorSintactico.agregarAnalisis("Declaracion de funcion en (Linea " + AnalizadorLexico.numLinea + ")");}
+declaracionFunc : tipo FUNC ID '(' parametro ')' {AnalizadorSintactico.agregarAnalisis("Declaracion de funcion en (Linea " + AnalizadorLexico.numLinea + ")");
+			$$=$3;}
 		|tipo FUNC ID '(' ')' {AnalizadorSintactico.agregarAnalisis("Declaracion de funcion en (Linea " + AnalizadorLexico.numLinea + ")");}
 		|FUNC ID '(' parametro ')' {AnalizadorSintactico.agregarError("error falta tipo (Linea " + AnalizadorLexico.numLinea + ")");}
 		|tipo ID '(' parametro ')' {AnalizadorSintactico.agregarError("error falta FUNC (Linea " + AnalizadorLexico.numLinea + ")");}
@@ -240,7 +254,15 @@ declaracionFunc : tipo FUNC ID '(' parametro ')' {AnalizadorSintactico.agregarAn
 		;
 
 
-parametro : tipo ID
+parametro : tipo ID {$$= new ParserVal(new Nodo($2.sval));
+		     TDSObject value = AnalizadorLexico.getLexemaObject($2.sval);
+                     if( value != null){
+                        ((Nodo)$$.obj).setTipo(value.getTipoVariable());
+                     }else{
+                        AnalizadorSintactico.agregarError("ID no definido (Linea " + AnalizadorLexico.numLinea + ")");
+                        //stop generacion de arbol
+						}
+		     }
 	  | ID {AnalizadorSintactico.agregarError("error falta FUNC (Linea " + AnalizadorLexico.numLinea + ")");}
 	  ;
 
@@ -258,7 +280,9 @@ asignacion: ID ASIGN expAritmetica ';' {
 					TDSObject value = AnalizadorLexico.getLexemaObject($1.sval);
                     if( value != null){
                         ((Nodo)aux.obj).setTipo(value.getTipoVariable());
-                    }else{
+                    }
+					else
+					{
                         AnalizadorSintactico.agregarError("ID no definido (Linea " + AnalizadorLexico.numLinea + ")");
                         //stop generacion de arbol
                         //return
@@ -353,21 +377,13 @@ opLogico: AND //{$$= new ParserVal("&&");}
 	;
 
 
-tipo: LONG 	{$$ = new ParserVal("LONG");}
-    | SINGLE	{$$ = new ParserVal("SINGLE");}
+tipo: LONG 	
+    | SINGLE	
     ;
 
 
 listaVariables: listaVariables ',' ID
-		{
-		  if (($1.obj != null) && ($3.obj != null))
-			{ Nodo aux = new Nodo ($3.sval);
-			  $$= new ParserVal(new Nodo("V", aux, (Nodo)$1.obj));}
-		  else if(($1.obj == null)) { Nodo aux2 = new Nodo ($3.sval);
-				$$= new ParserVal(new Nodo("V", aux2, null));}
-			else if (($3.obj == null)) {$$= new ParserVal(new Nodo("V", (Nodo)$1.obj, null));}
-		}
-	      |ID 	{$$= new ParserVal(new Nodo($1.sval));}
+	      |ID 
 	      | listaVariables ',' {AnalizadorSintactico.agregarError("falta ID (Linea " + AnalizadorLexico.numLinea + ")");}
 	      // listaVariables ID error por falta de coma, da shift reduce
 	      ;

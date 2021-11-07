@@ -22,6 +22,8 @@ public class AnalizadorSintactico {
     public static Parser p = new Parser();
     
     public static Nodo arbol;
+    
+    public static Nodo arbolFunc;
 
     public static void agregarAnalisis(String analisis){
         listaAnalisis.add(analisis);
@@ -95,6 +97,7 @@ public class AnalizadorSintactico {
                 Files.write(fileErrorSint,listaErroresSintacticos, StandardCharsets.UTF_8);
             }
             imprimirArbol(arbol);
+            imprimirArbol(arbolFunc);
             String archivoTDSName = originalPath + fileName + "_tablaDeSimbolos.txt";
             Path file3 = Paths.get(archivoTDSName);
             Vector<String> tdsData = new Vector<>();
