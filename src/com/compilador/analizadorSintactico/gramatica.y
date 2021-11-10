@@ -44,18 +44,29 @@ bloqueDeclarativo:bloqueDeclarativo sentenciasDeclarativas
 
 
 
-bloqueEjecutable :bloqueTRYCATCH
-		 |bloqueEjecutableNormal {$$=$1;}
-		 ;
+bloqueEjecutable :bloqueTRYCATCH {$$=$1;}
+				 |bloqueEjecutableNormal {$$=$1;}
+				 ;
 
-bloqueTRYCATCH: TRY sentEjecutables CATCH BEGIN sentSoloEjecutables END
+bloqueTRYCATCH: TRY sentEjecutables CATCH BEGIN sentSoloEjecutables END {$$= new ParserVal (new Nodo("TC", (Nodo)$2.obj, (Nodo)$5.obj));}
 	      | sentEjecutables CATCH BEGIN sentSoloEjecutables END {AnalizadorSintactico.agregarError("error: falta TRY en (Linea " + AnalizadorLexico.numLinea + ")");}
 	      | TRY CATCH BEGIN sentSoloEjecutables END {AnalizadorSintactico.agregarError("error TRY-CATCH vacio (Linea " + AnalizadorLexico.numLinea + ")");}
 	      | TRY sentEjecutables BEGIN sentSoloEjecutables END {AnalizadorSintactico.agregarError("error falta CATCH (Linea " + AnalizadorLexico.numLinea + ")");}
 	      | TRY sentEjecutables CATCH sentSoloEjecutables END {AnalizadorSintactico.agregarError("error falta BEGIN (Linea " + AnalizadorLexico.numLinea + ")");}
 	      | TRY sentEjecutables CATCH BEGIN sentSoloEjecutables error {AnalizadorSintactico.agregarError("error falta END (Linea " + AnalizadorLexico.numLinea + ")");}
 	      ;
-
+		  
+TRYCATCHFunc: BEGIN bloqueTRYCATCH RETURN '(' retorno ')' ';' END {ParserVal aux= new ParserVal (new Nodo("S", (Nodo)$2.obj, null));
+																	$$= new ParserVal(new Nodo("BF", (Nodo)aux.obj, (Nodo)$5.obj));}
+			| BEGIN sentEjecutableFunc bloqueTRYCATCH RETURN '(' retorno ')' ';' END {ParserVal aux= new ParserVal (new Nodo("S", (Nodo)$2.obj, (Nodo)$3.obj));
+																					  $$= new ParserVal(new Nodo("BF", (Nodo)aux.obj, (Nodo)$6.obj));}
+			| BEGIN sentEjecutableFunc bloqueTRYCATCH sentEjecutableFunc RETURN '(' retorno ')' ';' END {ParserVal aux= new ParserVal (new Nodo("S", (Nodo)$2.obj, (Nodo)$3.obj));
+																										 ParserVal aux2= new ParserVal (new Nodo("S", (Nodo)aux.obj, (Nodo)$4.obj));
+																										 $$= new ParserVal(new Nodo("BF", (Nodo)aux.obj, (Nodo)$7.obj));}
+			| BEGIN bloqueTRYCATCH sentEjecutableFunc RETURN '(' retorno ')' ';' END {ParserVal aux= new ParserVal (new Nodo("S", (Nodo)$2.obj, (Nodo)$3.obj));
+																					  $$= new ParserVal(new Nodo("BF", (Nodo)aux.obj, (Nodo)$6.obj));}
+			;
+			
 bloqueEjecutableNormal: BEGIN sentSoloEjecutables END 
 			{
 			    $$=$2;
@@ -67,14 +78,16 @@ bloqueEjecutableNormal: BEGIN sentSoloEjecutables END
 
 bloqueEjecutableFunc: BEGIN sentEjecutableFunc RETURN '(' retorno ')' ';' END
             {
-                $$ = new ParserVal(new Nodo("BF",(Nodo)$2.obj,null));
+                $$ = new ParserVal(new Nodo("BF",(Nodo)$2.obj,(Nodo)$5.obj));
             }
+			|TRYCATCHFunc {$$=$1;}
 		    | sentEjecutableFunc RETURN '(' retorno ')' END {AnalizadorSintactico.agregarError("error falta BEGIN (Linea " + AnalizadorLexico.numLinea + ")");}
 		    | BEGIN sentEjecutableFunc '(' retorno ')' END {AnalizadorSintactico.agregarError("error falta RETURN (Linea " + AnalizadorLexico.numLinea + ")");}
 		    | BEGIN sentEjecutableFunc RETURN  retorno ')' END {AnalizadorSintactico.agregarError("error falta '(' (Linea " + AnalizadorLexico.numLinea + ")");}
 		    | BEGIN sentEjecutableFunc RETURN '(' ')' END {AnalizadorSintactico.agregarError("error falta retorno (Linea " + AnalizadorLexico.numLinea + ")");}
 		    | BEGIN sentEjecutableFunc RETURN '(' retorno END {AnalizadorSintactico.agregarError("error falta ')' (Linea " + AnalizadorLexico.numLinea + ")");}
 		    ;
+
 
 
 sentEjecutableFunc: sentEjecutableFunc sentEjecutables
@@ -150,7 +163,7 @@ encabezadoFunc: tipo FUNC '(' tipo ')'
 	      ;
 
 
-retorno : expAritmetica
+retorno : expAritmetica {$$=$1;}
 	| tipo '(' expAritmetica ')'
 	;
 

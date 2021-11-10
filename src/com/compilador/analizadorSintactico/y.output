@@ -15,151 +15,157 @@
   10                 | TRY sentEjecutables CATCH sentSoloEjecutables END
   11                 | TRY sentEjecutables CATCH BEGIN sentSoloEjecutables error
 
-  12  bloqueEjecutableNormal : BEGIN sentSoloEjecutables END
-  13                         | sentSoloEjecutables END
-  14                         | BEGIN sentSoloEjecutables error
+  12  TRYCATCHFunc : BEGIN bloqueTRYCATCH RETURN '(' retorno ')' ';' END
+  13               | BEGIN sentEjecutableFunc bloqueTRYCATCH RETURN '(' retorno ')' ';' END
+  14               | BEGIN sentEjecutableFunc bloqueTRYCATCH sentEjecutableFunc RETURN '(' retorno ')' ';' END
+  15               | BEGIN bloqueTRYCATCH sentEjecutableFunc RETURN '(' retorno ')' ';' END
 
-  15  bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN '(' retorno ')' ';' END
-  16                       | sentEjecutableFunc RETURN '(' retorno ')' END
-  17                       | BEGIN sentEjecutableFunc '(' retorno ')' END
-  18                       | BEGIN sentEjecutableFunc RETURN retorno ')' END
-  19                       | BEGIN sentEjecutableFunc RETURN '(' ')' END
-  20                       | BEGIN sentEjecutableFunc RETURN '(' retorno END
+  16  bloqueEjecutableNormal : BEGIN sentSoloEjecutables END
+  17                         | sentSoloEjecutables END
+  18                         | BEGIN sentSoloEjecutables error
 
-  21  sentEjecutableFunc : sentEjecutableFunc sentEjecutables
-  22                     | sentEjecutableFunc sentenciaCONTRACT
-  23                     | sentEjecutables
+  19  bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN '(' retorno ')' ';' END
+  20                       | TRYCATCHFunc
+  21                       | sentEjecutableFunc RETURN '(' retorno ')' END
+  22                       | BEGIN sentEjecutableFunc '(' retorno ')' END
+  23                       | BEGIN sentEjecutableFunc RETURN retorno ')' END
+  24                       | BEGIN sentEjecutableFunc RETURN '(' ')' END
+  25                       | BEGIN sentEjecutableFunc RETURN '(' retorno END
 
-  24  sentenciaCONTRACT : CONTRACT ':' '(' condicion ')' ';'
-  25                    | CONTRACT '(' condicion ')' ';'
-  26                    | CONTRACT ':' condicion ')' ';'
-  27                    | CONTRACT ':' '(' ')' ';'
-  28                    | CONTRACT ':' '(' condicion ';'
-  29                    | CONTRACT ':' '(' condicion ')' error
+  26  sentEjecutableFunc : sentEjecutableFunc sentEjecutables
+  27                     | sentEjecutableFunc sentenciaCONTRACT
+  28                     | sentEjecutables
 
-  30  sentSoloEjecutables : sentSoloEjecutables sentEjecutables
-  31                      | sentEjecutables
+  29  sentenciaCONTRACT : CONTRACT ':' '(' condicion ')' ';'
+  30                    | CONTRACT '(' condicion ')' ';'
+  31                    | CONTRACT ':' condicion ')' ';'
+  32                    | CONTRACT ':' '(' ')' ';'
+  33                    | CONTRACT ':' '(' condicion ';'
+  34                    | CONTRACT ':' '(' condicion ')' error
 
-  32  sentenciasDeclarativas : declaraVariable
-  33                         | declaraFunc
-  34                         | declaraVarFunc
+  35  sentSoloEjecutables : sentSoloEjecutables sentEjecutables
+  36                      | sentEjecutables
 
-  35  declaraVariable : tipo listaVariables ';'
-  36                  | listaVariables ';'
-  37                  | tipo listaVariables error
+  37  sentenciasDeclarativas : declaraVariable
+  38                         | declaraFunc
+  39                         | declaraVarFunc
 
-  38  declaraFunc : declaracionFunc bloqueDeclarativo bloqueEjecutableFunc
-  39              | declaracionFunc bloqueEjecutableFunc
+  40  declaraVariable : tipo listaVariables ';'
+  41                  | listaVariables ';'
+  42                  | tipo listaVariables error
 
-  40  declaraVarFunc : encabezadoFunc listaVariables ';'
-  41                 | encabezadoFunc ';'
-  42                 | encabezadoFunc listaVariables error
+  43  declaraFunc : declaracionFunc bloqueDeclarativo bloqueEjecutableFunc
+  44              | declaracionFunc bloqueEjecutableFunc
 
-  43  encabezadoFunc : tipo FUNC '(' tipo ')'
-  44                 | FUNC '(' tipo ')'
-  45                 | tipo FUNC tipo ')'
-  46                 | tipo FUNC '(' ')'
-  47                 | tipo FUNC '(' tipo error
+  45  declaraVarFunc : encabezadoFunc listaVariables ';'
+  46                 | encabezadoFunc ';'
+  47                 | encabezadoFunc listaVariables error
 
-  48  retorno : expAritmetica
-  49          | tipo '(' expAritmetica ')'
+  48  encabezadoFunc : tipo FUNC '(' tipo ')'
+  49                 | FUNC '(' tipo ')'
+  50                 | tipo FUNC tipo ')'
+  51                 | tipo FUNC '(' ')'
+  52                 | tipo FUNC '(' tipo error
 
-  50  expAritmetica : expAritmetica '+' termino
-  51                | expAritmetica '-' termino
-  52                | termino
+  53  retorno : expAritmetica
+  54          | tipo '(' expAritmetica ')'
 
-  53  termino : termino '*' factor
-  54          | termino '/' factor
-  55          | factor
+  55  expAritmetica : expAritmetica '+' termino
+  56                | expAritmetica '-' termino
+  57                | termino
 
-  56  factor : ID
-  57         | CTE
-  58         | '-' CTE
-  59         | llamadoFunc
+  58  termino : termino '*' factor
+  59          | termino '/' factor
+  60          | factor
 
-  60  llamadoFunc : ID '(' parametro ')'
-  61              | ID '(' ')' ';'
+  61  factor : ID
+  62         | CTE
+  63         | '-' CTE
+  64         | llamadoFunc
 
-  62  declaracionFunc : tipo FUNC ID '(' parametro ')'
-  63                  | tipo FUNC ID '(' ')'
-  64                  | FUNC ID '(' parametro ')'
-  65                  | tipo ID '(' parametro ')'
-  66                  | tipo FUNC ID parametro ')'
-  67                  | tipo FUNC ID '(' parametro error
+  65  llamadoFunc : ID '(' parametro ')'
+  66              | ID '(' ')' ';'
 
-  68  parametro : tipo ID
-  69            | ID
+  67  declaracionFunc : tipo FUNC ID '(' parametro ')'
+  68                  | tipo FUNC ID '(' ')'
+  69                  | FUNC ID '(' parametro ')'
+  70                  | tipo ID '(' parametro ')'
+  71                  | tipo FUNC ID parametro ')'
+  72                  | tipo FUNC ID '(' parametro error
 
-  70  sentEjecutables : asignacion
-  71                  | sentenciaIF
-  72                  | sentenciaPRINT
-  73                  | sentenciaWHILE
+  73  parametro : tipo ID
+  74            | ID
 
-  74  asignacion : ID ASIGN expAritmetica ';'
-  75             | ID ASIGN tipo '(' expAritmetica ')' ';'
-  76             | ASIGN expAritmetica ';'
-  77             | ID expAritmetica ';'
-  78             | ID ASIGN expAritmetica error
+  75  sentEjecutables : asignacion
+  76                  | sentenciaIF
+  77                  | sentenciaPRINT
+  78                  | sentenciaWHILE
 
-  79  sentenciaIF : IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF ';'
-  80              | IF condicion THEN bloqueEjecutable ENDIF ';'
-  81              | condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF ';'
-  82              | IF THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF ';'
-  83              | IF condicion bloqueEjecutable ELSE bloqueEjecutable ENDIF ';'
-  84              | IF condicion THEN ELSE bloqueEjecutable ENDIF ';'
-  85              | IF condicion THEN bloqueEjecutable ELSE ENDIF ';'
-  86              | IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable ';'
-  87              | IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF error
-  88              | IF THEN bloqueEjecutable ENDIF ';'
-  89              | IF condicion bloqueEjecutable ENDIF ';'
-  90              | IF condicion THEN ENDIF ';'
-  91              | IF condicion THEN bloqueEjecutable ';'
-  92              | IF condicion THEN bloqueEjecutable ENDIF error
+  79  asignacion : ID ASIGN expAritmetica ';'
+  80             | ID ASIGN tipo '(' expAritmetica ')' ';'
+  81             | ASIGN expAritmetica ';'
+  82             | ID expAritmetica ';'
+  83             | ID ASIGN expAritmetica error
 
-  93  sentenciaPRINT : PRINT '(' CADENA ')' ';'
-  94                 | '(' CADENA ')' ';'
-  95                 | PRINT CADENA ')' ';'
-  96                 | PRINT '(' ')' ';'
-  97                 | PRINT '(' CADENA ';'
-  98                 | PRINT '(' CADENA ')' error
-  99                 | PRINT '(' ID ')' ';'
- 100                 | PRINT '(' CTE ')' ';'
+  84  sentenciaIF : IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF ';'
+  85              | IF condicion THEN bloqueEjecutable ENDIF ';'
+  86              | condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF ';'
+  87              | IF THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF ';'
+  88              | IF condicion bloqueEjecutable ELSE bloqueEjecutable ENDIF ';'
+  89              | IF condicion THEN ELSE bloqueEjecutable ENDIF ';'
+  90              | IF condicion THEN bloqueEjecutable ELSE ENDIF ';'
+  91              | IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable ';'
+  92              | IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF error
+  93              | IF THEN bloqueEjecutable ENDIF ';'
+  94              | IF condicion bloqueEjecutable ENDIF ';'
+  95              | IF condicion THEN ENDIF ';'
+  96              | IF condicion THEN bloqueEjecutable ';'
+  97              | IF condicion THEN bloqueEjecutable ENDIF error
 
- 101  sentenciaWHILE : WHILE condicion DO bloqueEjecutable
- 102                 | condicion DO bloqueEjecutable
- 103                 | WHILE DO bloqueEjecutable
- 104                 | WHILE condicion bloqueEjecutable
- 105                 | WHILE condicion DO error
+  98  sentenciaPRINT : PRINT '(' CADENA ')' ';'
+  99                 | '(' CADENA ')' ';'
+ 100                 | PRINT CADENA ')' ';'
+ 101                 | PRINT '(' ')' ';'
+ 102                 | PRINT '(' CADENA ';'
+ 103                 | PRINT '(' CADENA ')' error
+ 104                 | PRINT '(' ID ')' ';'
+ 105                 | PRINT '(' CTE ')' ';'
 
- 106  condicion : '(' comparaciones ')'
+ 106  sentenciaWHILE : WHILE condicion DO bloqueEjecutable
+ 107                 | condicion DO bloqueEjecutable
+ 108                 | WHILE DO bloqueEjecutable
+ 109                 | WHILE condicion bloqueEjecutable
+ 110                 | WHILE condicion DO error
 
- 107  comparaciones : comparaciones opLogico comparacion
- 108                | comparacion
- 109                | comparaciones opLogico error
+ 111  condicion : '(' comparaciones ')'
 
- 110  comparacion : expAritmetica comparador expAritmetica
- 111              | tipo '(' expAritmetica ')' comparador expAritmetica
- 112              | expAritmetica comparador tipo '(' expAritmetica ')'
- 113              | tipo '(' expAritmetica ')' comparador tipo '(' expAritmetica ')'
- 114              | expAritmetica comparador error
- 115              | comparador expAritmetica
+ 112  comparaciones : comparaciones opLogico comparacion
+ 113                | comparacion
+ 114                | comparaciones opLogico error
 
- 116  comparador : '>'
- 117             | '<'
- 118             | IGUAL
- 119             | DISTINTO
- 120             | MAYORIG
- 121             | MENORIG
+ 115  comparacion : expAritmetica comparador expAritmetica
+ 116              | tipo '(' expAritmetica ')' comparador expAritmetica
+ 117              | expAritmetica comparador tipo '(' expAritmetica ')'
+ 118              | tipo '(' expAritmetica ')' comparador tipo '(' expAritmetica ')'
+ 119              | expAritmetica comparador error
+ 120              | comparador expAritmetica
 
- 122  opLogico : AND
- 123           | OR
+ 121  comparador : '>'
+ 122             | '<'
+ 123             | IGUAL
+ 124             | DISTINTO
+ 125             | MAYORIG
+ 126             | MENORIG
 
- 124  tipo : LONG
- 125       | SINGLE
+ 127  opLogico : AND
+ 128           | OR
 
- 126  listaVariables : listaVariables ',' ID
- 127                 | ID
- 128                 | listaVariables ','
+ 129  tipo : LONG
+ 130       | SINGLE
+
+ 131  listaVariables : listaVariables ',' ID
+ 132                 | ID
+ 133                 | listaVariables ','
 
 state 0
 	$accept : . programa $end  (0)
@@ -197,8 +203,8 @@ state 2
 
 
 state 3
-	encabezadoFunc : FUNC . '(' tipo ')'  (44)
-	declaracionFunc : FUNC . ID '(' parametro ')'  (64)
+	encabezadoFunc : FUNC . '(' tipo ')'  (49)
+	declaracionFunc : FUNC . ID '(' parametro ')'  (69)
 
 	ID  shift 16
 	'('  shift 17
@@ -206,21 +212,21 @@ state 3
 
 
 state 4
-	tipo : LONG .  (124)
+	tipo : LONG .  (129)
 
-	.  reduce 124
+	.  reduce 129
 
 
 state 5
-	tipo : SINGLE .  (125)
+	tipo : SINGLE .  (130)
 
-	.  reduce 125
+	.  reduce 130
 
 
 state 6
-	listaVariables : ID .  (127)
+	listaVariables : ID .  (132)
 
-	.  reduce 127
+	.  reduce 132
 
 
 state 7
@@ -267,35 +273,35 @@ state 8
 
 
 state 9
-	sentenciasDeclarativas : declaraVariable .  (32)
+	sentenciasDeclarativas : declaraVariable .  (37)
 
-	.  reduce 32
+	.  reduce 37
 
 
 state 10
-	sentenciasDeclarativas : declaraFunc .  (33)
+	sentenciasDeclarativas : declaraFunc .  (38)
 
-	.  reduce 33
+	.  reduce 38
 
 
 state 11
-	sentenciasDeclarativas : declaraVarFunc .  (34)
+	sentenciasDeclarativas : declaraVarFunc .  (39)
 
-	.  reduce 34
+	.  reduce 39
 
 
 state 12
-	declaraVariable : tipo . listaVariables ';'  (35)
-	declaraVariable : tipo . listaVariables error  (37)
-	encabezadoFunc : tipo . FUNC '(' tipo ')'  (43)
-	encabezadoFunc : tipo . FUNC tipo ')'  (45)
-	encabezadoFunc : tipo . FUNC '(' ')'  (46)
-	encabezadoFunc : tipo . FUNC '(' tipo error  (47)
-	declaracionFunc : tipo . FUNC ID '(' parametro ')'  (62)
-	declaracionFunc : tipo . FUNC ID '(' ')'  (63)
-	declaracionFunc : tipo . ID '(' parametro ')'  (65)
-	declaracionFunc : tipo . FUNC ID parametro ')'  (66)
-	declaracionFunc : tipo . FUNC ID '(' parametro error  (67)
+	declaraVariable : tipo . listaVariables ';'  (40)
+	declaraVariable : tipo . listaVariables error  (42)
+	encabezadoFunc : tipo . FUNC '(' tipo ')'  (48)
+	encabezadoFunc : tipo . FUNC tipo ')'  (50)
+	encabezadoFunc : tipo . FUNC '(' ')'  (51)
+	encabezadoFunc : tipo . FUNC '(' tipo error  (52)
+	declaracionFunc : tipo . FUNC ID '(' parametro ')'  (67)
+	declaracionFunc : tipo . FUNC ID '(' ')'  (68)
+	declaracionFunc : tipo . ID '(' parametro ')'  (70)
+	declaracionFunc : tipo . FUNC ID parametro ')'  (71)
+	declaracionFunc : tipo . FUNC ID '(' parametro error  (72)
 
 	FUNC  shift 37
 	ID  shift 38
@@ -305,9 +311,9 @@ state 12
 
 
 state 13
-	declaraVariable : listaVariables . ';'  (36)
-	listaVariables : listaVariables . ',' ID  (126)
-	listaVariables : listaVariables . ','  (128)
+	declaraVariable : listaVariables . ';'  (41)
+	listaVariables : listaVariables . ',' ID  (131)
+	listaVariables : listaVariables . ','  (133)
 
 	';'  shift 40
 	','  shift 41
@@ -315,8 +321,8 @@ state 13
 
 
 state 14
-	declaraFunc : declaracionFunc . bloqueDeclarativo bloqueEjecutableFunc  (38)
-	declaraFunc : declaracionFunc . bloqueEjecutableFunc  (39)
+	declaraFunc : declaracionFunc . bloqueDeclarativo bloqueEjecutableFunc  (43)
+	declaraFunc : declaracionFunc . bloqueEjecutableFunc  (44)
 
 	PRINT  shift 18
 	FUNC  shift 3
@@ -333,8 +339,9 @@ state 14
 	bloqueDeclarativo  goto 43
 	sentenciasDeclarativas  goto 8
 	sentEjecutables  goto 44
-	bloqueEjecutableFunc  goto 45
+	TRYCATCHFunc  goto 45
 	sentEjecutableFunc  goto 46
+	bloqueEjecutableFunc  goto 47
 	condicion  goto 32
 	declaraVariable  goto 9
 	declaraFunc  goto 10
@@ -350,75 +357,75 @@ state 14
 
 
 state 15
-	declaraVarFunc : encabezadoFunc . listaVariables ';'  (40)
-	declaraVarFunc : encabezadoFunc . ';'  (41)
-	declaraVarFunc : encabezadoFunc . listaVariables error  (42)
+	declaraVarFunc : encabezadoFunc . listaVariables ';'  (45)
+	declaraVarFunc : encabezadoFunc . ';'  (46)
+	declaraVarFunc : encabezadoFunc . listaVariables error  (47)
 
 	ID  shift 6
-	';'  shift 47
+	';'  shift 48
 	.  error
 
-	listaVariables  goto 48
+	listaVariables  goto 49
 
 
 state 16
-	declaracionFunc : FUNC ID . '(' parametro ')'  (64)
+	declaracionFunc : FUNC ID . '(' parametro ')'  (69)
 
-	'('  shift 49
+	'('  shift 50
 	.  error
 
 
 state 17
-	encabezadoFunc : FUNC '(' . tipo ')'  (44)
+	encabezadoFunc : FUNC '(' . tipo ')'  (49)
 
 	LONG  shift 4
 	SINGLE  shift 5
 	.  error
 
-	tipo  goto 50
+	tipo  goto 51
 
 
 state 18
-	sentenciaPRINT : PRINT . '(' CADENA ')' ';'  (93)
-	sentenciaPRINT : PRINT . CADENA ')' ';'  (95)
-	sentenciaPRINT : PRINT . '(' ')' ';'  (96)
-	sentenciaPRINT : PRINT . '(' CADENA ';'  (97)
-	sentenciaPRINT : PRINT . '(' CADENA ')' error  (98)
-	sentenciaPRINT : PRINT . '(' ID ')' ';'  (99)
-	sentenciaPRINT : PRINT . '(' CTE ')' ';'  (100)
+	sentenciaPRINT : PRINT . '(' CADENA ')' ';'  (98)
+	sentenciaPRINT : PRINT . CADENA ')' ';'  (100)
+	sentenciaPRINT : PRINT . '(' ')' ';'  (101)
+	sentenciaPRINT : PRINT . '(' CADENA ';'  (102)
+	sentenciaPRINT : PRINT . '(' CADENA ')' error  (103)
+	sentenciaPRINT : PRINT . '(' ID ')' ';'  (104)
+	sentenciaPRINT : PRINT . '(' CTE ')' ';'  (105)
 
-	CADENA  shift 51
-	'('  shift 52
+	CADENA  shift 52
+	'('  shift 53
 	.  error
 
 
 state 19
-	sentenciaWHILE : WHILE . condicion DO bloqueEjecutable  (101)
-	sentenciaWHILE : WHILE . DO bloqueEjecutable  (103)
-	sentenciaWHILE : WHILE . condicion bloqueEjecutable  (104)
-	sentenciaWHILE : WHILE . condicion DO error  (105)
+	sentenciaWHILE : WHILE . condicion DO bloqueEjecutable  (106)
+	sentenciaWHILE : WHILE . DO bloqueEjecutable  (108)
+	sentenciaWHILE : WHILE . condicion bloqueEjecutable  (109)
+	sentenciaWHILE : WHILE . condicion DO error  (110)
 
-	DO  shift 53
-	'('  shift 54
+	DO  shift 54
+	'('  shift 55
 	.  error
 
-	condicion  goto 55
+	condicion  goto 56
 
 
 state 20
-	bloqueEjecutableNormal : BEGIN . sentSoloEjecutables END  (12)
-	bloqueEjecutableNormal : BEGIN . sentSoloEjecutables error  (14)
+	bloqueEjecutableNormal : BEGIN . sentSoloEjecutables END  (16)
+	bloqueEjecutableNormal : BEGIN . sentSoloEjecutables error  (18)
 
 	PRINT  shift 18
 	WHILE  shift 19
-	ID  shift 56
+	ID  shift 57
 	IF  shift 23
 	ASIGN  shift 24
 	'('  shift 25
 	.  error
 
-	sentEjecutables  goto 57
-	sentSoloEjecutables  goto 58
+	sentEjecutables  goto 58
+	sentSoloEjecutables  goto 59
 	condicion  goto 32
 	asignacion  goto 33
 	sentenciaIF  goto 34
@@ -427,23 +434,23 @@ state 20
 
 
 state 21
-	asignacion : ID . ASIGN expAritmetica ';'  (74)
-	asignacion : ID . ASIGN tipo '(' expAritmetica ')' ';'  (75)
-	asignacion : ID . expAritmetica ';'  (77)
-	asignacion : ID . ASIGN expAritmetica error  (78)
-	listaVariables : ID .  (127)
+	asignacion : ID . ASIGN expAritmetica ';'  (79)
+	asignacion : ID . ASIGN tipo '(' expAritmetica ')' ';'  (80)
+	asignacion : ID . expAritmetica ';'  (82)
+	asignacion : ID . ASIGN expAritmetica error  (83)
+	listaVariables : ID .  (132)
 
-	ID  shift 59
-	CTE  shift 60
-	ASIGN  shift 61
-	'-'  shift 62
-	';'  reduce 127
-	','  reduce 127
+	ID  shift 60
+	CTE  shift 61
+	ASIGN  shift 62
+	'-'  shift 63
+	';'  reduce 132
+	','  reduce 132
 
-	expAritmetica  goto 63
-	termino  goto 64
-	factor  goto 65
-	llamadoFunc  goto 66
+	expAritmetica  goto 64
+	termino  goto 65
+	factor  goto 66
+	llamadoFunc  goto 67
 
 
 state 22
@@ -455,14 +462,14 @@ state 22
 
 	PRINT  shift 18
 	WHILE  shift 19
-	ID  shift 56
-	CATCH  shift 67
+	ID  shift 57
+	CATCH  shift 68
 	IF  shift 23
 	ASIGN  shift 24
 	'('  shift 25
 	.  error
 
-	sentEjecutables  goto 68
+	sentEjecutables  goto 69
 	condicion  goto 32
 	asignacion  goto 33
 	sentenciaIF  goto 34
@@ -471,67 +478,67 @@ state 22
 
 
 state 23
-	sentenciaIF : IF . condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF ';'  (79)
-	sentenciaIF : IF . condicion THEN bloqueEjecutable ENDIF ';'  (80)
-	sentenciaIF : IF . THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF ';'  (82)
-	sentenciaIF : IF . condicion bloqueEjecutable ELSE bloqueEjecutable ENDIF ';'  (83)
-	sentenciaIF : IF . condicion THEN ELSE bloqueEjecutable ENDIF ';'  (84)
-	sentenciaIF : IF . condicion THEN bloqueEjecutable ELSE ENDIF ';'  (85)
-	sentenciaIF : IF . condicion THEN bloqueEjecutable ELSE bloqueEjecutable ';'  (86)
-	sentenciaIF : IF . condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF error  (87)
-	sentenciaIF : IF . THEN bloqueEjecutable ENDIF ';'  (88)
-	sentenciaIF : IF . condicion bloqueEjecutable ENDIF ';'  (89)
-	sentenciaIF : IF . condicion THEN ENDIF ';'  (90)
-	sentenciaIF : IF . condicion THEN bloqueEjecutable ';'  (91)
-	sentenciaIF : IF . condicion THEN bloqueEjecutable ENDIF error  (92)
+	sentenciaIF : IF . condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF ';'  (84)
+	sentenciaIF : IF . condicion THEN bloqueEjecutable ENDIF ';'  (85)
+	sentenciaIF : IF . THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF ';'  (87)
+	sentenciaIF : IF . condicion bloqueEjecutable ELSE bloqueEjecutable ENDIF ';'  (88)
+	sentenciaIF : IF . condicion THEN ELSE bloqueEjecutable ENDIF ';'  (89)
+	sentenciaIF : IF . condicion THEN bloqueEjecutable ELSE ENDIF ';'  (90)
+	sentenciaIF : IF . condicion THEN bloqueEjecutable ELSE bloqueEjecutable ';'  (91)
+	sentenciaIF : IF . condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF error  (92)
+	sentenciaIF : IF . THEN bloqueEjecutable ENDIF ';'  (93)
+	sentenciaIF : IF . condicion bloqueEjecutable ENDIF ';'  (94)
+	sentenciaIF : IF . condicion THEN ENDIF ';'  (95)
+	sentenciaIF : IF . condicion THEN bloqueEjecutable ';'  (96)
+	sentenciaIF : IF . condicion THEN bloqueEjecutable ENDIF error  (97)
 
-	THEN  shift 69
-	'('  shift 54
+	THEN  shift 70
+	'('  shift 55
 	.  error
 
-	condicion  goto 70
+	condicion  goto 71
 
 
 state 24
-	asignacion : ASIGN . expAritmetica ';'  (76)
+	asignacion : ASIGN . expAritmetica ';'  (81)
 
-	ID  shift 59
-	CTE  shift 60
-	'-'  shift 62
+	ID  shift 60
+	CTE  shift 61
+	'-'  shift 63
 	.  error
 
-	expAritmetica  goto 71
-	termino  goto 64
-	factor  goto 65
-	llamadoFunc  goto 66
+	expAritmetica  goto 72
+	termino  goto 65
+	factor  goto 66
+	llamadoFunc  goto 67
 
 
 state 25
-	sentenciaPRINT : '(' . CADENA ')' ';'  (94)
-	condicion : '(' . comparaciones ')'  (106)
+	sentenciaPRINT : '(' . CADENA ')' ';'  (99)
+	condicion : '(' . comparaciones ')'  (111)
 
 	LONG  shift 4
 	SINGLE  shift 5
-	CADENA  shift 72
-	ID  shift 59
-	CTE  shift 60
-	IGUAL  shift 73
-	DISTINTO  shift 74
-	MAYORIG  shift 75
-	MENORIG  shift 76
-	'-'  shift 62
-	'>'  shift 77
-	'<'  shift 78
+	CADENA  shift 73
+	ID  shift 60
+	CTE  shift 61
+	IGUAL  shift 74
+	DISTINTO  shift 75
+	MAYORIG  shift 76
+	MENORIG  shift 77
+	'-'  shift 63
+	'>'  shift 78
+	'<'  shift 79
 	.  error
 
-	tipo  goto 79
-	expAritmetica  goto 80
-	termino  goto 64
-	factor  goto 65
-	llamadoFunc  goto 66
-	comparaciones  goto 81
-	comparacion  goto 82
-	comparador  goto 83
+	tipo  goto 80
+	expAritmetica  goto 81
+	termino  goto 65
+	factor  goto 66
+	llamadoFunc  goto 67
+	comparaciones  goto 82
+	comparacion  goto 83
+	comparador  goto 84
 
 
 state 26
@@ -560,32 +567,32 @@ state 29
 
 state 30
 	bloqueTRYCATCH : sentEjecutables . CATCH BEGIN sentSoloEjecutables END  (7)
-	sentSoloEjecutables : sentEjecutables .  (31)
+	sentSoloEjecutables : sentEjecutables .  (36)
 
-	CATCH  shift 84
-	PRINT  reduce 31
-	WHILE  reduce 31
-	END  reduce 31
-	ID  reduce 31
-	IF  reduce 31
-	ASIGN  reduce 31
-	'('  reduce 31
+	CATCH  shift 85
+	PRINT  reduce 36
+	WHILE  reduce 36
+	END  reduce 36
+	ID  reduce 36
+	IF  reduce 36
+	ASIGN  reduce 36
+	'('  reduce 36
 
 
 state 31
-	bloqueEjecutableNormal : sentSoloEjecutables . END  (13)
-	sentSoloEjecutables : sentSoloEjecutables . sentEjecutables  (30)
+	bloqueEjecutableNormal : sentSoloEjecutables . END  (17)
+	sentSoloEjecutables : sentSoloEjecutables . sentEjecutables  (35)
 
 	PRINT  shift 18
 	WHILE  shift 19
-	END  shift 85
-	ID  shift 56
+	END  shift 86
+	ID  shift 57
 	IF  shift 23
 	ASIGN  shift 24
 	'('  shift 25
 	.  error
 
-	sentEjecutables  goto 86
+	sentEjecutables  goto 87
 	condicion  goto 32
 	asignacion  goto 33
 	sentenciaIF  goto 34
@@ -594,112 +601,118 @@ state 31
 
 
 state 32
-	sentenciaIF : condicion . THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF ';'  (81)
-	sentenciaWHILE : condicion . DO bloqueEjecutable  (102)
+	sentenciaIF : condicion . THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF ';'  (86)
+	sentenciaWHILE : condicion . DO bloqueEjecutable  (107)
 
-	THEN  shift 87
-	DO  shift 88
+	THEN  shift 88
+	DO  shift 89
 	.  error
 
 
 state 33
-	sentEjecutables : asignacion .  (70)
+	sentEjecutables : asignacion .  (75)
 
-	.  reduce 70
+	.  reduce 75
 
 
 state 34
-	sentEjecutables : sentenciaIF .  (71)
+	sentEjecutables : sentenciaIF .  (76)
 
-	.  reduce 71
+	.  reduce 76
 
 
 state 35
-	sentEjecutables : sentenciaPRINT .  (72)
+	sentEjecutables : sentenciaPRINT .  (77)
 
-	.  reduce 72
+	.  reduce 77
 
 
 state 36
-	sentEjecutables : sentenciaWHILE .  (73)
+	sentEjecutables : sentenciaWHILE .  (78)
 
-	.  reduce 73
+	.  reduce 78
 
 
 state 37
-	encabezadoFunc : tipo FUNC . '(' tipo ')'  (43)
-	encabezadoFunc : tipo FUNC . tipo ')'  (45)
-	encabezadoFunc : tipo FUNC . '(' ')'  (46)
-	encabezadoFunc : tipo FUNC . '(' tipo error  (47)
-	declaracionFunc : tipo FUNC . ID '(' parametro ')'  (62)
-	declaracionFunc : tipo FUNC . ID '(' ')'  (63)
-	declaracionFunc : tipo FUNC . ID parametro ')'  (66)
-	declaracionFunc : tipo FUNC . ID '(' parametro error  (67)
+	encabezadoFunc : tipo FUNC . '(' tipo ')'  (48)
+	encabezadoFunc : tipo FUNC . tipo ')'  (50)
+	encabezadoFunc : tipo FUNC . '(' ')'  (51)
+	encabezadoFunc : tipo FUNC . '(' tipo error  (52)
+	declaracionFunc : tipo FUNC . ID '(' parametro ')'  (67)
+	declaracionFunc : tipo FUNC . ID '(' ')'  (68)
+	declaracionFunc : tipo FUNC . ID parametro ')'  (71)
+	declaracionFunc : tipo FUNC . ID '(' parametro error  (72)
 
 	LONG  shift 4
 	SINGLE  shift 5
-	ID  shift 89
-	'('  shift 90
+	ID  shift 90
+	'('  shift 91
 	.  error
 
-	tipo  goto 91
+	tipo  goto 92
 
 
 state 38
-	declaracionFunc : tipo ID . '(' parametro ')'  (65)
-	listaVariables : ID .  (127)
+	declaracionFunc : tipo ID . '(' parametro ')'  (70)
+	listaVariables : ID .  (132)
 
-	'('  shift 92
-	error  reduce 127
-	';'  reduce 127
-	','  reduce 127
+	'('  shift 93
+	error  reduce 132
+	';'  reduce 132
+	','  reduce 132
 
 
 state 39
-	declaraVariable : tipo listaVariables . ';'  (35)
-	declaraVariable : tipo listaVariables . error  (37)
-	listaVariables : listaVariables . ',' ID  (126)
-	listaVariables : listaVariables . ','  (128)
+	declaraVariable : tipo listaVariables . ';'  (40)
+	declaraVariable : tipo listaVariables . error  (42)
+	listaVariables : listaVariables . ',' ID  (131)
+	listaVariables : listaVariables . ','  (133)
 
-	error  shift 93
-	';'  shift 94
+	error  shift 94
+	';'  shift 95
 	','  shift 41
 	.  error
 
 
 state 40
-	declaraVariable : listaVariables ';' .  (36)
+	declaraVariable : listaVariables ';' .  (41)
 
-	.  reduce 36
+	.  reduce 41
 
 
 state 41
-	listaVariables : listaVariables ',' . ID  (126)
-	listaVariables : listaVariables ',' .  (128)
+	listaVariables : listaVariables ',' . ID  (131)
+	listaVariables : listaVariables ',' .  (133)
 
-	ID  shift 95
-	error  reduce 128
-	';'  reduce 128
-	','  reduce 128
+	ID  shift 96
+	error  reduce 133
+	';'  reduce 133
+	','  reduce 133
 
 
 state 42
-	bloqueEjecutableFunc : BEGIN . sentEjecutableFunc RETURN '(' retorno ')' ';' END  (15)
-	bloqueEjecutableFunc : BEGIN . sentEjecutableFunc '(' retorno ')' END  (17)
-	bloqueEjecutableFunc : BEGIN . sentEjecutableFunc RETURN retorno ')' END  (18)
-	bloqueEjecutableFunc : BEGIN . sentEjecutableFunc RETURN '(' ')' END  (19)
-	bloqueEjecutableFunc : BEGIN . sentEjecutableFunc RETURN '(' retorno END  (20)
+	TRYCATCHFunc : BEGIN . bloqueTRYCATCH RETURN '(' retorno ')' ';' END  (12)
+	TRYCATCHFunc : BEGIN . sentEjecutableFunc bloqueTRYCATCH RETURN '(' retorno ')' ';' END  (13)
+	TRYCATCHFunc : BEGIN . sentEjecutableFunc bloqueTRYCATCH sentEjecutableFunc RETURN '(' retorno ')' ';' END  (14)
+	TRYCATCHFunc : BEGIN . bloqueTRYCATCH sentEjecutableFunc RETURN '(' retorno ')' ';' END  (15)
+	bloqueEjecutableFunc : BEGIN . sentEjecutableFunc RETURN '(' retorno ')' ';' END  (19)
+	bloqueEjecutableFunc : BEGIN . sentEjecutableFunc '(' retorno ')' END  (22)
+	bloqueEjecutableFunc : BEGIN . sentEjecutableFunc RETURN retorno ')' END  (23)
+	bloqueEjecutableFunc : BEGIN . sentEjecutableFunc RETURN '(' ')' END  (24)
+	bloqueEjecutableFunc : BEGIN . sentEjecutableFunc RETURN '(' retorno END  (25)
 
 	PRINT  shift 18
 	WHILE  shift 19
-	ID  shift 56
+	ID  shift 57
+	TRY  shift 22
 	IF  shift 23
 	ASIGN  shift 24
 	'('  shift 25
 	.  error
 
-	sentEjecutables  goto 44
-	sentEjecutableFunc  goto 96
+	bloqueTRYCATCH  goto 97
+	sentEjecutables  goto 98
+	sentEjecutableFunc  goto 99
 	condicion  goto 32
 	asignacion  goto 33
 	sentenciaIF  goto 34
@@ -709,7 +722,7 @@ state 42
 
 state 43
 	bloqueDeclarativo : bloqueDeclarativo . sentenciasDeclarativas  (2)
-	declaraFunc : declaracionFunc bloqueDeclarativo . bloqueEjecutableFunc  (38)
+	declaraFunc : declaracionFunc bloqueDeclarativo . bloqueEjecutableFunc  (43)
 
 	PRINT  shift 18
 	FUNC  shift 3
@@ -725,8 +738,9 @@ state 43
 
 	sentenciasDeclarativas  goto 27
 	sentEjecutables  goto 44
-	bloqueEjecutableFunc  goto 97
+	TRYCATCHFunc  goto 45
 	sentEjecutableFunc  goto 46
+	bloqueEjecutableFunc  goto 100
 	condicion  goto 32
 	declaraVariable  goto 9
 	declaraFunc  goto 10
@@ -742,34 +756,34 @@ state 43
 
 
 state 44
-	sentEjecutableFunc : sentEjecutables .  (23)
+	sentEjecutableFunc : sentEjecutables .  (28)
 
-	.  reduce 23
+	.  reduce 28
 
 
 state 45
-	declaraFunc : declaracionFunc bloqueEjecutableFunc .  (39)
+	bloqueEjecutableFunc : TRYCATCHFunc .  (20)
 
-	.  reduce 39
+	.  reduce 20
 
 
 state 46
-	bloqueEjecutableFunc : sentEjecutableFunc . RETURN '(' retorno ')' END  (16)
-	sentEjecutableFunc : sentEjecutableFunc . sentEjecutables  (21)
-	sentEjecutableFunc : sentEjecutableFunc . sentenciaCONTRACT  (22)
+	bloqueEjecutableFunc : sentEjecutableFunc . RETURN '(' retorno ')' END  (21)
+	sentEjecutableFunc : sentEjecutableFunc . sentEjecutables  (26)
+	sentEjecutableFunc : sentEjecutableFunc . sentenciaCONTRACT  (27)
 
 	PRINT  shift 18
-	RETURN  shift 98
+	RETURN  shift 101
 	WHILE  shift 19
-	ID  shift 56
-	CONTRACT  shift 99
+	ID  shift 57
+	CONTRACT  shift 102
 	IF  shift 23
 	ASIGN  shift 24
 	'('  shift 25
 	.  error
 
-	sentEjecutables  goto 100
-	sentenciaCONTRACT  goto 101
+	sentEjecutables  goto 103
+	sentenciaCONTRACT  goto 104
 	condicion  goto 32
 	asignacion  goto 33
 	sentenciaIF  goto 34
@@ -778,132 +792,84 @@ state 46
 
 
 state 47
-	declaraVarFunc : encabezadoFunc ';' .  (41)
+	declaraFunc : declaracionFunc bloqueEjecutableFunc .  (44)
 
-	.  reduce 41
+	.  reduce 44
 
 
 state 48
-	declaraVarFunc : encabezadoFunc listaVariables . ';'  (40)
-	declaraVarFunc : encabezadoFunc listaVariables . error  (42)
-	listaVariables : listaVariables . ',' ID  (126)
-	listaVariables : listaVariables . ','  (128)
+	declaraVarFunc : encabezadoFunc ';' .  (46)
 
-	error  shift 102
-	';'  shift 103
+	.  reduce 46
+
+
+state 49
+	declaraVarFunc : encabezadoFunc listaVariables . ';'  (45)
+	declaraVarFunc : encabezadoFunc listaVariables . error  (47)
+	listaVariables : listaVariables . ',' ID  (131)
+	listaVariables : listaVariables . ','  (133)
+
+	error  shift 105
+	';'  shift 106
 	','  shift 41
 	.  error
 
 
-state 49
-	declaracionFunc : FUNC ID '(' . parametro ')'  (64)
+state 50
+	declaracionFunc : FUNC ID '(' . parametro ')'  (69)
 
 	LONG  shift 4
 	SINGLE  shift 5
-	ID  shift 104
+	ID  shift 107
 	.  error
 
-	tipo  goto 105
-	parametro  goto 106
-
-
-state 50
-	encabezadoFunc : FUNC '(' tipo . ')'  (44)
-
-	')'  shift 107
-	.  error
+	tipo  goto 108
+	parametro  goto 109
 
 
 state 51
-	sentenciaPRINT : PRINT CADENA . ')' ';'  (95)
+	encabezadoFunc : FUNC '(' tipo . ')'  (49)
 
-	')'  shift 108
+	')'  shift 110
 	.  error
 
 
 state 52
-	sentenciaPRINT : PRINT '(' . CADENA ')' ';'  (93)
-	sentenciaPRINT : PRINT '(' . ')' ';'  (96)
-	sentenciaPRINT : PRINT '(' . CADENA ';'  (97)
-	sentenciaPRINT : PRINT '(' . CADENA ')' error  (98)
-	sentenciaPRINT : PRINT '(' . ID ')' ';'  (99)
-	sentenciaPRINT : PRINT '(' . CTE ')' ';'  (100)
+	sentenciaPRINT : PRINT CADENA . ')' ';'  (100)
 
-	CADENA  shift 109
-	ID  shift 110
-	CTE  shift 111
-	')'  shift 112
+	')'  shift 111
 	.  error
 
 
 state 53
-	sentenciaWHILE : WHILE DO . bloqueEjecutable  (103)
+	sentenciaPRINT : PRINT '(' . CADENA ')' ';'  (98)
+	sentenciaPRINT : PRINT '(' . ')' ';'  (101)
+	sentenciaPRINT : PRINT '(' . CADENA ';'  (102)
+	sentenciaPRINT : PRINT '(' . CADENA ')' error  (103)
+	sentenciaPRINT : PRINT '(' . ID ')' ';'  (104)
+	sentenciaPRINT : PRINT '(' . CTE ')' ';'  (105)
 
-	PRINT  shift 18
-	WHILE  shift 19
-	BEGIN  shift 20
-	ID  shift 56
-	TRY  shift 22
-	IF  shift 23
-	ASIGN  shift 24
-	'('  shift 25
+	CADENA  shift 112
+	ID  shift 113
+	CTE  shift 114
+	')'  shift 115
 	.  error
-
-	bloqueEjecutable  goto 113
-	bloqueTRYCATCH  goto 28
-	bloqueEjecutableNormal  goto 29
-	sentEjecutables  goto 30
-	sentSoloEjecutables  goto 31
-	condicion  goto 32
-	asignacion  goto 33
-	sentenciaIF  goto 34
-	sentenciaPRINT  goto 35
-	sentenciaWHILE  goto 36
 
 
 state 54
-	condicion : '(' . comparaciones ')'  (106)
-
-	LONG  shift 4
-	SINGLE  shift 5
-	ID  shift 59
-	CTE  shift 60
-	IGUAL  shift 73
-	DISTINTO  shift 74
-	MAYORIG  shift 75
-	MENORIG  shift 76
-	'-'  shift 62
-	'>'  shift 77
-	'<'  shift 78
-	.  error
-
-	tipo  goto 79
-	expAritmetica  goto 80
-	termino  goto 64
-	factor  goto 65
-	llamadoFunc  goto 66
-	comparaciones  goto 81
-	comparacion  goto 82
-	comparador  goto 83
-
-
-state 55
-	sentenciaWHILE : WHILE condicion . DO bloqueEjecutable  (101)
-	sentenciaWHILE : WHILE condicion . bloqueEjecutable  (104)
-	sentenciaWHILE : WHILE condicion . DO error  (105)
+	sentenciaWHILE : WHILE DO . bloqueEjecutable  (108)
 
 	PRINT  shift 18
 	WHILE  shift 19
 	BEGIN  shift 20
-	DO  shift 114
-	ID  shift 56
+	ID  shift 57
 	TRY  shift 22
 	IF  shift 23
 	ASIGN  shift 24
 	'('  shift 25
 	.  error
 
-	bloqueEjecutable  goto 115
+	bloqueEjecutable  goto 116
 	bloqueTRYCATCH  goto 28
 	bloqueEjecutableNormal  goto 29
 	sentEjecutables  goto 30
@@ -915,46 +881,53 @@ state 55
 	sentenciaWHILE  goto 36
 
 
-state 56
-	asignacion : ID . ASIGN expAritmetica ';'  (74)
-	asignacion : ID . ASIGN tipo '(' expAritmetica ')' ';'  (75)
-	asignacion : ID . expAritmetica ';'  (77)
-	asignacion : ID . ASIGN expAritmetica error  (78)
+state 55
+	condicion : '(' . comparaciones ')'  (111)
 
-	ID  shift 59
-	CTE  shift 60
-	ASIGN  shift 61
-	'-'  shift 62
+	LONG  shift 4
+	SINGLE  shift 5
+	ID  shift 60
+	CTE  shift 61
+	IGUAL  shift 74
+	DISTINTO  shift 75
+	MAYORIG  shift 76
+	MENORIG  shift 77
+	'-'  shift 63
+	'>'  shift 78
+	'<'  shift 79
 	.  error
 
-	expAritmetica  goto 63
-	termino  goto 64
-	factor  goto 65
-	llamadoFunc  goto 66
+	tipo  goto 80
+	expAritmetica  goto 81
+	termino  goto 65
+	factor  goto 66
+	llamadoFunc  goto 67
+	comparaciones  goto 82
+	comparacion  goto 83
+	comparador  goto 84
 
 
-state 57
-	sentSoloEjecutables : sentEjecutables .  (31)
+state 56
+	sentenciaWHILE : WHILE condicion . DO bloqueEjecutable  (106)
+	sentenciaWHILE : WHILE condicion . bloqueEjecutable  (109)
+	sentenciaWHILE : WHILE condicion . DO error  (110)
 
-	.  reduce 31
-
-
-state 58
-	bloqueEjecutableNormal : BEGIN sentSoloEjecutables . END  (12)
-	bloqueEjecutableNormal : BEGIN sentSoloEjecutables . error  (14)
-	sentSoloEjecutables : sentSoloEjecutables . sentEjecutables  (30)
-
-	error  shift 116
 	PRINT  shift 18
 	WHILE  shift 19
-	END  shift 117
-	ID  shift 56
+	BEGIN  shift 20
+	DO  shift 117
+	ID  shift 57
+	TRY  shift 22
 	IF  shift 23
 	ASIGN  shift 24
 	'('  shift 25
 	.  error
 
-	sentEjecutables  goto 86
+	bloqueEjecutable  goto 118
+	bloqueTRYCATCH  goto 28
+	bloqueEjecutableNormal  goto 29
+	sentEjecutables  goto 30
+	sentSoloEjecutables  goto 31
 	condicion  goto 32
 	asignacion  goto 33
 	sentenciaIF  goto 34
@@ -962,177 +935,188 @@ state 58
 	sentenciaWHILE  goto 36
 
 
-state 59
-	factor : ID .  (56)
-	llamadoFunc : ID . '(' parametro ')'  (60)
-	llamadoFunc : ID . '(' ')' ';'  (61)
+state 57
+	asignacion : ID . ASIGN expAritmetica ';'  (79)
+	asignacion : ID . ASIGN tipo '(' expAritmetica ')' ';'  (80)
+	asignacion : ID . expAritmetica ';'  (82)
+	asignacion : ID . ASIGN expAritmetica error  (83)
 
-	'('  shift 118
-	error  reduce 56
-	END  reduce 56
-	IGUAL  reduce 56
-	DISTINTO  reduce 56
-	MAYORIG  reduce 56
-	MENORIG  reduce 56
-	AND  reduce 56
-	OR  reduce 56
-	')'  reduce 56
-	';'  reduce 56
-	'+'  reduce 56
-	'-'  reduce 56
-	'*'  reduce 56
-	'/'  reduce 56
-	'>'  reduce 56
-	'<'  reduce 56
+	ID  shift 60
+	CTE  shift 61
+	ASIGN  shift 62
+	'-'  shift 63
+	.  error
+
+	expAritmetica  goto 64
+	termino  goto 65
+	factor  goto 66
+	llamadoFunc  goto 67
+
+
+state 58
+	sentSoloEjecutables : sentEjecutables .  (36)
+
+	.  reduce 36
+
+
+state 59
+	bloqueEjecutableNormal : BEGIN sentSoloEjecutables . END  (16)
+	bloqueEjecutableNormal : BEGIN sentSoloEjecutables . error  (18)
+	sentSoloEjecutables : sentSoloEjecutables . sentEjecutables  (35)
+
+	error  shift 119
+	PRINT  shift 18
+	WHILE  shift 19
+	END  shift 120
+	ID  shift 57
+	IF  shift 23
+	ASIGN  shift 24
+	'('  shift 25
+	.  error
+
+	sentEjecutables  goto 87
+	condicion  goto 32
+	asignacion  goto 33
+	sentenciaIF  goto 34
+	sentenciaPRINT  goto 35
+	sentenciaWHILE  goto 36
 
 
 state 60
-	factor : CTE .  (57)
+	factor : ID .  (61)
+	llamadoFunc : ID . '(' parametro ')'  (65)
+	llamadoFunc : ID . '(' ')' ';'  (66)
 
-	.  reduce 57
+	'('  shift 121
+	error  reduce 61
+	END  reduce 61
+	IGUAL  reduce 61
+	DISTINTO  reduce 61
+	MAYORIG  reduce 61
+	MENORIG  reduce 61
+	AND  reduce 61
+	OR  reduce 61
+	')'  reduce 61
+	';'  reduce 61
+	'+'  reduce 61
+	'-'  reduce 61
+	'*'  reduce 61
+	'/'  reduce 61
+	'>'  reduce 61
+	'<'  reduce 61
 
 
 state 61
-	asignacion : ID ASIGN . expAritmetica ';'  (74)
-	asignacion : ID ASIGN . tipo '(' expAritmetica ')' ';'  (75)
-	asignacion : ID ASIGN . expAritmetica error  (78)
+	factor : CTE .  (62)
 
-	LONG  shift 4
-	SINGLE  shift 5
-	ID  shift 59
-	CTE  shift 60
-	'-'  shift 62
-	.  error
-
-	tipo  goto 119
-	expAritmetica  goto 120
-	termino  goto 64
-	factor  goto 65
-	llamadoFunc  goto 66
+	.  reduce 62
 
 
 state 62
-	factor : '-' . CTE  (58)
+	asignacion : ID ASIGN . expAritmetica ';'  (79)
+	asignacion : ID ASIGN . tipo '(' expAritmetica ')' ';'  (80)
+	asignacion : ID ASIGN . expAritmetica error  (83)
 
-	CTE  shift 121
+	LONG  shift 4
+	SINGLE  shift 5
+	ID  shift 60
+	CTE  shift 61
+	'-'  shift 63
 	.  error
+
+	tipo  goto 122
+	expAritmetica  goto 123
+	termino  goto 65
+	factor  goto 66
+	llamadoFunc  goto 67
 
 
 state 63
-	expAritmetica : expAritmetica . '+' termino  (50)
-	expAritmetica : expAritmetica . '-' termino  (51)
-	asignacion : ID expAritmetica . ';'  (77)
+	factor : '-' . CTE  (63)
 
-	';'  shift 122
-	'+'  shift 123
-	'-'  shift 124
+	CTE  shift 124
 	.  error
 
 
 state 64
-	expAritmetica : termino .  (52)
-	termino : termino . '*' factor  (53)
-	termino : termino . '/' factor  (54)
+	expAritmetica : expAritmetica . '+' termino  (55)
+	expAritmetica : expAritmetica . '-' termino  (56)
+	asignacion : ID expAritmetica . ';'  (82)
 
-	'*'  shift 125
-	'/'  shift 126
-	error  reduce 52
-	END  reduce 52
-	IGUAL  reduce 52
-	DISTINTO  reduce 52
-	MAYORIG  reduce 52
-	MENORIG  reduce 52
-	AND  reduce 52
-	OR  reduce 52
-	')'  reduce 52
-	';'  reduce 52
-	'+'  reduce 52
-	'-'  reduce 52
-	'>'  reduce 52
-	'<'  reduce 52
-
-
-state 65
-	termino : factor .  (55)
-
-	.  reduce 55
-
-
-state 66
-	factor : llamadoFunc .  (59)
-
-	.  reduce 59
-
-
-state 67
-	bloqueTRYCATCH : TRY CATCH . BEGIN sentSoloEjecutables END  (8)
-
-	BEGIN  shift 127
+	';'  shift 125
+	'+'  shift 126
+	'-'  shift 127
 	.  error
 
 
+state 65
+	expAritmetica : termino .  (57)
+	termino : termino . '*' factor  (58)
+	termino : termino . '/' factor  (59)
+
+	'*'  shift 128
+	'/'  shift 129
+	error  reduce 57
+	END  reduce 57
+	IGUAL  reduce 57
+	DISTINTO  reduce 57
+	MAYORIG  reduce 57
+	MENORIG  reduce 57
+	AND  reduce 57
+	OR  reduce 57
+	')'  reduce 57
+	';'  reduce 57
+	'+'  reduce 57
+	'-'  reduce 57
+	'>'  reduce 57
+	'<'  reduce 57
+
+
+state 66
+	termino : factor .  (60)
+
+	.  reduce 60
+
+
+state 67
+	factor : llamadoFunc .  (64)
+
+	.  reduce 64
+
+
 state 68
+	bloqueTRYCATCH : TRY CATCH . BEGIN sentSoloEjecutables END  (8)
+
+	BEGIN  shift 130
+	.  error
+
+
+state 69
 	bloqueTRYCATCH : TRY sentEjecutables . CATCH BEGIN sentSoloEjecutables END  (6)
 	bloqueTRYCATCH : TRY sentEjecutables . BEGIN sentSoloEjecutables END  (9)
 	bloqueTRYCATCH : TRY sentEjecutables . CATCH sentSoloEjecutables END  (10)
 	bloqueTRYCATCH : TRY sentEjecutables . CATCH BEGIN sentSoloEjecutables error  (11)
 
-	BEGIN  shift 128
-	CATCH  shift 129
+	BEGIN  shift 131
+	CATCH  shift 132
 	.  error
-
-
-state 69
-	sentenciaIF : IF THEN . bloqueEjecutable ELSE bloqueEjecutable ENDIF ';'  (82)
-	sentenciaIF : IF THEN . bloqueEjecutable ENDIF ';'  (88)
-
-	PRINT  shift 18
-	WHILE  shift 19
-	BEGIN  shift 20
-	ID  shift 56
-	TRY  shift 22
-	IF  shift 23
-	ASIGN  shift 24
-	'('  shift 25
-	.  error
-
-	bloqueEjecutable  goto 130
-	bloqueTRYCATCH  goto 28
-	bloqueEjecutableNormal  goto 29
-	sentEjecutables  goto 30
-	sentSoloEjecutables  goto 31
-	condicion  goto 32
-	asignacion  goto 33
-	sentenciaIF  goto 34
-	sentenciaPRINT  goto 35
-	sentenciaWHILE  goto 36
 
 
 state 70
-	sentenciaIF : IF condicion . THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF ';'  (79)
-	sentenciaIF : IF condicion . THEN bloqueEjecutable ENDIF ';'  (80)
-	sentenciaIF : IF condicion . bloqueEjecutable ELSE bloqueEjecutable ENDIF ';'  (83)
-	sentenciaIF : IF condicion . THEN ELSE bloqueEjecutable ENDIF ';'  (84)
-	sentenciaIF : IF condicion . THEN bloqueEjecutable ELSE ENDIF ';'  (85)
-	sentenciaIF : IF condicion . THEN bloqueEjecutable ELSE bloqueEjecutable ';'  (86)
-	sentenciaIF : IF condicion . THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF error  (87)
-	sentenciaIF : IF condicion . bloqueEjecutable ENDIF ';'  (89)
-	sentenciaIF : IF condicion . THEN ENDIF ';'  (90)
-	sentenciaIF : IF condicion . THEN bloqueEjecutable ';'  (91)
-	sentenciaIF : IF condicion . THEN bloqueEjecutable ENDIF error  (92)
+	sentenciaIF : IF THEN . bloqueEjecutable ELSE bloqueEjecutable ENDIF ';'  (87)
+	sentenciaIF : IF THEN . bloqueEjecutable ENDIF ';'  (93)
 
-	THEN  shift 131
 	PRINT  shift 18
 	WHILE  shift 19
 	BEGIN  shift 20
-	ID  shift 56
+	ID  shift 57
 	TRY  shift 22
 	IF  shift 23
 	ASIGN  shift 24
 	'('  shift 25
 	.  error
 
-	bloqueEjecutable  goto 132
+	bloqueEjecutable  goto 133
 	bloqueTRYCATCH  goto 28
 	bloqueEjecutableNormal  goto 29
 	sentEjecutables  goto 30
@@ -1145,153 +1129,30 @@ state 70
 
 
 state 71
-	expAritmetica : expAritmetica . '+' termino  (50)
-	expAritmetica : expAritmetica . '-' termino  (51)
-	asignacion : ASIGN expAritmetica . ';'  (76)
+	sentenciaIF : IF condicion . THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF ';'  (84)
+	sentenciaIF : IF condicion . THEN bloqueEjecutable ENDIF ';'  (85)
+	sentenciaIF : IF condicion . bloqueEjecutable ELSE bloqueEjecutable ENDIF ';'  (88)
+	sentenciaIF : IF condicion . THEN ELSE bloqueEjecutable ENDIF ';'  (89)
+	sentenciaIF : IF condicion . THEN bloqueEjecutable ELSE ENDIF ';'  (90)
+	sentenciaIF : IF condicion . THEN bloqueEjecutable ELSE bloqueEjecutable ';'  (91)
+	sentenciaIF : IF condicion . THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF error  (92)
+	sentenciaIF : IF condicion . bloqueEjecutable ENDIF ';'  (94)
+	sentenciaIF : IF condicion . THEN ENDIF ';'  (95)
+	sentenciaIF : IF condicion . THEN bloqueEjecutable ';'  (96)
+	sentenciaIF : IF condicion . THEN bloqueEjecutable ENDIF error  (97)
 
-	';'  shift 133
-	'+'  shift 123
-	'-'  shift 124
-	.  error
-
-
-state 72
-	sentenciaPRINT : '(' CADENA . ')' ';'  (94)
-
-	')'  shift 134
-	.  error
-
-
-state 73
-	comparador : IGUAL .  (118)
-
-	.  reduce 118
-
-
-state 74
-	comparador : DISTINTO .  (119)
-
-	.  reduce 119
-
-
-state 75
-	comparador : MAYORIG .  (120)
-
-	.  reduce 120
-
-
-state 76
-	comparador : MENORIG .  (121)
-
-	.  reduce 121
-
-
-state 77
-	comparador : '>' .  (116)
-
-	.  reduce 116
-
-
-state 78
-	comparador : '<' .  (117)
-
-	.  reduce 117
-
-
-state 79
-	comparacion : tipo . '(' expAritmetica ')' comparador expAritmetica  (111)
-	comparacion : tipo . '(' expAritmetica ')' comparador tipo '(' expAritmetica ')'  (113)
-
-	'('  shift 135
-	.  error
-
-
-state 80
-	expAritmetica : expAritmetica . '+' termino  (50)
-	expAritmetica : expAritmetica . '-' termino  (51)
-	comparacion : expAritmetica . comparador expAritmetica  (110)
-	comparacion : expAritmetica . comparador tipo '(' expAritmetica ')'  (112)
-	comparacion : expAritmetica . comparador error  (114)
-
-	IGUAL  shift 73
-	DISTINTO  shift 74
-	MAYORIG  shift 75
-	MENORIG  shift 76
-	'+'  shift 123
-	'-'  shift 124
-	'>'  shift 77
-	'<'  shift 78
-	.  error
-
-	comparador  goto 136
-
-
-state 81
-	condicion : '(' comparaciones . ')'  (106)
-	comparaciones : comparaciones . opLogico comparacion  (107)
-	comparaciones : comparaciones . opLogico error  (109)
-
-	AND  shift 137
-	OR  shift 138
-	')'  shift 139
-	.  error
-
-	opLogico  goto 140
-
-
-state 82
-	comparaciones : comparacion .  (108)
-
-	.  reduce 108
-
-
-state 83
-	comparacion : comparador . expAritmetica  (115)
-
-	ID  shift 59
-	CTE  shift 60
-	'-'  shift 62
-	.  error
-
-	expAritmetica  goto 141
-	termino  goto 64
-	factor  goto 65
-	llamadoFunc  goto 66
-
-
-state 84
-	bloqueTRYCATCH : sentEjecutables CATCH . BEGIN sentSoloEjecutables END  (7)
-
-	BEGIN  shift 142
-	.  error
-
-
-state 85
-	bloqueEjecutableNormal : sentSoloEjecutables END .  (13)
-
-	.  reduce 13
-
-
-state 86
-	sentSoloEjecutables : sentSoloEjecutables sentEjecutables .  (30)
-
-	.  reduce 30
-
-
-state 87
-	sentenciaIF : condicion THEN . bloqueEjecutable ELSE bloqueEjecutable ENDIF ';'  (81)
-
+	THEN  shift 134
 	PRINT  shift 18
 	WHILE  shift 19
 	BEGIN  shift 20
-	ID  shift 56
+	ID  shift 57
 	TRY  shift 22
 	IF  shift 23
 	ASIGN  shift 24
 	'('  shift 25
 	.  error
 
-	bloqueEjecutable  goto 143
+	bloqueEjecutable  goto 135
 	bloqueTRYCATCH  goto 28
 	bloqueEjecutableNormal  goto 29
 	sentEjecutables  goto 30
@@ -1303,20 +1164,154 @@ state 87
 	sentenciaWHILE  goto 36
 
 
+state 72
+	expAritmetica : expAritmetica . '+' termino  (55)
+	expAritmetica : expAritmetica . '-' termino  (56)
+	asignacion : ASIGN expAritmetica . ';'  (81)
+
+	';'  shift 136
+	'+'  shift 126
+	'-'  shift 127
+	.  error
+
+
+state 73
+	sentenciaPRINT : '(' CADENA . ')' ';'  (99)
+
+	')'  shift 137
+	.  error
+
+
+state 74
+	comparador : IGUAL .  (123)
+
+	.  reduce 123
+
+
+state 75
+	comparador : DISTINTO .  (124)
+
+	.  reduce 124
+
+
+state 76
+	comparador : MAYORIG .  (125)
+
+	.  reduce 125
+
+
+state 77
+	comparador : MENORIG .  (126)
+
+	.  reduce 126
+
+
+state 78
+	comparador : '>' .  (121)
+
+	.  reduce 121
+
+
+state 79
+	comparador : '<' .  (122)
+
+	.  reduce 122
+
+
+state 80
+	comparacion : tipo . '(' expAritmetica ')' comparador expAritmetica  (116)
+	comparacion : tipo . '(' expAritmetica ')' comparador tipo '(' expAritmetica ')'  (118)
+
+	'('  shift 138
+	.  error
+
+
+state 81
+	expAritmetica : expAritmetica . '+' termino  (55)
+	expAritmetica : expAritmetica . '-' termino  (56)
+	comparacion : expAritmetica . comparador expAritmetica  (115)
+	comparacion : expAritmetica . comparador tipo '(' expAritmetica ')'  (117)
+	comparacion : expAritmetica . comparador error  (119)
+
+	IGUAL  shift 74
+	DISTINTO  shift 75
+	MAYORIG  shift 76
+	MENORIG  shift 77
+	'+'  shift 126
+	'-'  shift 127
+	'>'  shift 78
+	'<'  shift 79
+	.  error
+
+	comparador  goto 139
+
+
+state 82
+	condicion : '(' comparaciones . ')'  (111)
+	comparaciones : comparaciones . opLogico comparacion  (112)
+	comparaciones : comparaciones . opLogico error  (114)
+
+	AND  shift 140
+	OR  shift 141
+	')'  shift 142
+	.  error
+
+	opLogico  goto 143
+
+
+state 83
+	comparaciones : comparacion .  (113)
+
+	.  reduce 113
+
+
+state 84
+	comparacion : comparador . expAritmetica  (120)
+
+	ID  shift 60
+	CTE  shift 61
+	'-'  shift 63
+	.  error
+
+	expAritmetica  goto 144
+	termino  goto 65
+	factor  goto 66
+	llamadoFunc  goto 67
+
+
+state 85
+	bloqueTRYCATCH : sentEjecutables CATCH . BEGIN sentSoloEjecutables END  (7)
+
+	BEGIN  shift 145
+	.  error
+
+
+state 86
+	bloqueEjecutableNormal : sentSoloEjecutables END .  (17)
+
+	.  reduce 17
+
+
+state 87
+	sentSoloEjecutables : sentSoloEjecutables sentEjecutables .  (35)
+
+	.  reduce 35
+
+
 state 88
-	sentenciaWHILE : condicion DO . bloqueEjecutable  (102)
+	sentenciaIF : condicion THEN . bloqueEjecutable ELSE bloqueEjecutable ENDIF ';'  (86)
 
 	PRINT  shift 18
 	WHILE  shift 19
 	BEGIN  shift 20
-	ID  shift 56
+	ID  shift 57
 	TRY  shift 22
 	IF  shift 23
 	ASIGN  shift 24
 	'('  shift 25
 	.  error
 
-	bloqueEjecutable  goto 144
+	bloqueEjecutable  goto 146
 	bloqueTRYCATCH  goto 28
 	bloqueEjecutableNormal  goto 29
 	sentEjecutables  goto 30
@@ -1329,92 +1324,23 @@ state 88
 
 
 state 89
-	declaracionFunc : tipo FUNC ID . '(' parametro ')'  (62)
-	declaracionFunc : tipo FUNC ID . '(' ')'  (63)
-	declaracionFunc : tipo FUNC ID . parametro ')'  (66)
-	declaracionFunc : tipo FUNC ID . '(' parametro error  (67)
-
-	LONG  shift 4
-	SINGLE  shift 5
-	ID  shift 104
-	'('  shift 145
-	.  error
-
-	tipo  goto 105
-	parametro  goto 146
-
-
-state 90
-	encabezadoFunc : tipo FUNC '(' . tipo ')'  (43)
-	encabezadoFunc : tipo FUNC '(' . ')'  (46)
-	encabezadoFunc : tipo FUNC '(' . tipo error  (47)
-
-	LONG  shift 4
-	SINGLE  shift 5
-	')'  shift 147
-	.  error
-
-	tipo  goto 148
-
-
-state 91
-	encabezadoFunc : tipo FUNC tipo . ')'  (45)
-
-	')'  shift 149
-	.  error
-
-
-state 92
-	declaracionFunc : tipo ID '(' . parametro ')'  (65)
-
-	LONG  shift 4
-	SINGLE  shift 5
-	ID  shift 104
-	.  error
-
-	tipo  goto 105
-	parametro  goto 150
-
-
-state 93
-	declaraVariable : tipo listaVariables error .  (37)
-
-	.  reduce 37
-
-
-state 94
-	declaraVariable : tipo listaVariables ';' .  (35)
-
-	.  reduce 35
-
-
-state 95
-	listaVariables : listaVariables ',' ID .  (126)
-
-	.  reduce 126
-
-
-state 96
-	bloqueEjecutableFunc : BEGIN sentEjecutableFunc . RETURN '(' retorno ')' ';' END  (15)
-	bloqueEjecutableFunc : BEGIN sentEjecutableFunc . '(' retorno ')' END  (17)
-	bloqueEjecutableFunc : BEGIN sentEjecutableFunc . RETURN retorno ')' END  (18)
-	bloqueEjecutableFunc : BEGIN sentEjecutableFunc . RETURN '(' ')' END  (19)
-	bloqueEjecutableFunc : BEGIN sentEjecutableFunc . RETURN '(' retorno END  (20)
-	sentEjecutableFunc : sentEjecutableFunc . sentEjecutables  (21)
-	sentEjecutableFunc : sentEjecutableFunc . sentenciaCONTRACT  (22)
+	sentenciaWHILE : condicion DO . bloqueEjecutable  (107)
 
 	PRINT  shift 18
-	RETURN  shift 151
 	WHILE  shift 19
-	ID  shift 56
-	CONTRACT  shift 99
+	BEGIN  shift 20
+	ID  shift 57
+	TRY  shift 22
 	IF  shift 23
 	ASIGN  shift 24
-	'('  shift 152
+	'('  shift 25
 	.  error
 
-	sentEjecutables  goto 100
-	sentenciaCONTRACT  goto 101
+	bloqueEjecutable  goto 147
+	bloqueTRYCATCH  goto 28
+	bloqueEjecutableNormal  goto 29
+	sentEjecutables  goto 30
+	sentSoloEjecutables  goto 31
 	condicion  goto 32
 	asignacion  goto 33
 	sentenciaIF  goto 34
@@ -1422,142 +1348,278 @@ state 96
 	sentenciaWHILE  goto 36
 
 
-state 97
-	declaraFunc : declaracionFunc bloqueDeclarativo bloqueEjecutableFunc .  (38)
+state 90
+	declaracionFunc : tipo FUNC ID . '(' parametro ')'  (67)
+	declaracionFunc : tipo FUNC ID . '(' ')'  (68)
+	declaracionFunc : tipo FUNC ID . parametro ')'  (71)
+	declaracionFunc : tipo FUNC ID . '(' parametro error  (72)
 
-	.  reduce 38
+	LONG  shift 4
+	SINGLE  shift 5
+	ID  shift 107
+	'('  shift 148
+	.  error
+
+	tipo  goto 108
+	parametro  goto 149
 
 
-state 98
-	bloqueEjecutableFunc : sentEjecutableFunc RETURN . '(' retorno ')' END  (16)
+state 91
+	encabezadoFunc : tipo FUNC '(' . tipo ')'  (48)
+	encabezadoFunc : tipo FUNC '(' . ')'  (51)
+	encabezadoFunc : tipo FUNC '(' . tipo error  (52)
 
-	'('  shift 153
+	LONG  shift 4
+	SINGLE  shift 5
+	')'  shift 150
+	.  error
+
+	tipo  goto 151
+
+
+state 92
+	encabezadoFunc : tipo FUNC tipo . ')'  (50)
+
+	')'  shift 152
 	.  error
 
 
-state 99
-	sentenciaCONTRACT : CONTRACT . ':' '(' condicion ')' ';'  (24)
-	sentenciaCONTRACT : CONTRACT . '(' condicion ')' ';'  (25)
-	sentenciaCONTRACT : CONTRACT . ':' condicion ')' ';'  (26)
-	sentenciaCONTRACT : CONTRACT . ':' '(' ')' ';'  (27)
-	sentenciaCONTRACT : CONTRACT . ':' '(' condicion ';'  (28)
-	sentenciaCONTRACT : CONTRACT . ':' '(' condicion ')' error  (29)
+state 93
+	declaracionFunc : tipo ID '(' . parametro ')'  (70)
 
-	'('  shift 154
-	':'  shift 155
+	LONG  shift 4
+	SINGLE  shift 5
+	ID  shift 107
 	.  error
 
-
-state 100
-	sentEjecutableFunc : sentEjecutableFunc sentEjecutables .  (21)
-
-	.  reduce 21
+	tipo  goto 108
+	parametro  goto 153
 
 
-state 101
-	sentEjecutableFunc : sentEjecutableFunc sentenciaCONTRACT .  (22)
-
-	.  reduce 22
-
-
-state 102
-	declaraVarFunc : encabezadoFunc listaVariables error .  (42)
+state 94
+	declaraVariable : tipo listaVariables error .  (42)
 
 	.  reduce 42
 
 
-state 103
-	declaraVarFunc : encabezadoFunc listaVariables ';' .  (40)
+state 95
+	declaraVariable : tipo listaVariables ';' .  (40)
 
 	.  reduce 40
 
 
-state 104
-	parametro : ID .  (69)
+state 96
+	listaVariables : listaVariables ',' ID .  (131)
 
-	.  reduce 69
+	.  reduce 131
+
+
+state 97
+	TRYCATCHFunc : BEGIN bloqueTRYCATCH . RETURN '(' retorno ')' ';' END  (12)
+	TRYCATCHFunc : BEGIN bloqueTRYCATCH . sentEjecutableFunc RETURN '(' retorno ')' ';' END  (15)
+
+	PRINT  shift 18
+	RETURN  shift 154
+	WHILE  shift 19
+	ID  shift 57
+	IF  shift 23
+	ASIGN  shift 24
+	'('  shift 25
+	.  error
+
+	sentEjecutables  goto 44
+	sentEjecutableFunc  goto 155
+	condicion  goto 32
+	asignacion  goto 33
+	sentenciaIF  goto 34
+	sentenciaPRINT  goto 35
+	sentenciaWHILE  goto 36
+
+
+state 98
+	bloqueTRYCATCH : sentEjecutables . CATCH BEGIN sentSoloEjecutables END  (7)
+	sentEjecutableFunc : sentEjecutables .  (28)
+
+	CATCH  shift 85
+	PRINT  reduce 28
+	RETURN  reduce 28
+	WHILE  reduce 28
+	ID  reduce 28
+	CONTRACT  reduce 28
+	TRY  reduce 28
+	IF  reduce 28
+	ASIGN  reduce 28
+	'('  reduce 28
+
+
+state 99
+	TRYCATCHFunc : BEGIN sentEjecutableFunc . bloqueTRYCATCH RETURN '(' retorno ')' ';' END  (13)
+	TRYCATCHFunc : BEGIN sentEjecutableFunc . bloqueTRYCATCH sentEjecutableFunc RETURN '(' retorno ')' ';' END  (14)
+	bloqueEjecutableFunc : BEGIN sentEjecutableFunc . RETURN '(' retorno ')' ';' END  (19)
+	bloqueEjecutableFunc : BEGIN sentEjecutableFunc . '(' retorno ')' END  (22)
+	bloqueEjecutableFunc : BEGIN sentEjecutableFunc . RETURN retorno ')' END  (23)
+	bloqueEjecutableFunc : BEGIN sentEjecutableFunc . RETURN '(' ')' END  (24)
+	bloqueEjecutableFunc : BEGIN sentEjecutableFunc . RETURN '(' retorno END  (25)
+	sentEjecutableFunc : sentEjecutableFunc . sentEjecutables  (26)
+	sentEjecutableFunc : sentEjecutableFunc . sentenciaCONTRACT  (27)
+
+	PRINT  shift 18
+	RETURN  shift 156
+	WHILE  shift 19
+	ID  shift 57
+	CONTRACT  shift 102
+	TRY  shift 22
+	IF  shift 23
+	ASIGN  shift 24
+	'('  shift 157
+	.  error
+
+	bloqueTRYCATCH  goto 158
+	sentEjecutables  goto 159
+	sentenciaCONTRACT  goto 104
+	condicion  goto 32
+	asignacion  goto 33
+	sentenciaIF  goto 34
+	sentenciaPRINT  goto 35
+	sentenciaWHILE  goto 36
+
+
+state 100
+	declaraFunc : declaracionFunc bloqueDeclarativo bloqueEjecutableFunc .  (43)
+
+	.  reduce 43
+
+
+state 101
+	bloqueEjecutableFunc : sentEjecutableFunc RETURN . '(' retorno ')' END  (21)
+
+	'('  shift 160
+	.  error
+
+
+state 102
+	sentenciaCONTRACT : CONTRACT . ':' '(' condicion ')' ';'  (29)
+	sentenciaCONTRACT : CONTRACT . '(' condicion ')' ';'  (30)
+	sentenciaCONTRACT : CONTRACT . ':' condicion ')' ';'  (31)
+	sentenciaCONTRACT : CONTRACT . ':' '(' ')' ';'  (32)
+	sentenciaCONTRACT : CONTRACT . ':' '(' condicion ';'  (33)
+	sentenciaCONTRACT : CONTRACT . ':' '(' condicion ')' error  (34)
+
+	'('  shift 161
+	':'  shift 162
+	.  error
+
+
+state 103
+	sentEjecutableFunc : sentEjecutableFunc sentEjecutables .  (26)
+
+	.  reduce 26
+
+
+state 104
+	sentEjecutableFunc : sentEjecutableFunc sentenciaCONTRACT .  (27)
+
+	.  reduce 27
 
 
 state 105
-	parametro : tipo . ID  (68)
+	declaraVarFunc : encabezadoFunc listaVariables error .  (47)
 
-	ID  shift 156
-	.  error
+	.  reduce 47
 
 
 state 106
-	declaracionFunc : FUNC ID '(' parametro . ')'  (64)
+	declaraVarFunc : encabezadoFunc listaVariables ';' .  (45)
 
-	')'  shift 157
-	.  error
+	.  reduce 45
 
 
 state 107
-	encabezadoFunc : FUNC '(' tipo ')' .  (44)
+	parametro : ID .  (74)
 
-	.  reduce 44
+	.  reduce 74
 
 
 state 108
-	sentenciaPRINT : PRINT CADENA ')' . ';'  (95)
+	parametro : tipo . ID  (73)
 
-	';'  shift 158
+	ID  shift 163
 	.  error
 
 
 state 109
-	sentenciaPRINT : PRINT '(' CADENA . ')' ';'  (93)
-	sentenciaPRINT : PRINT '(' CADENA . ';'  (97)
-	sentenciaPRINT : PRINT '(' CADENA . ')' error  (98)
+	declaracionFunc : FUNC ID '(' parametro . ')'  (69)
 
-	')'  shift 159
-	';'  shift 160
+	')'  shift 164
 	.  error
 
 
 state 110
-	sentenciaPRINT : PRINT '(' ID . ')' ';'  (99)
+	encabezadoFunc : FUNC '(' tipo ')' .  (49)
 
-	')'  shift 161
-	.  error
+	.  reduce 49
 
 
 state 111
-	sentenciaPRINT : PRINT '(' CTE . ')' ';'  (100)
+	sentenciaPRINT : PRINT CADENA ')' . ';'  (100)
 
-	')'  shift 162
+	';'  shift 165
 	.  error
 
 
 state 112
-	sentenciaPRINT : PRINT '(' ')' . ';'  (96)
+	sentenciaPRINT : PRINT '(' CADENA . ')' ';'  (98)
+	sentenciaPRINT : PRINT '(' CADENA . ';'  (102)
+	sentenciaPRINT : PRINT '(' CADENA . ')' error  (103)
 
-	';'  shift 163
+	')'  shift 166
+	';'  shift 167
 	.  error
 
 
 state 113
-	sentenciaWHILE : WHILE DO bloqueEjecutable .  (103)
+	sentenciaPRINT : PRINT '(' ID . ')' ';'  (104)
 
-	.  reduce 103
+	')'  shift 168
+	.  error
 
 
 state 114
-	sentenciaWHILE : WHILE condicion DO . bloqueEjecutable  (101)
-	sentenciaWHILE : WHILE condicion DO . error  (105)
+	sentenciaPRINT : PRINT '(' CTE . ')' ';'  (105)
 
-	error  shift 164
+	')'  shift 169
+	.  error
+
+
+state 115
+	sentenciaPRINT : PRINT '(' ')' . ';'  (101)
+
+	';'  shift 170
+	.  error
+
+
+state 116
+	sentenciaWHILE : WHILE DO bloqueEjecutable .  (108)
+
+	.  reduce 108
+
+
+state 117
+	sentenciaWHILE : WHILE condicion DO . bloqueEjecutable  (106)
+	sentenciaWHILE : WHILE condicion DO . error  (110)
+
+	error  shift 171
 	PRINT  shift 18
 	WHILE  shift 19
 	BEGIN  shift 20
-	ID  shift 56
+	ID  shift 57
 	TRY  shift 22
 	IF  shift 23
 	ASIGN  shift 24
 	'('  shift 25
 	.  error
 
-	bloqueEjecutable  goto 165
+	bloqueEjecutable  goto 172
 	bloqueTRYCATCH  goto 28
 	bloqueEjecutableNormal  goto 29
 	sentEjecutables  goto 30
@@ -1569,133 +1631,133 @@ state 114
 	sentenciaWHILE  goto 36
 
 
-state 115
-	sentenciaWHILE : WHILE condicion bloqueEjecutable .  (104)
-
-	.  reduce 104
-
-
-state 116
-	bloqueEjecutableNormal : BEGIN sentSoloEjecutables error .  (14)
-
-	.  reduce 14
-
-
-state 117
-	bloqueEjecutableNormal : BEGIN sentSoloEjecutables END .  (12)
-
-	.  reduce 12
-
-
 state 118
-	llamadoFunc : ID '(' . parametro ')'  (60)
-	llamadoFunc : ID '(' . ')' ';'  (61)
+	sentenciaWHILE : WHILE condicion bloqueEjecutable .  (109)
 
-	LONG  shift 4
-	SINGLE  shift 5
-	ID  shift 104
-	')'  shift 166
-	.  error
-
-	tipo  goto 105
-	parametro  goto 167
+	.  reduce 109
 
 
 state 119
-	asignacion : ID ASIGN tipo . '(' expAritmetica ')' ';'  (75)
+	bloqueEjecutableNormal : BEGIN sentSoloEjecutables error .  (18)
 
-	'('  shift 168
-	.  error
+	.  reduce 18
 
 
 state 120
-	expAritmetica : expAritmetica . '+' termino  (50)
-	expAritmetica : expAritmetica . '-' termino  (51)
-	asignacion : ID ASIGN expAritmetica . ';'  (74)
-	asignacion : ID ASIGN expAritmetica . error  (78)
+	bloqueEjecutableNormal : BEGIN sentSoloEjecutables END .  (16)
 
-	error  shift 169
-	';'  shift 170
-	'+'  shift 123
-	'-'  shift 124
-	.  error
+	.  reduce 16
 
 
 state 121
-	factor : '-' CTE .  (58)
+	llamadoFunc : ID '(' . parametro ')'  (65)
+	llamadoFunc : ID '(' . ')' ';'  (66)
 
-	.  reduce 58
+	LONG  shift 4
+	SINGLE  shift 5
+	ID  shift 107
+	')'  shift 173
+	.  error
+
+	tipo  goto 108
+	parametro  goto 174
 
 
 state 122
-	asignacion : ID expAritmetica ';' .  (77)
+	asignacion : ID ASIGN tipo . '(' expAritmetica ')' ';'  (80)
 
-	.  reduce 77
+	'('  shift 175
+	.  error
 
 
 state 123
-	expAritmetica : expAritmetica '+' . termino  (50)
+	expAritmetica : expAritmetica . '+' termino  (55)
+	expAritmetica : expAritmetica . '-' termino  (56)
+	asignacion : ID ASIGN expAritmetica . ';'  (79)
+	asignacion : ID ASIGN expAritmetica . error  (83)
 
-	ID  shift 59
-	CTE  shift 60
-	'-'  shift 62
+	error  shift 176
+	';'  shift 177
+	'+'  shift 126
+	'-'  shift 127
 	.  error
-
-	termino  goto 171
-	factor  goto 65
-	llamadoFunc  goto 66
 
 
 state 124
-	expAritmetica : expAritmetica '-' . termino  (51)
+	factor : '-' CTE .  (63)
 
-	ID  shift 59
-	CTE  shift 60
-	'-'  shift 62
-	.  error
-
-	termino  goto 172
-	factor  goto 65
-	llamadoFunc  goto 66
+	.  reduce 63
 
 
 state 125
-	termino : termino '*' . factor  (53)
+	asignacion : ID expAritmetica ';' .  (82)
 
-	ID  shift 59
-	CTE  shift 60
-	'-'  shift 62
-	.  error
-
-	factor  goto 173
-	llamadoFunc  goto 66
+	.  reduce 82
 
 
 state 126
-	termino : termino '/' . factor  (54)
+	expAritmetica : expAritmetica '+' . termino  (55)
 
-	ID  shift 59
-	CTE  shift 60
-	'-'  shift 62
+	ID  shift 60
+	CTE  shift 61
+	'-'  shift 63
 	.  error
 
-	factor  goto 174
-	llamadoFunc  goto 66
+	termino  goto 178
+	factor  goto 66
+	llamadoFunc  goto 67
 
 
 state 127
+	expAritmetica : expAritmetica '-' . termino  (56)
+
+	ID  shift 60
+	CTE  shift 61
+	'-'  shift 63
+	.  error
+
+	termino  goto 179
+	factor  goto 66
+	llamadoFunc  goto 67
+
+
+state 128
+	termino : termino '*' . factor  (58)
+
+	ID  shift 60
+	CTE  shift 61
+	'-'  shift 63
+	.  error
+
+	factor  goto 180
+	llamadoFunc  goto 67
+
+
+state 129
+	termino : termino '/' . factor  (59)
+
+	ID  shift 60
+	CTE  shift 61
+	'-'  shift 63
+	.  error
+
+	factor  goto 181
+	llamadoFunc  goto 67
+
+
+state 130
 	bloqueTRYCATCH : TRY CATCH BEGIN . sentSoloEjecutables END  (8)
 
 	PRINT  shift 18
 	WHILE  shift 19
-	ID  shift 56
+	ID  shift 57
 	IF  shift 23
 	ASIGN  shift 24
 	'('  shift 25
 	.  error
 
-	sentEjecutables  goto 57
-	sentSoloEjecutables  goto 175
+	sentEjecutables  goto 58
+	sentSoloEjecutables  goto 182
 	condicion  goto 32
 	asignacion  goto 33
 	sentenciaIF  goto 34
@@ -1703,86 +1765,19 @@ state 127
 	sentenciaWHILE  goto 36
 
 
-state 128
+state 131
 	bloqueTRYCATCH : TRY sentEjecutables BEGIN . sentSoloEjecutables END  (9)
 
 	PRINT  shift 18
 	WHILE  shift 19
-	ID  shift 56
+	ID  shift 57
 	IF  shift 23
 	ASIGN  shift 24
 	'('  shift 25
 	.  error
 
-	sentEjecutables  goto 57
-	sentSoloEjecutables  goto 176
-	condicion  goto 32
-	asignacion  goto 33
-	sentenciaIF  goto 34
-	sentenciaPRINT  goto 35
-	sentenciaWHILE  goto 36
-
-
-state 129
-	bloqueTRYCATCH : TRY sentEjecutables CATCH . BEGIN sentSoloEjecutables END  (6)
-	bloqueTRYCATCH : TRY sentEjecutables CATCH . sentSoloEjecutables END  (10)
-	bloqueTRYCATCH : TRY sentEjecutables CATCH . BEGIN sentSoloEjecutables error  (11)
-
-	PRINT  shift 18
-	WHILE  shift 19
-	BEGIN  shift 177
-	ID  shift 56
-	IF  shift 23
-	ASIGN  shift 24
-	'('  shift 25
-	.  error
-
-	sentEjecutables  goto 57
-	sentSoloEjecutables  goto 178
-	condicion  goto 32
-	asignacion  goto 33
-	sentenciaIF  goto 34
-	sentenciaPRINT  goto 35
-	sentenciaWHILE  goto 36
-
-
-state 130
-	sentenciaIF : IF THEN bloqueEjecutable . ELSE bloqueEjecutable ENDIF ';'  (82)
-	sentenciaIF : IF THEN bloqueEjecutable . ENDIF ';'  (88)
-
-	ELSE  shift 179
-	ENDIF  shift 180
-	.  error
-
-
-state 131
-	sentenciaIF : IF condicion THEN . bloqueEjecutable ELSE bloqueEjecutable ENDIF ';'  (79)
-	sentenciaIF : IF condicion THEN . bloqueEjecutable ENDIF ';'  (80)
-	sentenciaIF : IF condicion THEN . ELSE bloqueEjecutable ENDIF ';'  (84)
-	sentenciaIF : IF condicion THEN . bloqueEjecutable ELSE ENDIF ';'  (85)
-	sentenciaIF : IF condicion THEN . bloqueEjecutable ELSE bloqueEjecutable ';'  (86)
-	sentenciaIF : IF condicion THEN . bloqueEjecutable ELSE bloqueEjecutable ENDIF error  (87)
-	sentenciaIF : IF condicion THEN . ENDIF ';'  (90)
-	sentenciaIF : IF condicion THEN . bloqueEjecutable ';'  (91)
-	sentenciaIF : IF condicion THEN . bloqueEjecutable ENDIF error  (92)
-
-	ELSE  shift 181
-	ENDIF  shift 182
-	PRINT  shift 18
-	WHILE  shift 19
-	BEGIN  shift 20
-	ID  shift 56
-	TRY  shift 22
-	IF  shift 23
-	ASIGN  shift 24
-	'('  shift 25
-	.  error
-
-	bloqueEjecutable  goto 183
-	bloqueTRYCATCH  goto 28
-	bloqueEjecutableNormal  goto 29
-	sentEjecutables  goto 30
-	sentSoloEjecutables  goto 31
+	sentEjecutables  goto 58
+	sentSoloEjecutables  goto 183
 	condicion  goto 32
 	asignacion  goto 33
 	sentenciaIF  goto 34
@@ -1791,132 +1786,199 @@ state 131
 
 
 state 132
-	sentenciaIF : IF condicion bloqueEjecutable . ELSE bloqueEjecutable ENDIF ';'  (83)
-	sentenciaIF : IF condicion bloqueEjecutable . ENDIF ';'  (89)
+	bloqueTRYCATCH : TRY sentEjecutables CATCH . BEGIN sentSoloEjecutables END  (6)
+	bloqueTRYCATCH : TRY sentEjecutables CATCH . sentSoloEjecutables END  (10)
+	bloqueTRYCATCH : TRY sentEjecutables CATCH . BEGIN sentSoloEjecutables error  (11)
 
-	ELSE  shift 184
-	ENDIF  shift 185
+	PRINT  shift 18
+	WHILE  shift 19
+	BEGIN  shift 184
+	ID  shift 57
+	IF  shift 23
+	ASIGN  shift 24
+	'('  shift 25
 	.  error
+
+	sentEjecutables  goto 58
+	sentSoloEjecutables  goto 185
+	condicion  goto 32
+	asignacion  goto 33
+	sentenciaIF  goto 34
+	sentenciaPRINT  goto 35
+	sentenciaWHILE  goto 36
 
 
 state 133
-	asignacion : ASIGN expAritmetica ';' .  (76)
+	sentenciaIF : IF THEN bloqueEjecutable . ELSE bloqueEjecutable ENDIF ';'  (87)
+	sentenciaIF : IF THEN bloqueEjecutable . ENDIF ';'  (93)
 
-	.  reduce 76
+	ELSE  shift 186
+	ENDIF  shift 187
+	.  error
 
 
 state 134
-	sentenciaPRINT : '(' CADENA ')' . ';'  (94)
+	sentenciaIF : IF condicion THEN . bloqueEjecutable ELSE bloqueEjecutable ENDIF ';'  (84)
+	sentenciaIF : IF condicion THEN . bloqueEjecutable ENDIF ';'  (85)
+	sentenciaIF : IF condicion THEN . ELSE bloqueEjecutable ENDIF ';'  (89)
+	sentenciaIF : IF condicion THEN . bloqueEjecutable ELSE ENDIF ';'  (90)
+	sentenciaIF : IF condicion THEN . bloqueEjecutable ELSE bloqueEjecutable ';'  (91)
+	sentenciaIF : IF condicion THEN . bloqueEjecutable ELSE bloqueEjecutable ENDIF error  (92)
+	sentenciaIF : IF condicion THEN . ENDIF ';'  (95)
+	sentenciaIF : IF condicion THEN . bloqueEjecutable ';'  (96)
+	sentenciaIF : IF condicion THEN . bloqueEjecutable ENDIF error  (97)
 
-	';'  shift 186
+	ELSE  shift 188
+	ENDIF  shift 189
+	PRINT  shift 18
+	WHILE  shift 19
+	BEGIN  shift 20
+	ID  shift 57
+	TRY  shift 22
+	IF  shift 23
+	ASIGN  shift 24
+	'('  shift 25
 	.  error
+
+	bloqueEjecutable  goto 190
+	bloqueTRYCATCH  goto 28
+	bloqueEjecutableNormal  goto 29
+	sentEjecutables  goto 30
+	sentSoloEjecutables  goto 31
+	condicion  goto 32
+	asignacion  goto 33
+	sentenciaIF  goto 34
+	sentenciaPRINT  goto 35
+	sentenciaWHILE  goto 36
 
 
 state 135
-	comparacion : tipo '(' . expAritmetica ')' comparador expAritmetica  (111)
-	comparacion : tipo '(' . expAritmetica ')' comparador tipo '(' expAritmetica ')'  (113)
+	sentenciaIF : IF condicion bloqueEjecutable . ELSE bloqueEjecutable ENDIF ';'  (88)
+	sentenciaIF : IF condicion bloqueEjecutable . ENDIF ';'  (94)
 
-	ID  shift 59
-	CTE  shift 60
-	'-'  shift 62
+	ELSE  shift 191
+	ENDIF  shift 192
 	.  error
-
-	expAritmetica  goto 187
-	termino  goto 64
-	factor  goto 65
-	llamadoFunc  goto 66
 
 
 state 136
-	comparacion : expAritmetica comparador . expAritmetica  (110)
-	comparacion : expAritmetica comparador . tipo '(' expAritmetica ')'  (112)
-	comparacion : expAritmetica comparador . error  (114)
+	asignacion : ASIGN expAritmetica ';' .  (81)
 
-	error  shift 188
-	LONG  shift 4
-	SINGLE  shift 5
-	ID  shift 59
-	CTE  shift 60
-	'-'  shift 62
-	.  error
-
-	tipo  goto 189
-	expAritmetica  goto 190
-	termino  goto 64
-	factor  goto 65
-	llamadoFunc  goto 66
+	.  reduce 81
 
 
 state 137
-	opLogico : AND .  (122)
+	sentenciaPRINT : '(' CADENA ')' . ';'  (99)
 
-	.  reduce 122
+	';'  shift 193
+	.  error
 
 
 state 138
-	opLogico : OR .  (123)
+	comparacion : tipo '(' . expAritmetica ')' comparador expAritmetica  (116)
+	comparacion : tipo '(' . expAritmetica ')' comparador tipo '(' expAritmetica ')'  (118)
 
-	.  reduce 123
+	ID  shift 60
+	CTE  shift 61
+	'-'  shift 63
+	.  error
+
+	expAritmetica  goto 194
+	termino  goto 65
+	factor  goto 66
+	llamadoFunc  goto 67
 
 
 state 139
-	condicion : '(' comparaciones ')' .  (106)
+	comparacion : expAritmetica comparador . expAritmetica  (115)
+	comparacion : expAritmetica comparador . tipo '(' expAritmetica ')'  (117)
+	comparacion : expAritmetica comparador . error  (119)
 
-	.  reduce 106
+	error  shift 195
+	LONG  shift 4
+	SINGLE  shift 5
+	ID  shift 60
+	CTE  shift 61
+	'-'  shift 63
+	.  error
+
+	tipo  goto 196
+	expAritmetica  goto 197
+	termino  goto 65
+	factor  goto 66
+	llamadoFunc  goto 67
 
 
 state 140
-	comparaciones : comparaciones opLogico . comparacion  (107)
-	comparaciones : comparaciones opLogico . error  (109)
+	opLogico : AND .  (127)
 
-	error  shift 191
-	LONG  shift 4
-	SINGLE  shift 5
-	ID  shift 59
-	CTE  shift 60
-	IGUAL  shift 73
-	DISTINTO  shift 74
-	MAYORIG  shift 75
-	MENORIG  shift 76
-	'-'  shift 62
-	'>'  shift 77
-	'<'  shift 78
-	.  error
-
-	tipo  goto 79
-	expAritmetica  goto 80
-	termino  goto 64
-	factor  goto 65
-	llamadoFunc  goto 66
-	comparacion  goto 192
-	comparador  goto 83
+	.  reduce 127
 
 
 state 141
-	expAritmetica : expAritmetica . '+' termino  (50)
-	expAritmetica : expAritmetica . '-' termino  (51)
-	comparacion : comparador expAritmetica .  (115)
+	opLogico : OR .  (128)
 
-	'+'  shift 123
-	'-'  shift 124
-	AND  reduce 115
-	OR  reduce 115
-	')'  reduce 115
+	.  reduce 128
 
 
 state 142
+	condicion : '(' comparaciones ')' .  (111)
+
+	.  reduce 111
+
+
+state 143
+	comparaciones : comparaciones opLogico . comparacion  (112)
+	comparaciones : comparaciones opLogico . error  (114)
+
+	error  shift 198
+	LONG  shift 4
+	SINGLE  shift 5
+	ID  shift 60
+	CTE  shift 61
+	IGUAL  shift 74
+	DISTINTO  shift 75
+	MAYORIG  shift 76
+	MENORIG  shift 77
+	'-'  shift 63
+	'>'  shift 78
+	'<'  shift 79
+	.  error
+
+	tipo  goto 80
+	expAritmetica  goto 81
+	termino  goto 65
+	factor  goto 66
+	llamadoFunc  goto 67
+	comparacion  goto 199
+	comparador  goto 84
+
+
+state 144
+	expAritmetica : expAritmetica . '+' termino  (55)
+	expAritmetica : expAritmetica . '-' termino  (56)
+	comparacion : comparador expAritmetica .  (120)
+
+	'+'  shift 126
+	'-'  shift 127
+	AND  reduce 120
+	OR  reduce 120
+	')'  reduce 120
+
+
+state 145
 	bloqueTRYCATCH : sentEjecutables CATCH BEGIN . sentSoloEjecutables END  (7)
 
 	PRINT  shift 18
 	WHILE  shift 19
-	ID  shift 56
+	ID  shift 57
 	IF  shift 23
 	ASIGN  shift 24
 	'('  shift 25
 	.  error
 
-	sentEjecutables  goto 57
-	sentSoloEjecutables  goto 193
+	sentEjecutables  goto 58
+	sentSoloEjecutables  goto 200
 	condicion  goto 32
 	asignacion  goto 33
 	sentenciaIF  goto 34
@@ -1924,505 +1986,449 @@ state 142
 	sentenciaWHILE  goto 36
 
 
-state 143
-	sentenciaIF : condicion THEN bloqueEjecutable . ELSE bloqueEjecutable ENDIF ';'  (81)
-
-	ELSE  shift 194
-	.  error
-
-
-state 144
-	sentenciaWHILE : condicion DO bloqueEjecutable .  (102)
-
-	.  reduce 102
-
-
-state 145
-	declaracionFunc : tipo FUNC ID '(' . parametro ')'  (62)
-	declaracionFunc : tipo FUNC ID '(' . ')'  (63)
-	declaracionFunc : tipo FUNC ID '(' . parametro error  (67)
-
-	LONG  shift 4
-	SINGLE  shift 5
-	ID  shift 104
-	')'  shift 195
-	.  error
-
-	tipo  goto 105
-	parametro  goto 196
-
-
 state 146
-	declaracionFunc : tipo FUNC ID parametro . ')'  (66)
+	sentenciaIF : condicion THEN bloqueEjecutable . ELSE bloqueEjecutable ENDIF ';'  (86)
 
-	')'  shift 197
+	ELSE  shift 201
 	.  error
 
 
 state 147
-	encabezadoFunc : tipo FUNC '(' ')' .  (46)
+	sentenciaWHILE : condicion DO bloqueEjecutable .  (107)
 
-	.  reduce 46
+	.  reduce 107
 
 
 state 148
-	encabezadoFunc : tipo FUNC '(' tipo . ')'  (43)
-	encabezadoFunc : tipo FUNC '(' tipo . error  (47)
+	declaracionFunc : tipo FUNC ID '(' . parametro ')'  (67)
+	declaracionFunc : tipo FUNC ID '(' . ')'  (68)
+	declaracionFunc : tipo FUNC ID '(' . parametro error  (72)
 
-	error  shift 198
-	')'  shift 199
+	LONG  shift 4
+	SINGLE  shift 5
+	ID  shift 107
+	')'  shift 202
 	.  error
+
+	tipo  goto 108
+	parametro  goto 203
 
 
 state 149
-	encabezadoFunc : tipo FUNC tipo ')' .  (45)
+	declaracionFunc : tipo FUNC ID parametro . ')'  (71)
 
-	.  reduce 45
+	')'  shift 204
+	.  error
 
 
 state 150
-	declaracionFunc : tipo ID '(' parametro . ')'  (65)
+	encabezadoFunc : tipo FUNC '(' ')' .  (51)
 
-	')'  shift 200
-	.  error
+	.  reduce 51
 
 
 state 151
-	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN . '(' retorno ')' ';' END  (15)
-	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN . retorno ')' END  (18)
-	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN . '(' ')' END  (19)
-	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN . '(' retorno END  (20)
+	encabezadoFunc : tipo FUNC '(' tipo . ')'  (48)
+	encabezadoFunc : tipo FUNC '(' tipo . error  (52)
 
-	LONG  shift 4
-	SINGLE  shift 5
-	ID  shift 59
-	CTE  shift 60
-	'('  shift 201
-	'-'  shift 62
+	error  shift 205
+	')'  shift 206
 	.  error
-
-	retorno  goto 202
-	tipo  goto 203
-	expAritmetica  goto 204
-	termino  goto 64
-	factor  goto 65
-	llamadoFunc  goto 66
 
 
 state 152
-	bloqueEjecutableFunc : BEGIN sentEjecutableFunc '(' . retorno ')' END  (17)
-	sentenciaPRINT : '(' . CADENA ')' ';'  (94)
-	condicion : '(' . comparaciones ')'  (106)
+	encabezadoFunc : tipo FUNC tipo ')' .  (50)
 
-	LONG  shift 4
-	SINGLE  shift 5
-	CADENA  shift 72
-	ID  shift 59
-	CTE  shift 60
-	IGUAL  shift 73
-	DISTINTO  shift 74
-	MAYORIG  shift 75
-	MENORIG  shift 76
-	'-'  shift 62
-	'>'  shift 77
-	'<'  shift 78
-	.  error
-
-	retorno  goto 205
-	tipo  goto 206
-	expAritmetica  goto 207
-	termino  goto 64
-	factor  goto 65
-	llamadoFunc  goto 66
-	comparaciones  goto 81
-	comparacion  goto 82
-	comparador  goto 83
+	.  reduce 50
 
 
 state 153
-	bloqueEjecutableFunc : sentEjecutableFunc RETURN '(' . retorno ')' END  (16)
+	declaracionFunc : tipo ID '(' parametro . ')'  (70)
 
-	LONG  shift 4
-	SINGLE  shift 5
-	ID  shift 59
-	CTE  shift 60
-	'-'  shift 62
+	')'  shift 207
 	.  error
-
-	retorno  goto 208
-	tipo  goto 203
-	expAritmetica  goto 204
-	termino  goto 64
-	factor  goto 65
-	llamadoFunc  goto 66
 
 
 state 154
-	sentenciaCONTRACT : CONTRACT '(' . condicion ')' ';'  (25)
+	TRYCATCHFunc : BEGIN bloqueTRYCATCH RETURN . '(' retorno ')' ';' END  (12)
 
-	'('  shift 54
+	'('  shift 208
 	.  error
-
-	condicion  goto 209
 
 
 state 155
-	sentenciaCONTRACT : CONTRACT ':' . '(' condicion ')' ';'  (24)
-	sentenciaCONTRACT : CONTRACT ':' . condicion ')' ';'  (26)
-	sentenciaCONTRACT : CONTRACT ':' . '(' ')' ';'  (27)
-	sentenciaCONTRACT : CONTRACT ':' . '(' condicion ';'  (28)
-	sentenciaCONTRACT : CONTRACT ':' . '(' condicion ')' error  (29)
+	TRYCATCHFunc : BEGIN bloqueTRYCATCH sentEjecutableFunc . RETURN '(' retorno ')' ';' END  (15)
+	sentEjecutableFunc : sentEjecutableFunc . sentEjecutables  (26)
+	sentEjecutableFunc : sentEjecutableFunc . sentenciaCONTRACT  (27)
 
-	'('  shift 210
+	PRINT  shift 18
+	RETURN  shift 209
+	WHILE  shift 19
+	ID  shift 57
+	CONTRACT  shift 102
+	IF  shift 23
+	ASIGN  shift 24
+	'('  shift 25
 	.  error
 
-	condicion  goto 211
+	sentEjecutables  goto 103
+	sentenciaCONTRACT  goto 104
+	condicion  goto 32
+	asignacion  goto 33
+	sentenciaIF  goto 34
+	sentenciaPRINT  goto 35
+	sentenciaWHILE  goto 36
 
 
 state 156
-	parametro : tipo ID .  (68)
+	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN . '(' retorno ')' ';' END  (19)
+	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN . retorno ')' END  (23)
+	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN . '(' ')' END  (24)
+	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN . '(' retorno END  (25)
 
-	.  reduce 68
+	LONG  shift 4
+	SINGLE  shift 5
+	ID  shift 60
+	CTE  shift 61
+	'('  shift 210
+	'-'  shift 63
+	.  error
+
+	retorno  goto 211
+	tipo  goto 212
+	expAritmetica  goto 213
+	termino  goto 65
+	factor  goto 66
+	llamadoFunc  goto 67
 
 
 state 157
-	declaracionFunc : FUNC ID '(' parametro ')' .  (64)
+	bloqueEjecutableFunc : BEGIN sentEjecutableFunc '(' . retorno ')' END  (22)
+	sentenciaPRINT : '(' . CADENA ')' ';'  (99)
+	condicion : '(' . comparaciones ')'  (111)
 
-	.  reduce 64
+	LONG  shift 4
+	SINGLE  shift 5
+	CADENA  shift 73
+	ID  shift 60
+	CTE  shift 61
+	IGUAL  shift 74
+	DISTINTO  shift 75
+	MAYORIG  shift 76
+	MENORIG  shift 77
+	'-'  shift 63
+	'>'  shift 78
+	'<'  shift 79
+	.  error
+
+	retorno  goto 214
+	tipo  goto 215
+	expAritmetica  goto 216
+	termino  goto 65
+	factor  goto 66
+	llamadoFunc  goto 67
+	comparaciones  goto 82
+	comparacion  goto 83
+	comparador  goto 84
 
 
 state 158
-	sentenciaPRINT : PRINT CADENA ')' ';' .  (95)
+	TRYCATCHFunc : BEGIN sentEjecutableFunc bloqueTRYCATCH . RETURN '(' retorno ')' ';' END  (13)
+	TRYCATCHFunc : BEGIN sentEjecutableFunc bloqueTRYCATCH . sentEjecutableFunc RETURN '(' retorno ')' ';' END  (14)
 
-	.  reduce 95
+	PRINT  shift 18
+	RETURN  shift 217
+	WHILE  shift 19
+	ID  shift 57
+	IF  shift 23
+	ASIGN  shift 24
+	'('  shift 25
+	.  error
+
+	sentEjecutables  goto 44
+	sentEjecutableFunc  goto 218
+	condicion  goto 32
+	asignacion  goto 33
+	sentenciaIF  goto 34
+	sentenciaPRINT  goto 35
+	sentenciaWHILE  goto 36
 
 
 state 159
-	sentenciaPRINT : PRINT '(' CADENA ')' . ';'  (93)
-	sentenciaPRINT : PRINT '(' CADENA ')' . error  (98)
+	bloqueTRYCATCH : sentEjecutables . CATCH BEGIN sentSoloEjecutables END  (7)
+	sentEjecutableFunc : sentEjecutableFunc sentEjecutables .  (26)
 
-	error  shift 212
-	';'  shift 213
-	.  error
+	CATCH  shift 85
+	PRINT  reduce 26
+	RETURN  reduce 26
+	WHILE  reduce 26
+	ID  reduce 26
+	CONTRACT  reduce 26
+	TRY  reduce 26
+	IF  reduce 26
+	ASIGN  reduce 26
+	'('  reduce 26
 
 
 state 160
-	sentenciaPRINT : PRINT '(' CADENA ';' .  (97)
+	bloqueEjecutableFunc : sentEjecutableFunc RETURN '(' . retorno ')' END  (21)
 
-	.  reduce 97
+	LONG  shift 4
+	SINGLE  shift 5
+	ID  shift 60
+	CTE  shift 61
+	'-'  shift 63
+	.  error
+
+	retorno  goto 219
+	tipo  goto 212
+	expAritmetica  goto 213
+	termino  goto 65
+	factor  goto 66
+	llamadoFunc  goto 67
 
 
 state 161
-	sentenciaPRINT : PRINT '(' ID ')' . ';'  (99)
+	sentenciaCONTRACT : CONTRACT '(' . condicion ')' ';'  (30)
 
-	';'  shift 214
+	'('  shift 55
 	.  error
+
+	condicion  goto 220
 
 
 state 162
-	sentenciaPRINT : PRINT '(' CTE ')' . ';'  (100)
+	sentenciaCONTRACT : CONTRACT ':' . '(' condicion ')' ';'  (29)
+	sentenciaCONTRACT : CONTRACT ':' . condicion ')' ';'  (31)
+	sentenciaCONTRACT : CONTRACT ':' . '(' ')' ';'  (32)
+	sentenciaCONTRACT : CONTRACT ':' . '(' condicion ';'  (33)
+	sentenciaCONTRACT : CONTRACT ':' . '(' condicion ')' error  (34)
 
-	';'  shift 215
+	'('  shift 221
 	.  error
+
+	condicion  goto 222
 
 
 state 163
-	sentenciaPRINT : PRINT '(' ')' ';' .  (96)
+	parametro : tipo ID .  (73)
 
-	.  reduce 96
+	.  reduce 73
 
 
 state 164
-	sentenciaWHILE : WHILE condicion DO error .  (105)
+	declaracionFunc : FUNC ID '(' parametro ')' .  (69)
 
-	.  reduce 105
+	.  reduce 69
 
 
 state 165
-	sentenciaWHILE : WHILE condicion DO bloqueEjecutable .  (101)
+	sentenciaPRINT : PRINT CADENA ')' ';' .  (100)
 
-	.  reduce 101
+	.  reduce 100
 
 
 state 166
-	llamadoFunc : ID '(' ')' . ';'  (61)
+	sentenciaPRINT : PRINT '(' CADENA ')' . ';'  (98)
+	sentenciaPRINT : PRINT '(' CADENA ')' . error  (103)
 
-	';'  shift 216
-	.  error
-
-
-state 167
-	llamadoFunc : ID '(' parametro . ')'  (60)
-
-	')'  shift 217
-	.  error
-
-
-state 168
-	asignacion : ID ASIGN tipo '(' . expAritmetica ')' ';'  (75)
-
-	ID  shift 59
-	CTE  shift 60
-	'-'  shift 62
-	.  error
-
-	expAritmetica  goto 218
-	termino  goto 64
-	factor  goto 65
-	llamadoFunc  goto 66
-
-
-state 169
-	asignacion : ID ASIGN expAritmetica error .  (78)
-
-	.  reduce 78
-
-
-state 170
-	asignacion : ID ASIGN expAritmetica ';' .  (74)
-
-	.  reduce 74
-
-
-state 171
-	expAritmetica : expAritmetica '+' termino .  (50)
-	termino : termino . '*' factor  (53)
-	termino : termino . '/' factor  (54)
-
-	'*'  shift 125
-	'/'  shift 126
-	error  reduce 50
-	END  reduce 50
-	IGUAL  reduce 50
-	DISTINTO  reduce 50
-	MAYORIG  reduce 50
-	MENORIG  reduce 50
-	AND  reduce 50
-	OR  reduce 50
-	')'  reduce 50
-	';'  reduce 50
-	'+'  reduce 50
-	'-'  reduce 50
-	'>'  reduce 50
-	'<'  reduce 50
-
-
-state 172
-	expAritmetica : expAritmetica '-' termino .  (51)
-	termino : termino . '*' factor  (53)
-	termino : termino . '/' factor  (54)
-
-	'*'  shift 125
-	'/'  shift 126
-	error  reduce 51
-	END  reduce 51
-	IGUAL  reduce 51
-	DISTINTO  reduce 51
-	MAYORIG  reduce 51
-	MENORIG  reduce 51
-	AND  reduce 51
-	OR  reduce 51
-	')'  reduce 51
-	';'  reduce 51
-	'+'  reduce 51
-	'-'  reduce 51
-	'>'  reduce 51
-	'<'  reduce 51
-
-
-state 173
-	termino : termino '*' factor .  (53)
-
-	.  reduce 53
-
-
-state 174
-	termino : termino '/' factor .  (54)
-
-	.  reduce 54
-
-
-state 175
-	bloqueTRYCATCH : TRY CATCH BEGIN sentSoloEjecutables . END  (8)
-	sentSoloEjecutables : sentSoloEjecutables . sentEjecutables  (30)
-
-	PRINT  shift 18
-	WHILE  shift 19
-	END  shift 219
-	ID  shift 56
-	IF  shift 23
-	ASIGN  shift 24
-	'('  shift 25
-	.  error
-
-	sentEjecutables  goto 86
-	condicion  goto 32
-	asignacion  goto 33
-	sentenciaIF  goto 34
-	sentenciaPRINT  goto 35
-	sentenciaWHILE  goto 36
-
-
-state 176
-	bloqueTRYCATCH : TRY sentEjecutables BEGIN sentSoloEjecutables . END  (9)
-	sentSoloEjecutables : sentSoloEjecutables . sentEjecutables  (30)
-
-	PRINT  shift 18
-	WHILE  shift 19
-	END  shift 220
-	ID  shift 56
-	IF  shift 23
-	ASIGN  shift 24
-	'('  shift 25
-	.  error
-
-	sentEjecutables  goto 86
-	condicion  goto 32
-	asignacion  goto 33
-	sentenciaIF  goto 34
-	sentenciaPRINT  goto 35
-	sentenciaWHILE  goto 36
-
-
-state 177
-	bloqueTRYCATCH : TRY sentEjecutables CATCH BEGIN . sentSoloEjecutables END  (6)
-	bloqueTRYCATCH : TRY sentEjecutables CATCH BEGIN . sentSoloEjecutables error  (11)
-
-	PRINT  shift 18
-	WHILE  shift 19
-	ID  shift 56
-	IF  shift 23
-	ASIGN  shift 24
-	'('  shift 25
-	.  error
-
-	sentEjecutables  goto 57
-	sentSoloEjecutables  goto 221
-	condicion  goto 32
-	asignacion  goto 33
-	sentenciaIF  goto 34
-	sentenciaPRINT  goto 35
-	sentenciaWHILE  goto 36
-
-
-state 178
-	bloqueTRYCATCH : TRY sentEjecutables CATCH sentSoloEjecutables . END  (10)
-	sentSoloEjecutables : sentSoloEjecutables . sentEjecutables  (30)
-
-	PRINT  shift 18
-	WHILE  shift 19
-	END  shift 222
-	ID  shift 56
-	IF  shift 23
-	ASIGN  shift 24
-	'('  shift 25
-	.  error
-
-	sentEjecutables  goto 86
-	condicion  goto 32
-	asignacion  goto 33
-	sentenciaIF  goto 34
-	sentenciaPRINT  goto 35
-	sentenciaWHILE  goto 36
-
-
-state 179
-	sentenciaIF : IF THEN bloqueEjecutable ELSE . bloqueEjecutable ENDIF ';'  (82)
-
-	PRINT  shift 18
-	WHILE  shift 19
-	BEGIN  shift 20
-	ID  shift 56
-	TRY  shift 22
-	IF  shift 23
-	ASIGN  shift 24
-	'('  shift 25
-	.  error
-
-	bloqueEjecutable  goto 223
-	bloqueTRYCATCH  goto 28
-	bloqueEjecutableNormal  goto 29
-	sentEjecutables  goto 30
-	sentSoloEjecutables  goto 31
-	condicion  goto 32
-	asignacion  goto 33
-	sentenciaIF  goto 34
-	sentenciaPRINT  goto 35
-	sentenciaWHILE  goto 36
-
-
-state 180
-	sentenciaIF : IF THEN bloqueEjecutable ENDIF . ';'  (88)
-
+	error  shift 223
 	';'  shift 224
 	.  error
 
 
-state 181
-	sentenciaIF : IF condicion THEN ELSE . bloqueEjecutable ENDIF ';'  (84)
+state 167
+	sentenciaPRINT : PRINT '(' CADENA ';' .  (102)
 
-	PRINT  shift 18
-	WHILE  shift 19
-	BEGIN  shift 20
-	ID  shift 56
-	TRY  shift 22
-	IF  shift 23
-	ASIGN  shift 24
-	'('  shift 25
+	.  reduce 102
+
+
+state 168
+	sentenciaPRINT : PRINT '(' ID ')' . ';'  (104)
+
+	';'  shift 225
 	.  error
 
-	bloqueEjecutable  goto 225
-	bloqueTRYCATCH  goto 28
-	bloqueEjecutableNormal  goto 29
-	sentEjecutables  goto 30
-	sentSoloEjecutables  goto 31
-	condicion  goto 32
-	asignacion  goto 33
-	sentenciaIF  goto 34
-	sentenciaPRINT  goto 35
-	sentenciaWHILE  goto 36
 
-
-state 182
-	sentenciaIF : IF condicion THEN ENDIF . ';'  (90)
+state 169
+	sentenciaPRINT : PRINT '(' CTE ')' . ';'  (105)
 
 	';'  shift 226
 	.  error
 
 
-state 183
-	sentenciaIF : IF condicion THEN bloqueEjecutable . ELSE bloqueEjecutable ENDIF ';'  (79)
-	sentenciaIF : IF condicion THEN bloqueEjecutable . ENDIF ';'  (80)
-	sentenciaIF : IF condicion THEN bloqueEjecutable . ELSE ENDIF ';'  (85)
-	sentenciaIF : IF condicion THEN bloqueEjecutable . ELSE bloqueEjecutable ';'  (86)
-	sentenciaIF : IF condicion THEN bloqueEjecutable . ELSE bloqueEjecutable ENDIF error  (87)
-	sentenciaIF : IF condicion THEN bloqueEjecutable . ';'  (91)
-	sentenciaIF : IF condicion THEN bloqueEjecutable . ENDIF error  (92)
+state 170
+	sentenciaPRINT : PRINT '(' ')' ';' .  (101)
 
-	ELSE  shift 227
-	ENDIF  shift 228
-	';'  shift 229
+	.  reduce 101
+
+
+state 171
+	sentenciaWHILE : WHILE condicion DO error .  (110)
+
+	.  reduce 110
+
+
+state 172
+	sentenciaWHILE : WHILE condicion DO bloqueEjecutable .  (106)
+
+	.  reduce 106
+
+
+state 173
+	llamadoFunc : ID '(' ')' . ';'  (66)
+
+	';'  shift 227
 	.  error
 
 
-state 184
-	sentenciaIF : IF condicion bloqueEjecutable ELSE . bloqueEjecutable ENDIF ';'  (83)
+state 174
+	llamadoFunc : ID '(' parametro . ')'  (65)
+
+	')'  shift 228
+	.  error
+
+
+state 175
+	asignacion : ID ASIGN tipo '(' . expAritmetica ')' ';'  (80)
+
+	ID  shift 60
+	CTE  shift 61
+	'-'  shift 63
+	.  error
+
+	expAritmetica  goto 229
+	termino  goto 65
+	factor  goto 66
+	llamadoFunc  goto 67
+
+
+state 176
+	asignacion : ID ASIGN expAritmetica error .  (83)
+
+	.  reduce 83
+
+
+state 177
+	asignacion : ID ASIGN expAritmetica ';' .  (79)
+
+	.  reduce 79
+
+
+state 178
+	expAritmetica : expAritmetica '+' termino .  (55)
+	termino : termino . '*' factor  (58)
+	termino : termino . '/' factor  (59)
+
+	'*'  shift 128
+	'/'  shift 129
+	error  reduce 55
+	END  reduce 55
+	IGUAL  reduce 55
+	DISTINTO  reduce 55
+	MAYORIG  reduce 55
+	MENORIG  reduce 55
+	AND  reduce 55
+	OR  reduce 55
+	')'  reduce 55
+	';'  reduce 55
+	'+'  reduce 55
+	'-'  reduce 55
+	'>'  reduce 55
+	'<'  reduce 55
+
+
+state 179
+	expAritmetica : expAritmetica '-' termino .  (56)
+	termino : termino . '*' factor  (58)
+	termino : termino . '/' factor  (59)
+
+	'*'  shift 128
+	'/'  shift 129
+	error  reduce 56
+	END  reduce 56
+	IGUAL  reduce 56
+	DISTINTO  reduce 56
+	MAYORIG  reduce 56
+	MENORIG  reduce 56
+	AND  reduce 56
+	OR  reduce 56
+	')'  reduce 56
+	';'  reduce 56
+	'+'  reduce 56
+	'-'  reduce 56
+	'>'  reduce 56
+	'<'  reduce 56
+
+
+state 180
+	termino : termino '*' factor .  (58)
+
+	.  reduce 58
+
+
+state 181
+	termino : termino '/' factor .  (59)
+
+	.  reduce 59
+
+
+state 182
+	bloqueTRYCATCH : TRY CATCH BEGIN sentSoloEjecutables . END  (8)
+	sentSoloEjecutables : sentSoloEjecutables . sentEjecutables  (35)
 
 	PRINT  shift 18
 	WHILE  shift 19
-	BEGIN  shift 20
-	ID  shift 56
-	TRY  shift 22
+	END  shift 230
+	ID  shift 57
 	IF  shift 23
 	ASIGN  shift 24
 	'('  shift 25
 	.  error
 
-	bloqueEjecutable  goto 230
-	bloqueTRYCATCH  goto 28
-	bloqueEjecutableNormal  goto 29
-	sentEjecutables  goto 30
-	sentSoloEjecutables  goto 31
+	sentEjecutables  goto 87
+	condicion  goto 32
+	asignacion  goto 33
+	sentenciaIF  goto 34
+	sentenciaPRINT  goto 35
+	sentenciaWHILE  goto 36
+
+
+state 183
+	bloqueTRYCATCH : TRY sentEjecutables BEGIN sentSoloEjecutables . END  (9)
+	sentSoloEjecutables : sentSoloEjecutables . sentEjecutables  (35)
+
+	PRINT  shift 18
+	WHILE  shift 19
+	END  shift 231
+	ID  shift 57
+	IF  shift 23
+	ASIGN  shift 24
+	'('  shift 25
+	.  error
+
+	sentEjecutables  goto 87
+	condicion  goto 32
+	asignacion  goto 33
+	sentenciaIF  goto 34
+	sentenciaPRINT  goto 35
+	sentenciaWHILE  goto 36
+
+
+state 184
+	bloqueTRYCATCH : TRY sentEjecutables CATCH BEGIN . sentSoloEjecutables END  (6)
+	bloqueTRYCATCH : TRY sentEjecutables CATCH BEGIN . sentSoloEjecutables error  (11)
+
+	PRINT  shift 18
+	WHILE  shift 19
+	ID  shift 57
+	IF  shift 23
+	ASIGN  shift 24
+	'('  shift 25
+	.  error
+
+	sentEjecutables  goto 58
+	sentSoloEjecutables  goto 232
 	condicion  goto 32
 	asignacion  goto 33
 	sentenciaIF  goto 34
@@ -2431,81 +2437,19 @@ state 184
 
 
 state 185
-	sentenciaIF : IF condicion bloqueEjecutable ENDIF . ';'  (89)
-
-	';'  shift 231
-	.  error
-
-
-state 186
-	sentenciaPRINT : '(' CADENA ')' ';' .  (94)
-
-	.  reduce 94
-
-
-state 187
-	expAritmetica : expAritmetica . '+' termino  (50)
-	expAritmetica : expAritmetica . '-' termino  (51)
-	comparacion : tipo '(' expAritmetica . ')' comparador expAritmetica  (111)
-	comparacion : tipo '(' expAritmetica . ')' comparador tipo '(' expAritmetica ')'  (113)
-
-	')'  shift 232
-	'+'  shift 123
-	'-'  shift 124
-	.  error
-
-
-state 188
-	comparacion : expAritmetica comparador error .  (114)
-
-	.  reduce 114
-
-
-state 189
-	comparacion : expAritmetica comparador tipo . '(' expAritmetica ')'  (112)
-
-	'('  shift 233
-	.  error
-
-
-state 190
-	expAritmetica : expAritmetica . '+' termino  (50)
-	expAritmetica : expAritmetica . '-' termino  (51)
-	comparacion : expAritmetica comparador expAritmetica .  (110)
-
-	'+'  shift 123
-	'-'  shift 124
-	AND  reduce 110
-	OR  reduce 110
-	')'  reduce 110
-
-
-state 191
-	comparaciones : comparaciones opLogico error .  (109)
-
-	.  reduce 109
-
-
-state 192
-	comparaciones : comparaciones opLogico comparacion .  (107)
-
-	.  reduce 107
-
-
-state 193
-	bloqueTRYCATCH : sentEjecutables CATCH BEGIN sentSoloEjecutables . END  (7)
-	sentSoloEjecutables : sentSoloEjecutables . sentEjecutables  (30)
+	bloqueTRYCATCH : TRY sentEjecutables CATCH sentSoloEjecutables . END  (10)
+	sentSoloEjecutables : sentSoloEjecutables . sentEjecutables  (35)
 
 	PRINT  shift 18
 	WHILE  shift 19
-	END  shift 234
-	ID  shift 56
+	END  shift 233
+	ID  shift 57
 	IF  shift 23
 	ASIGN  shift 24
 	'('  shift 25
 	.  error
 
-	sentEjecutables  goto 86
+	sentEjecutables  goto 87
 	condicion  goto 32
 	asignacion  goto 33
 	sentenciaIF  goto 34
@@ -2513,20 +2457,20 @@ state 193
 	sentenciaWHILE  goto 36
 
 
-state 194
-	sentenciaIF : condicion THEN bloqueEjecutable ELSE . bloqueEjecutable ENDIF ';'  (81)
+state 186
+	sentenciaIF : IF THEN bloqueEjecutable ELSE . bloqueEjecutable ENDIF ';'  (87)
 
 	PRINT  shift 18
 	WHILE  shift 19
 	BEGIN  shift 20
-	ID  shift 56
+	ID  shift 57
 	TRY  shift 22
 	IF  shift 23
 	ASIGN  shift 24
 	'('  shift 25
 	.  error
 
-	bloqueEjecutable  goto 235
+	bloqueEjecutable  goto 234
 	bloqueTRYCATCH  goto 28
 	bloqueEjecutableNormal  goto 29
 	sentEjecutables  goto 30
@@ -2538,257 +2482,500 @@ state 194
 	sentenciaWHILE  goto 36
 
 
-state 195
-	declaracionFunc : tipo FUNC ID '(' ')' .  (63)
+state 187
+	sentenciaIF : IF THEN bloqueEjecutable ENDIF . ';'  (93)
 
-	.  reduce 63
-
-
-state 196
-	declaracionFunc : tipo FUNC ID '(' parametro . ')'  (62)
-	declaracionFunc : tipo FUNC ID '(' parametro . error  (67)
-
-	error  shift 236
-	')'  shift 237
+	';'  shift 235
 	.  error
 
 
-state 197
-	declaracionFunc : tipo FUNC ID parametro ')' .  (66)
+state 188
+	sentenciaIF : IF condicion THEN ELSE . bloqueEjecutable ENDIF ';'  (89)
 
-	.  reduce 66
-
-
-state 198
-	encabezadoFunc : tipo FUNC '(' tipo error .  (47)
-
-	.  reduce 47
-
-
-state 199
-	encabezadoFunc : tipo FUNC '(' tipo ')' .  (43)
-
-	.  reduce 43
-
-
-state 200
-	declaracionFunc : tipo ID '(' parametro ')' .  (65)
-
-	.  reduce 65
-
-
-state 201
-	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN '(' . retorno ')' ';' END  (15)
-	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN '(' . ')' END  (19)
-	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN '(' . retorno END  (20)
-
-	LONG  shift 4
-	SINGLE  shift 5
-	ID  shift 59
-	CTE  shift 60
-	')'  shift 238
-	'-'  shift 62
+	PRINT  shift 18
+	WHILE  shift 19
+	BEGIN  shift 20
+	ID  shift 57
+	TRY  shift 22
+	IF  shift 23
+	ASIGN  shift 24
+	'('  shift 25
 	.  error
 
-	retorno  goto 239
-	tipo  goto 203
-	expAritmetica  goto 204
-	termino  goto 64
-	factor  goto 65
-	llamadoFunc  goto 66
+	bloqueEjecutable  goto 236
+	bloqueTRYCATCH  goto 28
+	bloqueEjecutableNormal  goto 29
+	sentEjecutables  goto 30
+	sentSoloEjecutables  goto 31
+	condicion  goto 32
+	asignacion  goto 33
+	sentenciaIF  goto 34
+	sentenciaPRINT  goto 35
+	sentenciaWHILE  goto 36
 
 
-state 202
-	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN retorno . ')' END  (18)
+state 189
+	sentenciaIF : IF condicion THEN ENDIF . ';'  (95)
 
-	')'  shift 240
+	';'  shift 237
 	.  error
 
 
-state 203
-	retorno : tipo . '(' expAritmetica ')'  (49)
+state 190
+	sentenciaIF : IF condicion THEN bloqueEjecutable . ELSE bloqueEjecutable ENDIF ';'  (84)
+	sentenciaIF : IF condicion THEN bloqueEjecutable . ENDIF ';'  (85)
+	sentenciaIF : IF condicion THEN bloqueEjecutable . ELSE ENDIF ';'  (90)
+	sentenciaIF : IF condicion THEN bloqueEjecutable . ELSE bloqueEjecutable ';'  (91)
+	sentenciaIF : IF condicion THEN bloqueEjecutable . ELSE bloqueEjecutable ENDIF error  (92)
+	sentenciaIF : IF condicion THEN bloqueEjecutable . ';'  (96)
+	sentenciaIF : IF condicion THEN bloqueEjecutable . ENDIF error  (97)
 
-	'('  shift 241
+	ELSE  shift 238
+	ENDIF  shift 239
+	';'  shift 240
 	.  error
 
 
-state 204
-	retorno : expAritmetica .  (48)
-	expAritmetica : expAritmetica . '+' termino  (50)
-	expAritmetica : expAritmetica . '-' termino  (51)
+state 191
+	sentenciaIF : IF condicion bloqueEjecutable ELSE . bloqueEjecutable ENDIF ';'  (88)
 
-	'+'  shift 123
-	'-'  shift 124
-	END  reduce 48
-	')'  reduce 48
+	PRINT  shift 18
+	WHILE  shift 19
+	BEGIN  shift 20
+	ID  shift 57
+	TRY  shift 22
+	IF  shift 23
+	ASIGN  shift 24
+	'('  shift 25
+	.  error
+
+	bloqueEjecutable  goto 241
+	bloqueTRYCATCH  goto 28
+	bloqueEjecutableNormal  goto 29
+	sentEjecutables  goto 30
+	sentSoloEjecutables  goto 31
+	condicion  goto 32
+	asignacion  goto 33
+	sentenciaIF  goto 34
+	sentenciaPRINT  goto 35
+	sentenciaWHILE  goto 36
 
 
-state 205
-	bloqueEjecutableFunc : BEGIN sentEjecutableFunc '(' retorno . ')' END  (17)
+state 192
+	sentenciaIF : IF condicion bloqueEjecutable ENDIF . ';'  (94)
 
-	')'  shift 242
+	';'  shift 242
 	.  error
 
 
-state 206
-	retorno : tipo . '(' expAritmetica ')'  (49)
-	comparacion : tipo . '(' expAritmetica ')' comparador expAritmetica  (111)
-	comparacion : tipo . '(' expAritmetica ')' comparador tipo '(' expAritmetica ')'  (113)
-
-	'('  shift 243
-	.  error
-
-
-state 207
-	retorno : expAritmetica .  (48)
-	expAritmetica : expAritmetica . '+' termino  (50)
-	expAritmetica : expAritmetica . '-' termino  (51)
-	comparacion : expAritmetica . comparador expAritmetica  (110)
-	comparacion : expAritmetica . comparador tipo '(' expAritmetica ')'  (112)
-	comparacion : expAritmetica . comparador error  (114)
-
-	IGUAL  shift 73
-	DISTINTO  shift 74
-	MAYORIG  shift 75
-	MENORIG  shift 76
-	'+'  shift 123
-	'-'  shift 124
-	'>'  shift 77
-	'<'  shift 78
-	')'  reduce 48
-
-	comparador  goto 136
-
-
-state 208
-	bloqueEjecutableFunc : sentEjecutableFunc RETURN '(' retorno . ')' END  (16)
-
-	')'  shift 244
-	.  error
-
-
-state 209
-	sentenciaCONTRACT : CONTRACT '(' condicion . ')' ';'  (25)
-
-	')'  shift 245
-	.  error
-
-
-state 210
-	sentenciaCONTRACT : CONTRACT ':' '(' . condicion ')' ';'  (24)
-	sentenciaCONTRACT : CONTRACT ':' '(' . ')' ';'  (27)
-	sentenciaCONTRACT : CONTRACT ':' '(' . condicion ';'  (28)
-	sentenciaCONTRACT : CONTRACT ':' '(' . condicion ')' error  (29)
-	condicion : '(' . comparaciones ')'  (106)
-
-	LONG  shift 4
-	SINGLE  shift 5
-	ID  shift 59
-	CTE  shift 60
-	IGUAL  shift 73
-	DISTINTO  shift 74
-	MAYORIG  shift 75
-	MENORIG  shift 76
-	'('  shift 54
-	')'  shift 246
-	'-'  shift 62
-	'>'  shift 77
-	'<'  shift 78
-	.  error
-
-	condicion  goto 247
-	tipo  goto 79
-	expAritmetica  goto 80
-	termino  goto 64
-	factor  goto 65
-	llamadoFunc  goto 66
-	comparaciones  goto 81
-	comparacion  goto 82
-	comparador  goto 83
-
-
-state 211
-	sentenciaCONTRACT : CONTRACT ':' condicion . ')' ';'  (26)
-
-	')'  shift 248
-	.  error
-
-
-state 212
-	sentenciaPRINT : PRINT '(' CADENA ')' error .  (98)
-
-	.  reduce 98
-
-
-state 213
-	sentenciaPRINT : PRINT '(' CADENA ')' ';' .  (93)
-
-	.  reduce 93
-
-
-state 214
-	sentenciaPRINT : PRINT '(' ID ')' ';' .  (99)
+state 193
+	sentenciaPRINT : '(' CADENA ')' ';' .  (99)
 
 	.  reduce 99
 
 
-state 215
-	sentenciaPRINT : PRINT '(' CTE ')' ';' .  (100)
+state 194
+	expAritmetica : expAritmetica . '+' termino  (55)
+	expAritmetica : expAritmetica . '-' termino  (56)
+	comparacion : tipo '(' expAritmetica . ')' comparador expAritmetica  (116)
+	comparacion : tipo '(' expAritmetica . ')' comparador tipo '(' expAritmetica ')'  (118)
 
-	.  reduce 100
-
-
-state 216
-	llamadoFunc : ID '(' ')' ';' .  (61)
-
-	.  reduce 61
-
-
-state 217
-	llamadoFunc : ID '(' parametro ')' .  (60)
-
-	.  reduce 60
-
-
-state 218
-	expAritmetica : expAritmetica . '+' termino  (50)
-	expAritmetica : expAritmetica . '-' termino  (51)
-	asignacion : ID ASIGN tipo '(' expAritmetica . ')' ';'  (75)
-
-	')'  shift 249
-	'+'  shift 123
-	'-'  shift 124
+	')'  shift 243
+	'+'  shift 126
+	'-'  shift 127
 	.  error
 
 
+state 195
+	comparacion : expAritmetica comparador error .  (119)
+
+	.  reduce 119
+
+
+state 196
+	comparacion : expAritmetica comparador tipo . '(' expAritmetica ')'  (117)
+
+	'('  shift 244
+	.  error
+
+
+state 197
+	expAritmetica : expAritmetica . '+' termino  (55)
+	expAritmetica : expAritmetica . '-' termino  (56)
+	comparacion : expAritmetica comparador expAritmetica .  (115)
+
+	'+'  shift 126
+	'-'  shift 127
+	AND  reduce 115
+	OR  reduce 115
+	')'  reduce 115
+
+
+state 198
+	comparaciones : comparaciones opLogico error .  (114)
+
+	.  reduce 114
+
+
+state 199
+	comparaciones : comparaciones opLogico comparacion .  (112)
+
+	.  reduce 112
+
+
+state 200
+	bloqueTRYCATCH : sentEjecutables CATCH BEGIN sentSoloEjecutables . END  (7)
+	sentSoloEjecutables : sentSoloEjecutables . sentEjecutables  (35)
+
+	PRINT  shift 18
+	WHILE  shift 19
+	END  shift 245
+	ID  shift 57
+	IF  shift 23
+	ASIGN  shift 24
+	'('  shift 25
+	.  error
+
+	sentEjecutables  goto 87
+	condicion  goto 32
+	asignacion  goto 33
+	sentenciaIF  goto 34
+	sentenciaPRINT  goto 35
+	sentenciaWHILE  goto 36
+
+
+state 201
+	sentenciaIF : condicion THEN bloqueEjecutable ELSE . bloqueEjecutable ENDIF ';'  (86)
+
+	PRINT  shift 18
+	WHILE  shift 19
+	BEGIN  shift 20
+	ID  shift 57
+	TRY  shift 22
+	IF  shift 23
+	ASIGN  shift 24
+	'('  shift 25
+	.  error
+
+	bloqueEjecutable  goto 246
+	bloqueTRYCATCH  goto 28
+	bloqueEjecutableNormal  goto 29
+	sentEjecutables  goto 30
+	sentSoloEjecutables  goto 31
+	condicion  goto 32
+	asignacion  goto 33
+	sentenciaIF  goto 34
+	sentenciaPRINT  goto 35
+	sentenciaWHILE  goto 36
+
+
+state 202
+	declaracionFunc : tipo FUNC ID '(' ')' .  (68)
+
+	.  reduce 68
+
+
+state 203
+	declaracionFunc : tipo FUNC ID '(' parametro . ')'  (67)
+	declaracionFunc : tipo FUNC ID '(' parametro . error  (72)
+
+	error  shift 247
+	')'  shift 248
+	.  error
+
+
+state 204
+	declaracionFunc : tipo FUNC ID parametro ')' .  (71)
+
+	.  reduce 71
+
+
+state 205
+	encabezadoFunc : tipo FUNC '(' tipo error .  (52)
+
+	.  reduce 52
+
+
+state 206
+	encabezadoFunc : tipo FUNC '(' tipo ')' .  (48)
+
+	.  reduce 48
+
+
+state 207
+	declaracionFunc : tipo ID '(' parametro ')' .  (70)
+
+	.  reduce 70
+
+
+state 208
+	TRYCATCHFunc : BEGIN bloqueTRYCATCH RETURN '(' . retorno ')' ';' END  (12)
+
+	LONG  shift 4
+	SINGLE  shift 5
+	ID  shift 60
+	CTE  shift 61
+	'-'  shift 63
+	.  error
+
+	retorno  goto 249
+	tipo  goto 212
+	expAritmetica  goto 213
+	termino  goto 65
+	factor  goto 66
+	llamadoFunc  goto 67
+
+
+state 209
+	TRYCATCHFunc : BEGIN bloqueTRYCATCH sentEjecutableFunc RETURN . '(' retorno ')' ';' END  (15)
+
+	'('  shift 250
+	.  error
+
+
+state 210
+	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN '(' . retorno ')' ';' END  (19)
+	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN '(' . ')' END  (24)
+	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN '(' . retorno END  (25)
+
+	LONG  shift 4
+	SINGLE  shift 5
+	ID  shift 60
+	CTE  shift 61
+	')'  shift 251
+	'-'  shift 63
+	.  error
+
+	retorno  goto 252
+	tipo  goto 212
+	expAritmetica  goto 213
+	termino  goto 65
+	factor  goto 66
+	llamadoFunc  goto 67
+
+
+state 211
+	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN retorno . ')' END  (23)
+
+	')'  shift 253
+	.  error
+
+
+state 212
+	retorno : tipo . '(' expAritmetica ')'  (54)
+
+	'('  shift 254
+	.  error
+
+
+state 213
+	retorno : expAritmetica .  (53)
+	expAritmetica : expAritmetica . '+' termino  (55)
+	expAritmetica : expAritmetica . '-' termino  (56)
+
+	'+'  shift 126
+	'-'  shift 127
+	END  reduce 53
+	')'  reduce 53
+
+
+state 214
+	bloqueEjecutableFunc : BEGIN sentEjecutableFunc '(' retorno . ')' END  (22)
+
+	')'  shift 255
+	.  error
+
+
+state 215
+	retorno : tipo . '(' expAritmetica ')'  (54)
+	comparacion : tipo . '(' expAritmetica ')' comparador expAritmetica  (116)
+	comparacion : tipo . '(' expAritmetica ')' comparador tipo '(' expAritmetica ')'  (118)
+
+	'('  shift 256
+	.  error
+
+
+state 216
+	retorno : expAritmetica .  (53)
+	expAritmetica : expAritmetica . '+' termino  (55)
+	expAritmetica : expAritmetica . '-' termino  (56)
+	comparacion : expAritmetica . comparador expAritmetica  (115)
+	comparacion : expAritmetica . comparador tipo '(' expAritmetica ')'  (117)
+	comparacion : expAritmetica . comparador error  (119)
+
+	IGUAL  shift 74
+	DISTINTO  shift 75
+	MAYORIG  shift 76
+	MENORIG  shift 77
+	'+'  shift 126
+	'-'  shift 127
+	'>'  shift 78
+	'<'  shift 79
+	')'  reduce 53
+
+	comparador  goto 139
+
+
+state 217
+	TRYCATCHFunc : BEGIN sentEjecutableFunc bloqueTRYCATCH RETURN . '(' retorno ')' ';' END  (13)
+
+	'('  shift 257
+	.  error
+
+
+state 218
+	TRYCATCHFunc : BEGIN sentEjecutableFunc bloqueTRYCATCH sentEjecutableFunc . RETURN '(' retorno ')' ';' END  (14)
+	sentEjecutableFunc : sentEjecutableFunc . sentEjecutables  (26)
+	sentEjecutableFunc : sentEjecutableFunc . sentenciaCONTRACT  (27)
+
+	PRINT  shift 18
+	RETURN  shift 258
+	WHILE  shift 19
+	ID  shift 57
+	CONTRACT  shift 102
+	IF  shift 23
+	ASIGN  shift 24
+	'('  shift 25
+	.  error
+
+	sentEjecutables  goto 103
+	sentenciaCONTRACT  goto 104
+	condicion  goto 32
+	asignacion  goto 33
+	sentenciaIF  goto 34
+	sentenciaPRINT  goto 35
+	sentenciaWHILE  goto 36
+
+
 state 219
+	bloqueEjecutableFunc : sentEjecutableFunc RETURN '(' retorno . ')' END  (21)
+
+	')'  shift 259
+	.  error
+
+
+state 220
+	sentenciaCONTRACT : CONTRACT '(' condicion . ')' ';'  (30)
+
+	')'  shift 260
+	.  error
+
+
+state 221
+	sentenciaCONTRACT : CONTRACT ':' '(' . condicion ')' ';'  (29)
+	sentenciaCONTRACT : CONTRACT ':' '(' . ')' ';'  (32)
+	sentenciaCONTRACT : CONTRACT ':' '(' . condicion ';'  (33)
+	sentenciaCONTRACT : CONTRACT ':' '(' . condicion ')' error  (34)
+	condicion : '(' . comparaciones ')'  (111)
+
+	LONG  shift 4
+	SINGLE  shift 5
+	ID  shift 60
+	CTE  shift 61
+	IGUAL  shift 74
+	DISTINTO  shift 75
+	MAYORIG  shift 76
+	MENORIG  shift 77
+	'('  shift 55
+	')'  shift 261
+	'-'  shift 63
+	'>'  shift 78
+	'<'  shift 79
+	.  error
+
+	condicion  goto 262
+	tipo  goto 80
+	expAritmetica  goto 81
+	termino  goto 65
+	factor  goto 66
+	llamadoFunc  goto 67
+	comparaciones  goto 82
+	comparacion  goto 83
+	comparador  goto 84
+
+
+state 222
+	sentenciaCONTRACT : CONTRACT ':' condicion . ')' ';'  (31)
+
+	')'  shift 263
+	.  error
+
+
+state 223
+	sentenciaPRINT : PRINT '(' CADENA ')' error .  (103)
+
+	.  reduce 103
+
+
+state 224
+	sentenciaPRINT : PRINT '(' CADENA ')' ';' .  (98)
+
+	.  reduce 98
+
+
+state 225
+	sentenciaPRINT : PRINT '(' ID ')' ';' .  (104)
+
+	.  reduce 104
+
+
+state 226
+	sentenciaPRINT : PRINT '(' CTE ')' ';' .  (105)
+
+	.  reduce 105
+
+
+state 227
+	llamadoFunc : ID '(' ')' ';' .  (66)
+
+	.  reduce 66
+
+
+state 228
+	llamadoFunc : ID '(' parametro ')' .  (65)
+
+	.  reduce 65
+
+
+state 229
+	expAritmetica : expAritmetica . '+' termino  (55)
+	expAritmetica : expAritmetica . '-' termino  (56)
+	asignacion : ID ASIGN tipo '(' expAritmetica . ')' ';'  (80)
+
+	')'  shift 264
+	'+'  shift 126
+	'-'  shift 127
+	.  error
+
+
+state 230
 	bloqueTRYCATCH : TRY CATCH BEGIN sentSoloEjecutables END .  (8)
 
 	.  reduce 8
 
 
-state 220
+state 231
 	bloqueTRYCATCH : TRY sentEjecutables BEGIN sentSoloEjecutables END .  (9)
 
 	.  reduce 9
 
 
-state 221
+state 232
 	bloqueTRYCATCH : TRY sentEjecutables CATCH BEGIN sentSoloEjecutables . END  (6)
 	bloqueTRYCATCH : TRY sentEjecutables CATCH BEGIN sentSoloEjecutables . error  (11)
-	sentSoloEjecutables : sentSoloEjecutables . sentEjecutables  (30)
+	sentSoloEjecutables : sentSoloEjecutables . sentEjecutables  (35)
 
-	error  shift 250
+	error  shift 265
 	PRINT  shift 18
 	WHILE  shift 19
-	END  shift 251
-	ID  shift 56
+	END  shift 266
+	ID  shift 57
 	IF  shift 23
 	ASIGN  shift 24
 	'('  shift 25
 	.  error
 
-	sentEjecutables  goto 86
+	sentEjecutables  goto 87
 	condicion  goto 32
 	asignacion  goto 33
 	sentenciaIF  goto 34
@@ -2796,56 +2983,56 @@ state 221
 	sentenciaWHILE  goto 36
 
 
-state 222
+state 233
 	bloqueTRYCATCH : TRY sentEjecutables CATCH sentSoloEjecutables END .  (10)
 
 	.  reduce 10
 
 
-state 223
-	sentenciaIF : IF THEN bloqueEjecutable ELSE bloqueEjecutable . ENDIF ';'  (82)
+state 234
+	sentenciaIF : IF THEN bloqueEjecutable ELSE bloqueEjecutable . ENDIF ';'  (87)
 
-	ENDIF  shift 252
+	ENDIF  shift 267
 	.  error
 
 
-state 224
-	sentenciaIF : IF THEN bloqueEjecutable ENDIF ';' .  (88)
+state 235
+	sentenciaIF : IF THEN bloqueEjecutable ENDIF ';' .  (93)
 
-	.  reduce 88
+	.  reduce 93
 
 
-state 225
-	sentenciaIF : IF condicion THEN ELSE bloqueEjecutable . ENDIF ';'  (84)
+state 236
+	sentenciaIF : IF condicion THEN ELSE bloqueEjecutable . ENDIF ';'  (89)
 
-	ENDIF  shift 253
+	ENDIF  shift 268
 	.  error
 
 
-state 226
-	sentenciaIF : IF condicion THEN ENDIF ';' .  (90)
+state 237
+	sentenciaIF : IF condicion THEN ENDIF ';' .  (95)
 
-	.  reduce 90
+	.  reduce 95
 
 
-state 227
-	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE . bloqueEjecutable ENDIF ';'  (79)
-	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE . ENDIF ';'  (85)
-	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE . bloqueEjecutable ';'  (86)
-	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE . bloqueEjecutable ENDIF error  (87)
+state 238
+	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE . bloqueEjecutable ENDIF ';'  (84)
+	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE . ENDIF ';'  (90)
+	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE . bloqueEjecutable ';'  (91)
+	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE . bloqueEjecutable ENDIF error  (92)
 
-	ENDIF  shift 254
+	ENDIF  shift 269
 	PRINT  shift 18
 	WHILE  shift 19
 	BEGIN  shift 20
-	ID  shift 56
+	ID  shift 57
 	TRY  shift 22
 	IF  shift 23
 	ASIGN  shift 24
 	'('  shift 25
 	.  error
 
-	bloqueEjecutable  goto 255
+	bloqueEjecutable  goto 270
 	bloqueTRYCATCH  goto 28
 	bloqueEjecutableNormal  goto 29
 	sentEjecutables  goto 30
@@ -2857,550 +3044,719 @@ state 227
 	sentenciaWHILE  goto 36
 
 
-state 228
-	sentenciaIF : IF condicion THEN bloqueEjecutable ENDIF . ';'  (80)
-	sentenciaIF : IF condicion THEN bloqueEjecutable ENDIF . error  (92)
+state 239
+	sentenciaIF : IF condicion THEN bloqueEjecutable ENDIF . ';'  (85)
+	sentenciaIF : IF condicion THEN bloqueEjecutable ENDIF . error  (97)
 
-	error  shift 256
-	';'  shift 257
+	error  shift 271
+	';'  shift 272
 	.  error
 
 
-state 229
-	sentenciaIF : IF condicion THEN bloqueEjecutable ';' .  (91)
+state 240
+	sentenciaIF : IF condicion THEN bloqueEjecutable ';' .  (96)
 
-	.  reduce 91
+	.  reduce 96
 
 
-state 230
-	sentenciaIF : IF condicion bloqueEjecutable ELSE bloqueEjecutable . ENDIF ';'  (83)
+state 241
+	sentenciaIF : IF condicion bloqueEjecutable ELSE bloqueEjecutable . ENDIF ';'  (88)
 
-	ENDIF  shift 258
+	ENDIF  shift 273
 	.  error
 
 
-state 231
-	sentenciaIF : IF condicion bloqueEjecutable ENDIF ';' .  (89)
+state 242
+	sentenciaIF : IF condicion bloqueEjecutable ENDIF ';' .  (94)
 
-	.  reduce 89
+	.  reduce 94
 
 
-state 232
-	comparacion : tipo '(' expAritmetica ')' . comparador expAritmetica  (111)
-	comparacion : tipo '(' expAritmetica ')' . comparador tipo '(' expAritmetica ')'  (113)
+state 243
+	comparacion : tipo '(' expAritmetica ')' . comparador expAritmetica  (116)
+	comparacion : tipo '(' expAritmetica ')' . comparador tipo '(' expAritmetica ')'  (118)
 
-	IGUAL  shift 73
-	DISTINTO  shift 74
-	MAYORIG  shift 75
-	MENORIG  shift 76
-	'>'  shift 77
-	'<'  shift 78
+	IGUAL  shift 74
+	DISTINTO  shift 75
+	MAYORIG  shift 76
+	MENORIG  shift 77
+	'>'  shift 78
+	'<'  shift 79
 	.  error
 
-	comparador  goto 259
+	comparador  goto 274
 
 
-state 233
-	comparacion : expAritmetica comparador tipo '(' . expAritmetica ')'  (112)
+state 244
+	comparacion : expAritmetica comparador tipo '(' . expAritmetica ')'  (117)
 
-	ID  shift 59
-	CTE  shift 60
-	'-'  shift 62
+	ID  shift 60
+	CTE  shift 61
+	'-'  shift 63
 	.  error
 
-	expAritmetica  goto 260
-	termino  goto 64
-	factor  goto 65
-	llamadoFunc  goto 66
+	expAritmetica  goto 275
+	termino  goto 65
+	factor  goto 66
+	llamadoFunc  goto 67
 
 
-state 234
+state 245
 	bloqueTRYCATCH : sentEjecutables CATCH BEGIN sentSoloEjecutables END .  (7)
 
 	.  reduce 7
 
 
-state 235
-	sentenciaIF : condicion THEN bloqueEjecutable ELSE bloqueEjecutable . ENDIF ';'  (81)
-
-	ENDIF  shift 261
-	.  error
-
-
-state 236
-	declaracionFunc : tipo FUNC ID '(' parametro error .  (67)
-
-	.  reduce 67
-
-
-state 237
-	declaracionFunc : tipo FUNC ID '(' parametro ')' .  (62)
-
-	.  reduce 62
-
-
-state 238
-	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN '(' ')' . END  (19)
-
-	END  shift 262
-	.  error
-
-
-state 239
-	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN '(' retorno . ')' ';' END  (15)
-	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN '(' retorno . END  (20)
-
-	END  shift 263
-	')'  shift 264
-	.  error
-
-
-state 240
-	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN retorno ')' . END  (18)
-
-	END  shift 265
-	.  error
-
-
-state 241
-	retorno : tipo '(' . expAritmetica ')'  (49)
-
-	ID  shift 59
-	CTE  shift 60
-	'-'  shift 62
-	.  error
-
-	expAritmetica  goto 266
-	termino  goto 64
-	factor  goto 65
-	llamadoFunc  goto 66
-
-
-state 242
-	bloqueEjecutableFunc : BEGIN sentEjecutableFunc '(' retorno ')' . END  (17)
-
-	END  shift 267
-	.  error
-
-
-state 243
-	retorno : tipo '(' . expAritmetica ')'  (49)
-	comparacion : tipo '(' . expAritmetica ')' comparador expAritmetica  (111)
-	comparacion : tipo '(' . expAritmetica ')' comparador tipo '(' expAritmetica ')'  (113)
-
-	ID  shift 59
-	CTE  shift 60
-	'-'  shift 62
-	.  error
-
-	expAritmetica  goto 268
-	termino  goto 64
-	factor  goto 65
-	llamadoFunc  goto 66
-
-
-state 244
-	bloqueEjecutableFunc : sentEjecutableFunc RETURN '(' retorno ')' . END  (16)
-
-	END  shift 269
-	.  error
-
-
-state 245
-	sentenciaCONTRACT : CONTRACT '(' condicion ')' . ';'  (25)
-
-	';'  shift 270
-	.  error
-
-
 state 246
-	sentenciaCONTRACT : CONTRACT ':' '(' ')' . ';'  (27)
+	sentenciaIF : condicion THEN bloqueEjecutable ELSE bloqueEjecutable . ENDIF ';'  (86)
 
-	';'  shift 271
+	ENDIF  shift 276
 	.  error
 
 
 state 247
-	sentenciaCONTRACT : CONTRACT ':' '(' condicion . ')' ';'  (24)
-	sentenciaCONTRACT : CONTRACT ':' '(' condicion . ';'  (28)
-	sentenciaCONTRACT : CONTRACT ':' '(' condicion . ')' error  (29)
+	declaracionFunc : tipo FUNC ID '(' parametro error .  (72)
 
-	')'  shift 272
-	';'  shift 273
-	.  error
+	.  reduce 72
 
 
 state 248
-	sentenciaCONTRACT : CONTRACT ':' condicion ')' . ';'  (26)
+	declaracionFunc : tipo FUNC ID '(' parametro ')' .  (67)
 
-	';'  shift 274
-	.  error
+	.  reduce 67
 
 
 state 249
-	asignacion : ID ASIGN tipo '(' expAritmetica ')' . ';'  (75)
+	TRYCATCHFunc : BEGIN bloqueTRYCATCH RETURN '(' retorno . ')' ';' END  (12)
 
-	';'  shift 275
+	')'  shift 277
 	.  error
 
 
 state 250
+	TRYCATCHFunc : BEGIN bloqueTRYCATCH sentEjecutableFunc RETURN '(' . retorno ')' ';' END  (15)
+
+	LONG  shift 4
+	SINGLE  shift 5
+	ID  shift 60
+	CTE  shift 61
+	'-'  shift 63
+	.  error
+
+	retorno  goto 278
+	tipo  goto 212
+	expAritmetica  goto 213
+	termino  goto 65
+	factor  goto 66
+	llamadoFunc  goto 67
+
+
+state 251
+	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN '(' ')' . END  (24)
+
+	END  shift 279
+	.  error
+
+
+state 252
+	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN '(' retorno . ')' ';' END  (19)
+	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN '(' retorno . END  (25)
+
+	END  shift 280
+	')'  shift 281
+	.  error
+
+
+state 253
+	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN retorno ')' . END  (23)
+
+	END  shift 282
+	.  error
+
+
+state 254
+	retorno : tipo '(' . expAritmetica ')'  (54)
+
+	ID  shift 60
+	CTE  shift 61
+	'-'  shift 63
+	.  error
+
+	expAritmetica  goto 283
+	termino  goto 65
+	factor  goto 66
+	llamadoFunc  goto 67
+
+
+state 255
+	bloqueEjecutableFunc : BEGIN sentEjecutableFunc '(' retorno ')' . END  (22)
+
+	END  shift 284
+	.  error
+
+
+state 256
+	retorno : tipo '(' . expAritmetica ')'  (54)
+	comparacion : tipo '(' . expAritmetica ')' comparador expAritmetica  (116)
+	comparacion : tipo '(' . expAritmetica ')' comparador tipo '(' expAritmetica ')'  (118)
+
+	ID  shift 60
+	CTE  shift 61
+	'-'  shift 63
+	.  error
+
+	expAritmetica  goto 285
+	termino  goto 65
+	factor  goto 66
+	llamadoFunc  goto 67
+
+
+state 257
+	TRYCATCHFunc : BEGIN sentEjecutableFunc bloqueTRYCATCH RETURN '(' . retorno ')' ';' END  (13)
+
+	LONG  shift 4
+	SINGLE  shift 5
+	ID  shift 60
+	CTE  shift 61
+	'-'  shift 63
+	.  error
+
+	retorno  goto 286
+	tipo  goto 212
+	expAritmetica  goto 213
+	termino  goto 65
+	factor  goto 66
+	llamadoFunc  goto 67
+
+
+state 258
+	TRYCATCHFunc : BEGIN sentEjecutableFunc bloqueTRYCATCH sentEjecutableFunc RETURN . '(' retorno ')' ';' END  (14)
+
+	'('  shift 287
+	.  error
+
+
+state 259
+	bloqueEjecutableFunc : sentEjecutableFunc RETURN '(' retorno ')' . END  (21)
+
+	END  shift 288
+	.  error
+
+
+state 260
+	sentenciaCONTRACT : CONTRACT '(' condicion ')' . ';'  (30)
+
+	';'  shift 289
+	.  error
+
+
+state 261
+	sentenciaCONTRACT : CONTRACT ':' '(' ')' . ';'  (32)
+
+	';'  shift 290
+	.  error
+
+
+state 262
+	sentenciaCONTRACT : CONTRACT ':' '(' condicion . ')' ';'  (29)
+	sentenciaCONTRACT : CONTRACT ':' '(' condicion . ';'  (33)
+	sentenciaCONTRACT : CONTRACT ':' '(' condicion . ')' error  (34)
+
+	')'  shift 291
+	';'  shift 292
+	.  error
+
+
+state 263
+	sentenciaCONTRACT : CONTRACT ':' condicion ')' . ';'  (31)
+
+	';'  shift 293
+	.  error
+
+
+state 264
+	asignacion : ID ASIGN tipo '(' expAritmetica ')' . ';'  (80)
+
+	';'  shift 294
+	.  error
+
+
+state 265
 	bloqueTRYCATCH : TRY sentEjecutables CATCH BEGIN sentSoloEjecutables error .  (11)
 
 	.  reduce 11
 
 
-state 251
+state 266
 	bloqueTRYCATCH : TRY sentEjecutables CATCH BEGIN sentSoloEjecutables END .  (6)
 
 	.  reduce 6
 
 
-state 252
-	sentenciaIF : IF THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF . ';'  (82)
-
-	';'  shift 276
-	.  error
-
-
-state 253
-	sentenciaIF : IF condicion THEN ELSE bloqueEjecutable ENDIF . ';'  (84)
-
-	';'  shift 277
-	.  error
-
-
-state 254
-	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE ENDIF . ';'  (85)
-
-	';'  shift 278
-	.  error
-
-
-state 255
-	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable . ENDIF ';'  (79)
-	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable . ';'  (86)
-	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable . ENDIF error  (87)
-
-	ENDIF  shift 279
-	';'  shift 280
-	.  error
-
-
-state 256
-	sentenciaIF : IF condicion THEN bloqueEjecutable ENDIF error .  (92)
-
-	.  reduce 92
-
-
-state 257
-	sentenciaIF : IF condicion THEN bloqueEjecutable ENDIF ';' .  (80)
-
-	.  reduce 80
-
-
-state 258
-	sentenciaIF : IF condicion bloqueEjecutable ELSE bloqueEjecutable ENDIF . ';'  (83)
-
-	';'  shift 281
-	.  error
-
-
-state 259
-	comparacion : tipo '(' expAritmetica ')' comparador . expAritmetica  (111)
-	comparacion : tipo '(' expAritmetica ')' comparador . tipo '(' expAritmetica ')'  (113)
-
-	LONG  shift 4
-	SINGLE  shift 5
-	ID  shift 59
-	CTE  shift 60
-	'-'  shift 62
-	.  error
-
-	tipo  goto 282
-	expAritmetica  goto 283
-	termino  goto 64
-	factor  goto 65
-	llamadoFunc  goto 66
-
-
-state 260
-	expAritmetica : expAritmetica . '+' termino  (50)
-	expAritmetica : expAritmetica . '-' termino  (51)
-	comparacion : expAritmetica comparador tipo '(' expAritmetica . ')'  (112)
-
-	')'  shift 284
-	'+'  shift 123
-	'-'  shift 124
-	.  error
-
-
-state 261
-	sentenciaIF : condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF . ';'  (81)
-
-	';'  shift 285
-	.  error
-
-
-state 262
-	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN '(' ')' END .  (19)
-
-	.  reduce 19
-
-
-state 263
-	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN '(' retorno END .  (20)
-
-	.  reduce 20
-
-
-state 264
-	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN '(' retorno ')' . ';' END  (15)
-
-	';'  shift 286
-	.  error
-
-
-state 265
-	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN retorno ')' END .  (18)
-
-	.  reduce 18
-
-
-state 266
-	retorno : tipo '(' expAritmetica . ')'  (49)
-	expAritmetica : expAritmetica . '+' termino  (50)
-	expAritmetica : expAritmetica . '-' termino  (51)
-
-	')'  shift 287
-	'+'  shift 123
-	'-'  shift 124
-	.  error
-
-
 state 267
-	bloqueEjecutableFunc : BEGIN sentEjecutableFunc '(' retorno ')' END .  (17)
+	sentenciaIF : IF THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF . ';'  (87)
 
-	.  reduce 17
+	';'  shift 295
+	.  error
 
 
 state 268
-	retorno : tipo '(' expAritmetica . ')'  (49)
-	expAritmetica : expAritmetica . '+' termino  (50)
-	expAritmetica : expAritmetica . '-' termino  (51)
-	comparacion : tipo '(' expAritmetica . ')' comparador expAritmetica  (111)
-	comparacion : tipo '(' expAritmetica . ')' comparador tipo '(' expAritmetica ')'  (113)
+	sentenciaIF : IF condicion THEN ELSE bloqueEjecutable ENDIF . ';'  (89)
 
-	')'  shift 288
-	'+'  shift 123
-	'-'  shift 124
+	';'  shift 296
 	.  error
 
 
 state 269
-	bloqueEjecutableFunc : sentEjecutableFunc RETURN '(' retorno ')' END .  (16)
+	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE ENDIF . ';'  (90)
 
-	.  reduce 16
-
-
-state 270
-	sentenciaCONTRACT : CONTRACT '(' condicion ')' ';' .  (25)
-
-	.  reduce 25
-
-
-state 271
-	sentenciaCONTRACT : CONTRACT ':' '(' ')' ';' .  (27)
-
-	.  reduce 27
-
-
-state 272
-	sentenciaCONTRACT : CONTRACT ':' '(' condicion ')' . ';'  (24)
-	sentenciaCONTRACT : CONTRACT ':' '(' condicion ')' . error  (29)
-
-	error  shift 289
-	';'  shift 290
+	';'  shift 297
 	.  error
 
 
-state 273
-	sentenciaCONTRACT : CONTRACT ':' '(' condicion ';' .  (28)
+state 270
+	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable . ENDIF ';'  (84)
+	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable . ';'  (91)
+	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable . ENDIF error  (92)
 
-	.  reduce 28
-
-
-state 274
-	sentenciaCONTRACT : CONTRACT ':' condicion ')' ';' .  (26)
-
-	.  reduce 26
+	ENDIF  shift 298
+	';'  shift 299
+	.  error
 
 
-state 275
-	asignacion : ID ASIGN tipo '(' expAritmetica ')' ';' .  (75)
+state 271
+	sentenciaIF : IF condicion THEN bloqueEjecutable ENDIF error .  (97)
 
-	.  reduce 75
-
-
-state 276
-	sentenciaIF : IF THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF ';' .  (82)
-
-	.  reduce 82
+	.  reduce 97
 
 
-state 277
-	sentenciaIF : IF condicion THEN ELSE bloqueEjecutable ENDIF ';' .  (84)
-
-	.  reduce 84
-
-
-state 278
-	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE ENDIF ';' .  (85)
+state 272
+	sentenciaIF : IF condicion THEN bloqueEjecutable ENDIF ';' .  (85)
 
 	.  reduce 85
 
 
+state 273
+	sentenciaIF : IF condicion bloqueEjecutable ELSE bloqueEjecutable ENDIF . ';'  (88)
+
+	';'  shift 300
+	.  error
+
+
+state 274
+	comparacion : tipo '(' expAritmetica ')' comparador . expAritmetica  (116)
+	comparacion : tipo '(' expAritmetica ')' comparador . tipo '(' expAritmetica ')'  (118)
+
+	LONG  shift 4
+	SINGLE  shift 5
+	ID  shift 60
+	CTE  shift 61
+	'-'  shift 63
+	.  error
+
+	tipo  goto 301
+	expAritmetica  goto 302
+	termino  goto 65
+	factor  goto 66
+	llamadoFunc  goto 67
+
+
+state 275
+	expAritmetica : expAritmetica . '+' termino  (55)
+	expAritmetica : expAritmetica . '-' termino  (56)
+	comparacion : expAritmetica comparador tipo '(' expAritmetica . ')'  (117)
+
+	')'  shift 303
+	'+'  shift 126
+	'-'  shift 127
+	.  error
+
+
+state 276
+	sentenciaIF : condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF . ';'  (86)
+
+	';'  shift 304
+	.  error
+
+
+state 277
+	TRYCATCHFunc : BEGIN bloqueTRYCATCH RETURN '(' retorno ')' . ';' END  (12)
+
+	';'  shift 305
+	.  error
+
+
+state 278
+	TRYCATCHFunc : BEGIN bloqueTRYCATCH sentEjecutableFunc RETURN '(' retorno . ')' ';' END  (15)
+
+	')'  shift 306
+	.  error
+
+
 state 279
-	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF . ';'  (79)
-	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF . error  (87)
-
-	error  shift 291
-	';'  shift 292
-	.  error
-
-
-state 280
-	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable ';' .  (86)
-
-	.  reduce 86
-
-
-state 281
-	sentenciaIF : IF condicion bloqueEjecutable ELSE bloqueEjecutable ENDIF ';' .  (83)
-
-	.  reduce 83
-
-
-state 282
-	comparacion : tipo '(' expAritmetica ')' comparador tipo . '(' expAritmetica ')'  (113)
-
-	'('  shift 293
-	.  error
-
-
-state 283
-	expAritmetica : expAritmetica . '+' termino  (50)
-	expAritmetica : expAritmetica . '-' termino  (51)
-	comparacion : tipo '(' expAritmetica ')' comparador expAritmetica .  (111)
-
-	'+'  shift 123
-	'-'  shift 124
-	AND  reduce 111
-	OR  reduce 111
-	')'  reduce 111
-
-
-state 284
-	comparacion : expAritmetica comparador tipo '(' expAritmetica ')' .  (112)
-
-	.  reduce 112
-
-
-state 285
-	sentenciaIF : condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF ';' .  (81)
-
-	.  reduce 81
-
-
-state 286
-	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN '(' retorno ')' ';' . END  (15)
-
-	END  shift 294
-	.  error
-
-
-state 287
-	retorno : tipo '(' expAritmetica ')' .  (49)
-
-	.  reduce 49
-
-
-state 288
-	retorno : tipo '(' expAritmetica ')' .  (49)
-	comparacion : tipo '(' expAritmetica ')' . comparador expAritmetica  (111)
-	comparacion : tipo '(' expAritmetica ')' . comparador tipo '(' expAritmetica ')'  (113)
-
-	IGUAL  shift 73
-	DISTINTO  shift 74
-	MAYORIG  shift 75
-	MENORIG  shift 76
-	'>'  shift 77
-	'<'  shift 78
-	')'  reduce 49
-
-	comparador  goto 259
-
-
-state 289
-	sentenciaCONTRACT : CONTRACT ':' '(' condicion ')' error .  (29)
-
-	.  reduce 29
-
-
-state 290
-	sentenciaCONTRACT : CONTRACT ':' '(' condicion ')' ';' .  (24)
+	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN '(' ')' END .  (24)
 
 	.  reduce 24
 
 
+state 280
+	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN '(' retorno END .  (25)
+
+	.  reduce 25
+
+
+state 281
+	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN '(' retorno ')' . ';' END  (19)
+
+	';'  shift 307
+	.  error
+
+
+state 282
+	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN retorno ')' END .  (23)
+
+	.  reduce 23
+
+
+state 283
+	retorno : tipo '(' expAritmetica . ')'  (54)
+	expAritmetica : expAritmetica . '+' termino  (55)
+	expAritmetica : expAritmetica . '-' termino  (56)
+
+	')'  shift 308
+	'+'  shift 126
+	'-'  shift 127
+	.  error
+
+
+state 284
+	bloqueEjecutableFunc : BEGIN sentEjecutableFunc '(' retorno ')' END .  (22)
+
+	.  reduce 22
+
+
+state 285
+	retorno : tipo '(' expAritmetica . ')'  (54)
+	expAritmetica : expAritmetica . '+' termino  (55)
+	expAritmetica : expAritmetica . '-' termino  (56)
+	comparacion : tipo '(' expAritmetica . ')' comparador expAritmetica  (116)
+	comparacion : tipo '(' expAritmetica . ')' comparador tipo '(' expAritmetica ')'  (118)
+
+	')'  shift 309
+	'+'  shift 126
+	'-'  shift 127
+	.  error
+
+
+state 286
+	TRYCATCHFunc : BEGIN sentEjecutableFunc bloqueTRYCATCH RETURN '(' retorno . ')' ';' END  (13)
+
+	')'  shift 310
+	.  error
+
+
+state 287
+	TRYCATCHFunc : BEGIN sentEjecutableFunc bloqueTRYCATCH sentEjecutableFunc RETURN '(' . retorno ')' ';' END  (14)
+
+	LONG  shift 4
+	SINGLE  shift 5
+	ID  shift 60
+	CTE  shift 61
+	'-'  shift 63
+	.  error
+
+	retorno  goto 311
+	tipo  goto 212
+	expAritmetica  goto 213
+	termino  goto 65
+	factor  goto 66
+	llamadoFunc  goto 67
+
+
+state 288
+	bloqueEjecutableFunc : sentEjecutableFunc RETURN '(' retorno ')' END .  (21)
+
+	.  reduce 21
+
+
+state 289
+	sentenciaCONTRACT : CONTRACT '(' condicion ')' ';' .  (30)
+
+	.  reduce 30
+
+
+state 290
+	sentenciaCONTRACT : CONTRACT ':' '(' ')' ';' .  (32)
+
+	.  reduce 32
+
+
 state 291
-	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF error .  (87)
+	sentenciaCONTRACT : CONTRACT ':' '(' condicion ')' . ';'  (29)
+	sentenciaCONTRACT : CONTRACT ':' '(' condicion ')' . error  (34)
+
+	error  shift 312
+	';'  shift 313
+	.  error
+
+
+state 292
+	sentenciaCONTRACT : CONTRACT ':' '(' condicion ';' .  (33)
+
+	.  reduce 33
+
+
+state 293
+	sentenciaCONTRACT : CONTRACT ':' condicion ')' ';' .  (31)
+
+	.  reduce 31
+
+
+state 294
+	asignacion : ID ASIGN tipo '(' expAritmetica ')' ';' .  (80)
+
+	.  reduce 80
+
+
+state 295
+	sentenciaIF : IF THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF ';' .  (87)
 
 	.  reduce 87
 
 
-state 292
-	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF ';' .  (79)
+state 296
+	sentenciaIF : IF condicion THEN ELSE bloqueEjecutable ENDIF ';' .  (89)
 
-	.  reduce 79
+	.  reduce 89
 
 
-state 293
-	comparacion : tipo '(' expAritmetica ')' comparador tipo '(' . expAritmetica ')'  (113)
+state 297
+	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE ENDIF ';' .  (90)
 
-	ID  shift 59
-	CTE  shift 60
-	'-'  shift 62
+	.  reduce 90
+
+
+state 298
+	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF . ';'  (84)
+	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF . error  (92)
+
+	error  shift 314
+	';'  shift 315
 	.  error
 
-	expAritmetica  goto 295
-	termino  goto 64
-	factor  goto 65
-	llamadoFunc  goto 66
+
+state 299
+	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable ';' .  (91)
+
+	.  reduce 91
 
 
-state 294
-	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN '(' retorno ')' ';' END .  (15)
+state 300
+	sentenciaIF : IF condicion bloqueEjecutable ELSE bloqueEjecutable ENDIF ';' .  (88)
+
+	.  reduce 88
+
+
+state 301
+	comparacion : tipo '(' expAritmetica ')' comparador tipo . '(' expAritmetica ')'  (118)
+
+	'('  shift 316
+	.  error
+
+
+state 302
+	expAritmetica : expAritmetica . '+' termino  (55)
+	expAritmetica : expAritmetica . '-' termino  (56)
+	comparacion : tipo '(' expAritmetica ')' comparador expAritmetica .  (116)
+
+	'+'  shift 126
+	'-'  shift 127
+	AND  reduce 116
+	OR  reduce 116
+	')'  reduce 116
+
+
+state 303
+	comparacion : expAritmetica comparador tipo '(' expAritmetica ')' .  (117)
+
+	.  reduce 117
+
+
+state 304
+	sentenciaIF : condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF ';' .  (86)
+
+	.  reduce 86
+
+
+state 305
+	TRYCATCHFunc : BEGIN bloqueTRYCATCH RETURN '(' retorno ')' ';' . END  (12)
+
+	END  shift 317
+	.  error
+
+
+state 306
+	TRYCATCHFunc : BEGIN bloqueTRYCATCH sentEjecutableFunc RETURN '(' retorno ')' . ';' END  (15)
+
+	';'  shift 318
+	.  error
+
+
+state 307
+	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN '(' retorno ')' ';' . END  (19)
+
+	END  shift 319
+	.  error
+
+
+state 308
+	retorno : tipo '(' expAritmetica ')' .  (54)
+
+	.  reduce 54
+
+
+state 309
+	retorno : tipo '(' expAritmetica ')' .  (54)
+	comparacion : tipo '(' expAritmetica ')' . comparador expAritmetica  (116)
+	comparacion : tipo '(' expAritmetica ')' . comparador tipo '(' expAritmetica ')'  (118)
+
+	IGUAL  shift 74
+	DISTINTO  shift 75
+	MAYORIG  shift 76
+	MENORIG  shift 77
+	'>'  shift 78
+	'<'  shift 79
+	')'  reduce 54
+
+	comparador  goto 274
+
+
+state 310
+	TRYCATCHFunc : BEGIN sentEjecutableFunc bloqueTRYCATCH RETURN '(' retorno ')' . ';' END  (13)
+
+	';'  shift 320
+	.  error
+
+
+state 311
+	TRYCATCHFunc : BEGIN sentEjecutableFunc bloqueTRYCATCH sentEjecutableFunc RETURN '(' retorno . ')' ';' END  (14)
+
+	')'  shift 321
+	.  error
+
+
+state 312
+	sentenciaCONTRACT : CONTRACT ':' '(' condicion ')' error .  (34)
+
+	.  reduce 34
+
+
+state 313
+	sentenciaCONTRACT : CONTRACT ':' '(' condicion ')' ';' .  (29)
+
+	.  reduce 29
+
+
+state 314
+	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF error .  (92)
+
+	.  reduce 92
+
+
+state 315
+	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF ';' .  (84)
+
+	.  reduce 84
+
+
+state 316
+	comparacion : tipo '(' expAritmetica ')' comparador tipo '(' . expAritmetica ')'  (118)
+
+	ID  shift 60
+	CTE  shift 61
+	'-'  shift 63
+	.  error
+
+	expAritmetica  goto 322
+	termino  goto 65
+	factor  goto 66
+	llamadoFunc  goto 67
+
+
+state 317
+	TRYCATCHFunc : BEGIN bloqueTRYCATCH RETURN '(' retorno ')' ';' END .  (12)
+
+	.  reduce 12
+
+
+state 318
+	TRYCATCHFunc : BEGIN bloqueTRYCATCH sentEjecutableFunc RETURN '(' retorno ')' ';' . END  (15)
+
+	END  shift 323
+	.  error
+
+
+state 319
+	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN '(' retorno ')' ';' END .  (19)
+
+	.  reduce 19
+
+
+state 320
+	TRYCATCHFunc : BEGIN sentEjecutableFunc bloqueTRYCATCH RETURN '(' retorno ')' ';' . END  (13)
+
+	END  shift 324
+	.  error
+
+
+state 321
+	TRYCATCHFunc : BEGIN sentEjecutableFunc bloqueTRYCATCH sentEjecutableFunc RETURN '(' retorno ')' . ';' END  (14)
+
+	';'  shift 325
+	.  error
+
+
+state 322
+	expAritmetica : expAritmetica . '+' termino  (55)
+	expAritmetica : expAritmetica . '-' termino  (56)
+	comparacion : tipo '(' expAritmetica ')' comparador tipo '(' expAritmetica . ')'  (118)
+
+	')'  shift 326
+	'+'  shift 126
+	'-'  shift 127
+	.  error
+
+
+state 323
+	TRYCATCHFunc : BEGIN bloqueTRYCATCH sentEjecutableFunc RETURN '(' retorno ')' ';' END .  (15)
 
 	.  reduce 15
 
 
-state 295
-	expAritmetica : expAritmetica . '+' termino  (50)
-	expAritmetica : expAritmetica . '-' termino  (51)
-	comparacion : tipo '(' expAritmetica ')' comparador tipo '(' expAritmetica . ')'  (113)
+state 324
+	TRYCATCHFunc : BEGIN sentEjecutableFunc bloqueTRYCATCH RETURN '(' retorno ')' ';' END .  (13)
 
-	')'  shift 296
-	'+'  shift 123
-	'-'  shift 124
+	.  reduce 13
+
+
+state 325
+	TRYCATCHFunc : BEGIN sentEjecutableFunc bloqueTRYCATCH sentEjecutableFunc RETURN '(' retorno ')' ';' . END  (14)
+
+	END  shift 327
 	.  error
 
 
-state 296
-	comparacion : tipo '(' expAritmetica ')' comparador tipo '(' expAritmetica ')' .  (113)
+state 326
+	comparacion : tipo '(' expAritmetica ')' comparador tipo '(' expAritmetica ')' .  (118)
 
-	.  reduce 113
+	.  reduce 118
 
 
-40 terminals, 34 nonterminals
-129 grammar rules, 297 states
+state 327
+	TRYCATCHFunc : BEGIN sentEjecutableFunc bloqueTRYCATCH sentEjecutableFunc RETURN '(' retorno ')' ';' END .  (14)
+
+	.  reduce 14
+
+
+40 terminals, 35 nonterminals
+134 grammar rules, 328 states
