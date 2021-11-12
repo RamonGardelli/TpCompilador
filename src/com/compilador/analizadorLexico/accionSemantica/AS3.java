@@ -36,7 +36,7 @@ public class AS3 extends AccionSemantica {
                 int result = AnalizadorLexico.existeEnTDS(_reading);
 
                 if (result == -1) {
-                    AnalizadorLexico.tablaDeSimbolos.put(_reading, new TDSObject(_indexTDS, "ID"));
+                    AnalizadorLexico.tablaDeSimbolos.put(_reading, new TDSObject( "ID"));
                     AnalizadorLexico.indexTDS++;
                 }else{
                     _indexTDS = result;

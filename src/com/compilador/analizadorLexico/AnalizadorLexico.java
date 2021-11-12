@@ -185,7 +185,7 @@ public class AnalizadorLexico {
         TDSObject result = tablaDeSimbolos.get(input);
         if(result != null){
         	result.setContRef(result.getContRef()+1);
-            return result.getRefId();
+            return 1;
         }
         return -1;
     }
@@ -211,7 +211,7 @@ public class AnalizadorLexico {
         if(result != null){
         	if (result.getContRef()==1)
         		{
-        			tablaDeSimbolos.put("-"+ref, new TDSObject (result.getRefId(), result.getTipoVariable()));
+        			tablaDeSimbolos.put("-"+ref, new TDSObject (result.getTipoVariable()));
         			tablaDeSimbolos.remove(ref);
         		}
         	else 
@@ -224,7 +224,7 @@ public class AnalizadorLexico {
         			}
         		else 
         		{
-        			tablaDeSimbolos.put("-"+ref, new TDSObject (indexTDS, result.getTipoVariable()));
+        			tablaDeSimbolos.put("-"+ref, new TDSObject ( result.getTipoVariable()));
         			indexTDS++;
         			result.setContRef(result.getContRef()-1);
         		}

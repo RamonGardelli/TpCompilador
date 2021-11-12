@@ -25,6 +25,10 @@ public class AnalizadorSintactico {
     
     public static Nodo arbolFunc;
 
+    public static String ambitoActual = "@main";
+
+    public static String tipoActual = "";
+
     public static void agregarAnalisis(String analisis){
         listaAnalisis.add(analisis);
     }
@@ -33,6 +37,33 @@ public class AnalizadorSintactico {
         listaErroresSintacticos.add(error);
     }
 
+    public static String getReferenciaPorAmbito(String input){
+        String fullKey = input + ambitoActual;
+        while(!fullKey.equals(input)){
+            if(!AnalizadorLexico.tablaDeSimbolos.containsKey(fullKey)){
+                fullKey = fullKey.substring(0,fullKey.lastIndexOf("@"));
+            }
+            else
+                break;
+        }
+        if(fullKey.equals(input))
+            return null;
+
+        return fullKey;
+    }
+
+    public static boolean esVariableRedeclarada(String input) {
+        TDSObject value = AnalizadorLexico.getLexemaObject(input);
+        if( value != null) {
+            if ( value.getTipoContenido().equals("VAR")){
+                AnalizadorSintactico.agregarError("Redeclaracion de variable (Linea " + AnalizadorLexico.numLinea + ")");
+            }else{
+                AnalizadorSintactico.agregarError("Redeclaracion de procedimiento (Linea " + AnalizadorLexico.numLinea + ")");
+            }
+            return true;
+        }
+        return false;
+    }
 
     public static void main(String[] args) {
 

@@ -18,7 +18,7 @@ public class AS7 extends AccionSemantica{
             int _indexTDS = AnalizadorLexico.indexTDS;
             int result = AnalizadorLexico.existeEnTDS(AnalizadorLexico.reading);
             if(result == -1){
-                AnalizadorLexico.tablaDeSimbolos.put(AnalizadorLexico.reading,new TDSObject(_indexTDS,"LONG"));
+                AnalizadorLexico.tablaDeSimbolos.put(AnalizadorLexico.reading,new TDSObject("LONG"));
                 AnalizadorLexico.indexTDS++;
             }else{
                 _indexTDS = result;
