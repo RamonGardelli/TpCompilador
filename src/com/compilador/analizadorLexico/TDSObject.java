@@ -29,7 +29,7 @@ public class TDSObject {
     }
 
     public String imprimir(){
-        return  " Tipo Variable: "+ tipoVariable;
+        return  " Tipo Variable: "+ tipoVariable + "|| TIPO Contenido: " + tipoContenido + "|| CONT REF: " + contRef;
     }
 
 	public String getTipoContenido() {

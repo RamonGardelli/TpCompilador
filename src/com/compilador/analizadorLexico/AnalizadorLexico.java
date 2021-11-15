@@ -18,7 +18,7 @@ public class AnalizadorLexico {
     public static int indexTDS = 0;
     public static boolean finArchivo =false;
 
-    public static HashMap<String, TDSObject> tablaDeSimbolos = new HashMap<>();
+    public static HashMap<String, TDSObject> tablaDeSimbolos = new HashMap<String,TDSObject>();
     public static Vector<String> listaDeErrores = new Vector<>();
     public static Vector<String> listaDeWarnings = new Vector<>();
 

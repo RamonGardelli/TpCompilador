@@ -1,10 +1,15 @@
-progCteRangoAcept
-LONG aux ;
-SINGLE aux2;
-BEGIN
-	aux := -2147483647;
-	aux := 2147483646 ;
-	aux2 := 3.40282346S+37 ;
-	aux2 := 1.17549436S-37 ;
+Funcion
+LONG x,z;
+LONG FUNC suma (LONG x)
+	LONG y;
+	BEGIN
+		x:= y+x;
+		RETURN (x);
+	END
 
+
+BEGIN
+
+	x:=4;
+	x:= suma(z);
 END

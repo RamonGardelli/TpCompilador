@@ -139,34 +139,56 @@ sentenciasDeclarativas : declaraVariable
 		       | declaraVarFunc 
 		       ;
 
-declaraVariable: tipo listaVariables ';' {AnalizadorSintactico.agregarAnalisis("Declaracion de variable. (Linea " + AnalizadorLexico.numLinea + ")");
-                /* MODIFICAR CUANDO ESTE LISTA LISTAVARIABLES
-                if( AnalizadorSintactico.esVariableRedeclarada($3.sval + AnalizadorSintactico.ambitoActual)){
-                                //corto arbol
-                            }else{
-                                TDSObject aux = AnalizadorLexico.tablaDeSimbolos.remove($3.sval);
-                                aux.setTipoContenido("FUNC");
-                                AnalizadorLexico.tablaDeSimbolos.put($3.sval + AnalizadorSintactico.ambitoActual,aux);
-                                $$=$3;
-                            }
-                */
+declaraVariable: tipo listaVariables ';' {
+                    AnalizadorSintactico.agregarAnalisis("Declaracion de variable. (Linea " + AnalizadorLexico.numLinea + ")");
             }
 	       | listaVariables ';' {AnalizadorSintactico.agregarError("error falta 'tipo' (Linea " + AnalizadorLexico.numLinea + ")");}
 	       | tipo listaVariables error {AnalizadorSintactico.agregarError("error falta ';' (Linea " + AnalizadorLexico.numLinea + ")");}
 	       ;
 
+listaVariables: listaVariables ',' ID {
+                		     if( AnalizadorSintactico.esVariableRedeclarada($3.sval + AnalizadorSintactico.ambitoActual)){
+                                   //corto arbol
+                             }else{
+                                TDSObject aux = AnalizadorLexico.tablaDeSimbolos.remove($3.sval);
+                                aux.setTipoContenido(AnalizadorSintactico.tipoActual);
+                                AnalizadorLexico.tablaDeSimbolos.put($3.sval + AnalizadorSintactico.ambitoActual,aux);
+                             }
+                            }
+	      |ID {
+	                if( AnalizadorSintactico.esVariableRedeclarada($1.sval + AnalizadorSintactico.ambitoActual)){
+                        //corto arbol
+                    }else{
+                    TDSObject aux = AnalizadorLexico.tablaDeSimbolos.remove($1.sval);
+                     aux.setTipoContenido(AnalizadorSintactico.tipoActual);
+                    AnalizadorLexico.tablaDeSimbolos.put($1.sval + AnalizadorSintactico.ambitoActual,aux);
+                }
+	      }
+	      | listaVariables ',' {AnalizadorSintactico.agregarError("falta ID (Linea " + AnalizadorLexico.numLinea + ")");}
+	      // listaVariables ID error por falta de coma, da shift reduce
+	      ;
+
 declaraFunc: declaracionFunc bloqueDeclarativo bloqueEjecutableFunc {
         AnalizadorSintactico.agregarAnalisis("Funcion reconocida en. (Linea " + AnalizadorLexico.numLinea + ")");
-        $$=new ParserVal (new Nodo($1.sval, (Nodo)$3.obj, null));}
-	   | declaracionFunc bloqueEjecutableFunc {AnalizadorSintactico.agregarAnalisis("Funcion reconocida en. (Linea " + AnalizadorLexico.numLinea + ")");}
+        $$=new ParserVal (new Nodo($1.sval, (Nodo)$3.obj, null));
+        AnalizadorSintactico.ambitoActual = AnalizadorSintactico.ambitoActual.substring(0,AnalizadorSintactico.ambitoActual.lastIndexOf("@"));
+        }
+	   | declaracionFunc bloqueEjecutableFunc {
+	        AnalizadorSintactico.agregarAnalisis("Funcion reconocida en. (Linea " + AnalizadorLexico.numLinea + ")");
+	        $$=new ParserVal (new Nodo($1.sval, (Nodo)$2.obj, null));
+	        AnalizadorSintactico.ambitoActual = AnalizadorSintactico.ambitoActual.substring(0,AnalizadorSintactico.ambitoActual.lastIndexOf("@"));
+	   }
 	   ;
 
-declaraVarFunc:  encabezadoFunc listaVariables ';' {AnalizadorSintactico.agregarAnalisis("Declaracion de variable. (Linea " + AnalizadorLexico.numLinea + ")");}
+declaraVarFunc:  encabezadoFunc listaVariables ';' {AnalizadorSintactico.agregarAnalisis("Declaracion de variable. (Linea " + AnalizadorLexico.numLinea + ")");
+            }
 	      | encabezadoFunc ';' {AnalizadorSintactico.agregarError("error falta variable (Linea " + AnalizadorLexico.numLinea + ")");}
 	      | encabezadoFunc listaVariables error {AnalizadorSintactico.agregarError("error falta ';' (Linea " + AnalizadorLexico.numLinea + ")");}
 	      ;
 
-encabezadoFunc: tipo FUNC '(' tipo ')' 
+encabezadoFunc: tipo FUNC '(' tipo ')' {
+            AnalizadorSintactico.tipoActual = $1.sval;
+           }
 	      | FUNC '(' tipo ')' {AnalizadorSintactico.agregarError("error falta tipo antes de FUNC (Linea " + AnalizadorLexico.numLinea + ")");}
 	      | tipo FUNC tipo ')'{AnalizadorSintactico.agregarError("error falta '(' (Linea " + AnalizadorLexico.numLinea + ")");}
 	      | tipo FUNC '(' ')' {AnalizadorSintactico.agregarError("error falta tipo entre parentesis (Linea " + AnalizadorLexico.numLinea + ")");}
@@ -180,19 +202,22 @@ retorno : expAritmetica {$$=$1;}
 
 
 
-
-
-
 expAritmetica: expAritmetica '+' termino  {
-					  $$= new ParserVal(new Nodo("+", (Nodo)$1.obj, (Nodo)$3.obj));
-                                          String tipo = AnalizadorSintactico.calculadorTipo("+",((Nodo)$1.obj).getTipo(),((Nodo)$3.obj).getTipo());
-                                          ((Nodo)$$.obj).setTipo(tipo);
-                                          }
+                      if (((Nodo)$1.obj).getTipo().equals(((Nodo)$3.obj).getTipo())){
+                        	$$= new ParserVal(new Nodo("+", (Nodo)$1.obj, (Nodo)$3.obj));
+                        	((Nodo)$$.obj).setTipo(((Nodo)$3.obj).getTipo());
+                      }else{
+                            AnalizadorSintactico.agregarError("Incompatibilidad de tipos + (Linea " + AnalizadorLexico.numLinea + ")");
+                      }
+                      }
 	     | expAritmetica '-' termino  {
-					                  $$= new ParserVal(new Nodo("-", (Nodo)$1.obj, (Nodo)$3.obj));
-					                  String tipo = AnalizadorSintactico.calculadorTipo("-",((Nodo)$1.obj).getTipo(),((Nodo)$3.obj).getTipo());
-                                      ((Nodo)$$.obj).setTipo(tipo);
-					                  }
+                      if (((Nodo)$1.obj).getTipo().equals(((Nodo)$3.obj).getTipo())){
+                        	$$= new ParserVal(new Nodo("-", (Nodo)$1.obj, (Nodo)$3.obj));
+                        	((Nodo)$$.obj).setTipo(((Nodo)$3.obj).getTipo());
+                      }else{
+                            AnalizadorSintactico.agregarError("Incompatibilidad de tipos - (Linea " + AnalizadorLexico.numLinea + ")");
+                      }
+					  }
 	     | termino	 {
 	                 $$=$1;
 	                 }
@@ -203,14 +228,20 @@ expAritmetica: expAritmetica '+' termino  {
 
 
 termino : termino '*' factor	{
-				                $$= new ParserVal(new Nodo("*", (Nodo)$1.obj, (Nodo)$3.obj));
-                                String tipo = AnalizadorSintactico.calculadorTipo("*",((Nodo)$1.obj).getTipo(),((Nodo)$3.obj).getTipo());
-                                ((Nodo)$$.obj).setTipo(tipo);
+                      if (((Nodo)$1.obj).getTipo().equals(((Nodo)$3.obj).getTipo())){
+                        	$$= new ParserVal(new Nodo("*", (Nodo)$1.obj, (Nodo)$3.obj));
+                        	((Nodo)$$.obj).setTipo(((Nodo)$3.obj).getTipo());
+                      }else{
+                            AnalizadorSintactico.agregarError("Incompatibilidad de tipos * (Linea " + AnalizadorLexico.numLinea + ")");
+                      }
 				                }
 	| termino '/' factor	{
-				            $$= new ParserVal(new Nodo("/", (Nodo)$1.obj, (Nodo)$3.obj));
-                            String tipo = AnalizadorSintactico.calculadorTipo("/",((Nodo)$1.obj).getTipo(),((Nodo)$3.obj).getTipo());
-                            ((Nodo)$$.obj).setTipo(tipo);
+                      if (((Nodo)$1.obj).getTipo().equals(((Nodo)$3.obj).getTipo())){
+                        	$$= new ParserVal(new Nodo("/", (Nodo)$1.obj, (Nodo)$3.obj));
+                        	((Nodo)$$.obj).setTipo(((Nodo)$3.obj).getTipo());
+                      }else{
+                            AnalizadorSintactico.agregarError("Incompatibilidad de tipos / (Linea " + AnalizadorLexico.numLinea + ")");
+                      }
 				            }
 	| factor		        {
 	                        $$ = $1;
@@ -222,12 +253,13 @@ termino : termino '*' factor	{
 
 
 factor  : ID  	{
-                     String lexema = getReferenciaPorAmbito($1.sval)
+                     String lexema = AnalizadorSintactico.getReferenciaPorAmbito($1.sval);
                      if(lexema != null){
+                        AnalizadorLexico.tablaDeSimbolos.remove($1.sval);
                         TDSObject value = AnalizadorLexico.getLexemaObject(lexema);
                         $$= new ParserVal(new Nodo($1.sval));
                         ((Nodo)$$.obj).setTipo(value.getTipoVariable());
-                        ((Nodo)$$.obj).setTipoContenido("VAR");
+                        //((Nodo)$$.obj).setTipoContenido("VAR");
                      }else{
                          AnalizadorSintactico.agregarError("ID no definido (Linea " + AnalizadorLexico.numLinea + ")");
                          //stop generacion de arbol
@@ -267,14 +299,16 @@ factor  : ID  	{
 	| llamadoFunc {$$=$1;}
 	;
 
-llamadoFunc: ID '(' parametro ')' 
+llamadoFunc: ID '(' ID ')'
 		{
 		  String variable = AnalizadorSintactico.getReferenciaPorAmbito($1.sval);
 		  if(variable != null){
+		    AnalizadorLexico.tablaDeSimbolos.remove($1.sval);
 		    TDSObject value = AnalizadorLexico.getLexemaObject(variable);
 		    if(value.getTipoContenido().equals("FUNC")){
+		        ParserVal aux2= new ParserVal($3.sval);
 		        ParserVal aux= new ParserVal($1.sval);
-		        $$= new ParserVal(new Nodo("LF",(Nodo)aux.obj, (Nodo)$3.obj ));
+		        $$= new ParserVal(new Nodo("LF",(Nodo)aux.obj, (Nodo)aux2.obj ));
 		        ((Nodo)$$.obj).setTipo(value.getTipoVariable());
 		    }else{
 		        AnalizadorSintactico.agregarError("ID pertenece a variable, no a Funcion (Linea " + AnalizadorLexico.numLinea + ")");
@@ -285,7 +319,24 @@ llamadoFunc: ID '(' parametro ')'
              //error
 		  }
 		  }
-	   | ID '(' ')' ';'
+	   | ID '(' ')' ';' {
+	   		  String variable = AnalizadorSintactico.getReferenciaPorAmbito($1.sval);
+       		  if(variable != null){
+       		    AnalizadorLexico.tablaDeSimbolos.remove($1.sval);
+       		    TDSObject value = AnalizadorLexico.getLexemaObject(variable);
+       		    if(value.getTipoContenido().equals("FUNC")){
+       		        ParserVal aux= new ParserVal($1.sval);
+       		        $$= new ParserVal(new Nodo("LF",(Nodo)aux.obj, null ));
+       		        ((Nodo)$$.obj).setTipo(value.getTipoVariable());
+       		    }else{
+       		        AnalizadorSintactico.agregarError("ID pertenece a variable, no a Funcion (Linea " + AnalizadorLexico.numLinea + ")");
+       		        //error
+       		    }
+       		  }else{
+                    AnalizadorSintactico.agregarError("ID de Funcion no declarada (Linea " + AnalizadorLexico.numLinea + ")");
+                    //error
+       		  }
+	   }
 	   ; 
 
 
@@ -312,7 +363,6 @@ declaracionFunc : tipo FUNC ID '(' parametro ')' {AnalizadorSintactico.agregarAn
              }
              AnalizadorSintactico.ambitoActual += "@"+ $3.sval;
             }
-		}
 		|FUNC ID '(' parametro ')' {AnalizadorSintactico.agregarError("error falta tipo (Linea " + AnalizadorLexico.numLinea + ")");}
 		|tipo ID '(' parametro ')' {AnalizadorSintactico.agregarError("error falta FUNC (Linea " + AnalizadorLexico.numLinea + ")");}
 		|tipo FUNC ID parametro ')' {AnalizadorSintactico.agregarError("error falta '(' (Linea " + AnalizadorLexico.numLinea + ")");}
@@ -321,13 +371,9 @@ declaracionFunc : tipo FUNC ID '(' parametro ')' {AnalizadorSintactico.agregarAn
 
 
 parametro : tipo ID {$$= new ParserVal(new Nodo($2.sval));
-		     TDSObject value = AnalizadorLexico.getLexemaObject($2.sval);
-                     if( value != null){
-                        ((Nodo)$$.obj).setTipo(value.getTipoVariable());
-                     }else{
-                        AnalizadorSintactico.agregarError("ID no definido (Linea " + AnalizadorLexico.numLinea + ")");
-                        //stop generacion de arbol
-						}
+                    TDSObject aux = AnalizadorLexico.tablaDeSimbolos.remove($2.sval);
+                     aux.setTipoContenido(AnalizadorSintactico.tipoActual);
+                    AnalizadorLexico.tablaDeSimbolos.put($2.sval + AnalizadorSintactico.ambitoActual,aux);
 		     }
 	  | ID {AnalizadorSintactico.agregarError("error falta FUNC (Linea " + AnalizadorLexico.numLinea + ")");}
 	  ;
@@ -341,7 +387,7 @@ sentEjecutables : asignacion {$$=$1;}
 		;
 
 asignacion: ID ASIGN expAritmetica ';' {
-                    String variable = getReferenciaPorAmbito($1.sval);
+                    String variable = AnalizadorSintactico.getReferenciaPorAmbito($1.sval);
                     if(variable == null){
                        AnalizadorSintactico.agregarError("Variable no definida (Linea " + AnalizadorLexico.numLinea + ")");
                        //corta arbol
@@ -439,16 +485,16 @@ opLogico: AND //{$$= new ParserVal("&&");}
 	;
 
 
-tipo: LONG 	{AnalizadorSintactico.tipoActual = "LONG";}
-    | SINGLE {AnalizadorSintactico.tipoActual = "SINGLE";}
+tipo: LONG 	{AnalizadorSintactico.tipoActual = "LONG";
+             $$ = new ParserVal("LONG");
+            }
+    | SINGLE {AnalizadorSintactico.tipoActual = "SINGLE";
+             $$ = new ParserVal("SINGLE");
+             }
     ;
 
 
-listaVariables: listaVariables ',' ID
-	      |ID 
-	      | listaVariables ',' {AnalizadorSintactico.agregarError("falta ID (Linea " + AnalizadorLexico.numLinea + ")");}
-	      // listaVariables ID error por falta de coma, da shift reduce
-	      ;
+
 
 
 %%
