@@ -302,9 +302,12 @@ factor  : ID  	{
 llamadoFunc: ID '(' ID ')'
 		{
 		  String variable = AnalizadorSintactico.getReferenciaPorAmbito($1.sval);
-		  if(variable != null){
+		  String variable2 = AnalizadorSintactico.getReferenciaPorAmbito($3.sval);
+		  if(variable != null && variable2!= null){
 		    AnalizadorLexico.tablaDeSimbolos.remove($1.sval);
+			AnalizadorLexico.tablaDeSimbolos.remove($3.sval);
 		    TDSObject value = AnalizadorLexico.getLexemaObject(variable);
+			TDSObject value2 = AnalizadorLexico.getLexemaObject(variable2);
 		    if(value.getTipoContenido().equals("FUNC")){
 		        ParserVal aux2= new ParserVal($3.sval);
 		        ParserVal aux= new ParserVal($1.sval);
