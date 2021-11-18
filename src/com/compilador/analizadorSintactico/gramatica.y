@@ -312,6 +312,7 @@ llamadoFunc: ID '(' ID ')'
 			AnalizadorLexico.tablaDeSimbolos.remove($3.sval);
 		    TDSObject value = AnalizadorLexico.getLexemaObject(variable);
 			TDSObject value2 = AnalizadorLexico.getLexemaObject(variable2);
+			
 		    ParserVal aux2= new ParserVal($3.sval);
 		    ParserVal aux= new ParserVal($1.sval);
 		    $$= new ParserVal(new Nodo("LF",(Nodo)aux.obj, (Nodo)aux2.obj ));
