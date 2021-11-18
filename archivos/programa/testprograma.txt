@@ -1,9 +1,12 @@
 Funcion
-LONG x,z;
+LONG x;
+SINGLE z;
 LONG FUNC suma (LONG x)
 	LONG y;
 	BEGIN
 		x:= y+x;
+		y:= 2;
+		CONTRACT:(x>4);
 		RETURN (x);
 	END
 
@@ -11,5 +14,5 @@ LONG FUNC suma (LONG x)
 BEGIN
 
 	x:=4;
-	x:= suma(z);
+	x:= suma(x);
 END

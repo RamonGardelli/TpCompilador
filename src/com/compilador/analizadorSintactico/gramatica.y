@@ -90,25 +90,25 @@ bloqueEjecutableFunc: BEGIN sentEjecutableFunc RETURN '(' retorno ')' ';' END
 
 
 
-sentEjecutableFunc: sentEjecutableFunc sentEjecutables
+sentEjecutableFunc: sentEjecutableFunc sentEjecutablesFunc
 				{ if (($1.obj != null) && ($2.obj != null))
 				 	{$$= new ParserVal(new Nodo("S", (Nodo)$2.obj, (Nodo)$1.obj));}
 				  else if(($1.obj == null)) {$$= new ParserVal(new Nodo("S", (Nodo)$2.obj, null));}
 				       else if (($2.obj == null)) {$$= new ParserVal(new Nodo("S", (Nodo)$1.obj, null));}
 				}
-		  | sentEjecutableFunc sentenciaCONTRACT
-				{ if (($1.obj != null) && ($2.obj != null))
-				 	{$$= new ParserVal(new Nodo("S", (Nodo)$2.obj, (Nodo)$1.obj));}
-				  else if(($1.obj == null)) {$$= new ParserVal(new Nodo("S", (Nodo)$2.obj, null));}
-				       else if (($2.obj == null)) {$$= new ParserVal(new Nodo("S", (Nodo)$1.obj, null));}
-				}
-		  | sentEjecutables
+		  | sentEjecutablesFunc
 		  		{
           		  $$= new ParserVal(new Nodo("S",((Nodo)$1.obj), null));
           		}
 		  ;
 
-sentenciaCONTRACT: CONTRACT ':' '(' condicion ')' ';' {AnalizadorSintactico.agregarAnalisis("sent control (Linea " + AnalizadorLexico.numLinea + ")");
+sentEjecutablesFunc: sentEjecutables { $$ = $1; }
+          | sentenciaCONTRACT { $$ = $1; }
+          ;
+
+sentenciaCONTRACT: CONTRACT ':' condicion  ';' {
+
+            AnalizadorSintactico.agregarAnalisis("sent contract (Linea " + AnalizadorLexico.numLinea + ")");
             $$ =  new ParserVal(new Nodo("CONTRACT",(Nodo)$4.obj,null));
             }
 		 | CONTRACT '(' condicion ')' ';'{AnalizadorSintactico.agregarError("error falta ':' (Linea " + AnalizadorLexico.numLinea + ")");}
@@ -312,7 +312,9 @@ llamadoFunc: ID '(' ID ')'
 			AnalizadorLexico.tablaDeSimbolos.remove($3.sval);
 		    TDSObject value = AnalizadorLexico.getLexemaObject(variable);
 			TDSObject value2 = AnalizadorLexico.getLexemaObject(variable2);
-			
+			if (!value.getTipoParametro().equals(value2.getTipoContenido())){
+			    AnalizadorSintactico.agregarError("El tipo enviado como parametro es distinto al esperado (Linea " + AnalizadorLexico.numLinea + ")");
+			}
 		    ParserVal aux2= new ParserVal($3.sval);
 		    ParserVal aux= new ParserVal($1.sval);
 		    $$= new ParserVal(new Nodo("LF",(Nodo)aux.obj, (Nodo)aux2.obj ));
@@ -345,6 +347,7 @@ declaracionFunc : tipo FUNC ID '(' parametro ')' {AnalizadorSintactico.agregarAn
             }else{
                 TDSObject aux = AnalizadorLexico.tablaDeSimbolos.remove($3.sval);
                 aux.setTipoContenido(AnalizadorSintactico.tipoActual);
+                aux.setTipoParametro(((TDSObject)((Object[])($5.obj))[1]).getTipoContenido());
                 AnalizadorLexico.tablaDeSimbolos.put($3.sval + AnalizadorSintactico.ambitoActual,aux);
                 $$=$3;
             }
@@ -460,12 +463,13 @@ condicion: '(' comparaciones ')' {$$=$2;}
 	 ;
 
 comparaciones: comparaciones opLogico comparacion 		
-	     | comparacion {$$ = new ParserVal(new Nodo("Cond", (Nodo)$1.obj, null));}
+	     | comparacion {
+	     $$ = new ParserVal(new Nodo("Cond", (Nodo)$1.obj, null));}
 	     | comparaciones opLogico error {AnalizadorSintactico.agregarError("opLogico de mas (Linea " + AnalizadorLexico.numLinea + ")");}
 	     ;
 
 comparacion: expAritmetica comparador expAritmetica
-		{ 
+		{
 		  $$ = new ParserVal(new Nodo($2.sval,(Nodo) $1.obj,(Nodo)$3.obj));
 		}
 	   | tipo '(' expAritmetica ')' comparador expAritmetica

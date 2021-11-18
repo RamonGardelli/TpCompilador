@@ -6,6 +6,16 @@ public class TDSObject {
     private String tipoVariable;
     private String tipoContenido;
 
+    public String getTipoParametro() {
+        return tipoParametro;
+    }
+
+    public void setTipoParametro(String tipoParametro) {
+        this.tipoParametro = tipoParametro;
+    }
+
+    private String tipoParametro;
+
     public TDSObject( String tipoVariable){
         this.tipoVariable = tipoVariable;
         this.contRef++;
