@@ -258,7 +258,7 @@ factor  : ID  	{
                         AnalizadorLexico.tablaDeSimbolos.remove($1.sval);
                         TDSObject value = AnalizadorLexico.getLexemaObject(lexema);
                         $$= new ParserVal(new Nodo($1.sval));
-                        ((Nodo)$$.obj).setTipo(value.getTipoVariable());
+                        ((Nodo)$$.obj).setTipo(value.getTipoContenido());
                         //((Nodo)$$.obj).setTipoContenido("VAR");
                      }else{
                          AnalizadorSintactico.agregarError("ID no definido (Linea " + AnalizadorLexico.numLinea + ")");
@@ -268,6 +268,10 @@ factor  : ID  	{
 	| CTE		{
                     if ($1.sval != null){
                         $$= new ParserVal(new Nodo($1.sval));
+                        TDSObject value = AnalizadorLexico.getLexemaObject($1.sval);
+                        if( value != null){
+                            ((Nodo)$$.obj).setTipo(value.getTipoVariable());
+                        }
                     }
 	            }
 	| '-' CTE	{
@@ -308,15 +312,10 @@ llamadoFunc: ID '(' ID ')'
 			AnalizadorLexico.tablaDeSimbolos.remove($3.sval);
 		    TDSObject value = AnalizadorLexico.getLexemaObject(variable);
 			TDSObject value2 = AnalizadorLexico.getLexemaObject(variable2);
-		    if(value.getTipoContenido().equals("FUNC")){
-		        ParserVal aux2= new ParserVal($3.sval);
-		        ParserVal aux= new ParserVal($1.sval);
-		        $$= new ParserVal(new Nodo("LF",(Nodo)aux.obj, (Nodo)aux2.obj ));
-		        ((Nodo)$$.obj).setTipo(value.getTipoVariable());
-		    }else{
-		        AnalizadorSintactico.agregarError("ID pertenece a variable, no a Funcion (Linea " + AnalizadorLexico.numLinea + ")");
-		        //error
-		    }
+		    ParserVal aux2= new ParserVal($3.sval);
+		    ParserVal aux= new ParserVal($1.sval);
+		    $$= new ParserVal(new Nodo("LF",(Nodo)aux.obj, (Nodo)aux2.obj ));
+		    ((Nodo)$$.obj).setTipo(value.getTipoContenido());
 		  }else{
              AnalizadorSintactico.agregarError("ID de Funcion no declarada (Linea " + AnalizadorLexico.numLinea + ")");
              //error
@@ -327,14 +326,9 @@ llamadoFunc: ID '(' ID ')'
        		  if(variable != null){
        		    AnalizadorLexico.tablaDeSimbolos.remove($1.sval);
        		    TDSObject value = AnalizadorLexico.getLexemaObject(variable);
-       		    if(value.getTipoContenido().equals("FUNC")){
-       		        ParserVal aux= new ParserVal($1.sval);
-       		        $$= new ParserVal(new Nodo("LF",(Nodo)aux.obj, null ));
-       		        ((Nodo)$$.obj).setTipo(value.getTipoVariable());
-       		    }else{
-       		        AnalizadorSintactico.agregarError("ID pertenece a variable, no a Funcion (Linea " + AnalizadorLexico.numLinea + ")");
-       		        //error
-       		    }
+       		    ParserVal aux= new ParserVal($1.sval);
+       		    $$= new ParserVal(new Nodo("LF",(Nodo)aux.obj, null ));
+       		    ((Nodo)$$.obj).setTipo(value.getTipoContenido());
        		  }else{
                     AnalizadorSintactico.agregarError("ID de Funcion no declarada (Linea " + AnalizadorLexico.numLinea + ")");
                     //error
@@ -349,18 +343,19 @@ declaracionFunc : tipo FUNC ID '(' parametro ')' {AnalizadorSintactico.agregarAn
                 //corto arbol
             }else{
                 TDSObject aux = AnalizadorLexico.tablaDeSimbolos.remove($3.sval);
-                aux.setTipoContenido("FUNC");
+                aux.setTipoContenido(AnalizadorSintactico.tipoActual);
                 AnalizadorLexico.tablaDeSimbolos.put($3.sval + AnalizadorSintactico.ambitoActual,aux);
                 $$=$3;
             }
             AnalizadorSintactico.ambitoActual += "@"+ $3.sval;
+            AnalizadorLexico.tablaDeSimbolos.put(((Object[])($5.obj))[0] + AnalizadorSintactico.ambitoActual,(TDSObject)((Object[])($5.obj))[1]);
 			}
 		|tipo FUNC ID '(' ')' {AnalizadorSintactico.agregarAnalisis("Declaracion de funcion en (Linea " + AnalizadorLexico.numLinea + ")");
 		     if( AnalizadorSintactico.esVariableRedeclarada($3.sval + AnalizadorSintactico.ambitoActual)){
                    //corto arbol
              }else{
                 TDSObject aux = AnalizadorLexico.tablaDeSimbolos.remove($3.sval);
-                aux.setTipoContenido("FUNC");
+                aux.setTipoContenido(AnalizadorSintactico.tipoActual);
                 AnalizadorLexico.tablaDeSimbolos.put($3.sval + AnalizadorSintactico.ambitoActual,aux);
                 $$=$3;
              }
@@ -373,10 +368,13 @@ declaracionFunc : tipo FUNC ID '(' parametro ')' {AnalizadorSintactico.agregarAn
 		;
 
 
-parametro : tipo ID {$$= new ParserVal(new Nodo($2.sval));
+parametro : tipo ID {
+                    Object[] obj = new Object[2] ;
+                    obj[0] = $2.sval;
                     TDSObject aux = AnalizadorLexico.tablaDeSimbolos.remove($2.sval);
-                     aux.setTipoContenido(AnalizadorSintactico.tipoActual);
-                    AnalizadorLexico.tablaDeSimbolos.put($2.sval + AnalizadorSintactico.ambitoActual,aux);
+                    aux.setTipoContenido(AnalizadorSintactico.tipoActual);
+                    obj[1] = aux;
+                    $$= new ParserVal(obj);
 		     }
 	  | ID {AnalizadorSintactico.agregarError("error falta FUNC (Linea " + AnalizadorLexico.numLinea + ")");}
 	  ;
@@ -395,14 +393,15 @@ asignacion: ID ASIGN expAritmetica ';' {
                        AnalizadorSintactico.agregarError("Variable no definida (Linea " + AnalizadorLexico.numLinea + ")");
                        //corta arbol
                     }else{
+                        AnalizadorLexico.tablaDeSimbolos.remove($1.sval);
                         AnalizadorSintactico.agregarAnalisis("Sentencia ejecutable asignacion (Linea " + AnalizadorLexico.numLinea + ")");
-					    ParserVal aux = new ParserVal(new Nodo($1.sval));
+					    ParserVal aux = new ParserVal(new Nodo(variable));
 					    TDSObject value = AnalizadorLexico.getLexemaObject(variable);
 					    $$= new ParserVal(new Nodo(":=", (Nodo)aux.obj, (Nodo)$3.obj));
-                        if(((Nodo)aux.obj).getTipo() == ((Nodo)$3.obj).getTipo()){
+                        if(value.getTipoContenido().equals( ((Nodo)$3.obj).getTipo())){
                             ((Nodo)$$.obj).setTipo(((Nodo)aux.obj).getTipo());
                         }else{
-                        	 AnalizadorSintactico.agregarError("Tipo Incompatible (" + ((Nodo)aux.obj).getTipo() + "," +  ((Nodo)$3.obj).getTipo()  + ") (Linea " + AnalizadorLexico.numLinea + ")");
+                        	 AnalizadorSintactico.agregarError("Tipo Incompatible (" + value.getTipoContenido() + "," +  ((Nodo)$3.obj).getTipo()  + ") (Linea " + AnalizadorLexico.numLinea + ")");
                         }
                      }
 					}

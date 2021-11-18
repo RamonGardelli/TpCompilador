@@ -55,11 +55,6 @@ public class AnalizadorSintactico {
     public static boolean esVariableRedeclarada(String input) {
         TDSObject value = AnalizadorLexico.getLexemaObject(input);
         if( value != null) {
-            if ( value.getTipoContenido().equals("VAR")){
-                AnalizadorSintactico.agregarError("Redeclaracion de variable (Linea " + AnalizadorLexico.numLinea + ")");
-            }else{
-                AnalizadorSintactico.agregarError("Redeclaracion de procedimiento (Linea " + AnalizadorLexico.numLinea + ")");
-            }
             return true;
         }
         return false;
@@ -152,35 +147,6 @@ public class AnalizadorSintactico {
     		imprimirArbol(n.getRight());
     	}
     }
-
-    public static String calculadorTipo(String  op, String tipo1, String tipo2) {
-        String result = "";
-        if(op.equals("/")){//ver
-            result = "SINGLE";
-        }else if(op.equals("*")){
-            if(tipo1.equals("SINGLE") && tipo2.equals("SINGLE")){
-                result = "SINGLE";
-            }else if ((tipo1.equals("LONG") && tipo2.equals("SINGLE")) || (tipo1.equals("SINGLE") && tipo2.equals("LONG"))){
-                result = "SINGLE";
-            }else{
-                result = "LONG";
-            }
-        }else if(op.equals("+")){
-            if(tipo1.equals("LONG") && tipo2.equals("LONG")){
-                result = "LONG";
-            }else{
-                result = "SINGLE";
-            }
-        }else{//RESTA / ver
-            if(tipo1.equals("LONG") && tipo2.equals("LONG")){
-                result = "LONG";
-            }else{
-                result = "SINGLE";
-            }
-        }
-        return result;
-    }
-
 
 
 }
