@@ -5,7 +5,7 @@ LONG FUNC suma (LONG x)
 	LONG y;
 	BEGIN
 		x:= y+x;
-		y:= 2;
+		y:= -2147483649;
 		CONTRACT:(x>4);
 		RETURN (x);
 	END
@@ -13,6 +13,6 @@ LONG FUNC suma (LONG x)
 
 BEGIN
 
-	x:=4;
+	x:=-2147483649;
 	x:= suma(x);
 END

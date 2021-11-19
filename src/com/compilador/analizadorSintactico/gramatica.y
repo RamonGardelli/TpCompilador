@@ -267,8 +267,15 @@ factor  : ID  	{
                 }
 	| CTE		{
                     if ($1.sval != null){
-                        $$= new ParserVal(new Nodo($1.sval));
-                        TDSObject value = AnalizadorLexico.getLexemaObject($1.sval);
+                        String var = $1.sval;
+                        if(var.equals("2147483648")){
+                             AnalizadorLexico.listaDeWarnings.add("Warning Linea " + AnalizadorLexico.numLinea + " : constante LONG fuera de rango.");
+                             var = "2147483647";
+                             TDSObject aux = AnalizadorLexico.tablaDeSimbolos.remove($1.sval);
+                             AnalizadorLexico.tablaDeSimbolos.put(var,aux);
+                        }
+                        $$= new ParserVal(new Nodo(var));
+                        TDSObject value = AnalizadorLexico.getLexemaObject(var);
                         if( value != null){
                             ((Nodo)$$.obj).setTipo(value.getTipoVariable());
                         }
@@ -282,8 +289,7 @@ factor  : ID  	{
                         if ( value.getTipoVariable() == "LONG" ) {
                                 long l = Long.parseLong("-"+$2.sval);
                                 if( !((l >= -2147483648) && (l <= 2147483647))){
-                                   AnalizadorSintactico.agregarError("CTE LONG fuera de Rango (Linea " + AnalizadorLexico.numLinea + ")");
-                                   //break
+                                    AnalizadorLexico.listaDeWarnings.add("Warning Linea " + AnalizadorLexico.numLinea + " : constante LONG fuera de rango.");
                                 }else{
                                       ((Nodo)$$.obj).setTipo(value.getTipoVariable());
                                 }
@@ -291,8 +297,7 @@ factor  : ID  	{
                                 float f = Float.parseFloat(("-"+$2.sval).replace('S','E'));
                                 if( f != 0.0f  ){
                                     if( !((f > -3.40282347E+38) && (f < -1.17549435E-38 ))){
-                                       AnalizadorSintactico.agregarError("CTE FLOAT fuera de Rango (Linea " + AnalizadorLexico.numLinea + ")");
-                                    //break
+                                       AnalizadorLexico.listaDeWarnings.add("Warning Linea " + AnalizadorLexico.numLinea + " : constante FLOAT fuera de rango.");;
                                      }else{
                                         ((Nodo)$$.obj).setTipo(value.getTipoVariable());
                                      }

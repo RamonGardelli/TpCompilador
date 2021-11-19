@@ -208,18 +208,22 @@ public class AnalizadorLexico {
     public static void agregarNegativoTDS(String ref)
     {
     	TDSObject result = tablaDeSimbolos.get(ref);
+        TDSObject resultNeg = tablaDeSimbolos.get("-"+ref);
         if(result != null){
-        	if (result.getContRef()==1)
+        	if (result.getContRef()==1 && resultNeg == null)
         		{
         			tablaDeSimbolos.put("-"+ref, new TDSObject (result.getTipoVariable()));
         			tablaDeSimbolos.remove(ref);
         		}
+            else if(result.getContRef()==1 && resultNeg != null){
+                tablaDeSimbolos.remove(ref);
+                resultNeg.setContRef(resultNeg.getContRef()+1);
+            }
         	else 
         	{
-        		TDSObject result2 = tablaDeSimbolos.get("-"+ref);
-        		if (result2 != null)
+        		if (resultNeg != null)
         			{
-        			result2.setContRef(result2.getContRef()+1);
+                    resultNeg.setContRef(resultNeg.getContRef()+1);
         			result.setContRef(result.getContRef()-1);
         			}
         		else 
@@ -228,15 +232,13 @@ public class AnalizadorLexico {
         			indexTDS++;
         			result.setContRef(result.getContRef()-1);
         		}
-        		
         	}
         }
         else 
         	{
-        	TDSObject result2 = tablaDeSimbolos.get("-"+ref);
-    		if (result2 != null)
+    		if (resultNeg != null)
     			{
-    			result2.setContRef(result2.getContRef()+1);
+                    resultNeg.setContRef(resultNeg.getContRef()+1);
     			}
         	}
     }
