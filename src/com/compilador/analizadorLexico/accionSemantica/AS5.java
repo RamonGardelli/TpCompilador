@@ -7,6 +7,8 @@ public class AS5 extends AccionSemantica {
 
     public static final float MIN_FLOAT = 1.17549435E-38f;
     public static final float MAX_FLOAT = 3.40282347E+38f;
+    public static final float correctionPositivo = 3.40282346E+38f;
+    public static final float correctionNegativo = 1.17549436E-38f;
 
 
     //Controlar rango del float, si esta en rango agregar a TS, si no, error
@@ -15,45 +17,33 @@ public class AS5 extends AccionSemantica {
 
         float _reading = Float.parseFloat((AnalizadorLexico.reading.replace('S','E')));
 
-        boolean enRango=false;
 
         if(AnalizadorLexico.reading.equals(("0.0")) || AnalizadorLexico.reading.equals(("0.")) || AnalizadorLexico.reading.equals((".0"))){
-            enRango =true;
+            //valid
         }else if(MIN_FLOAT < _reading && _reading < MAX_FLOAT){
-            enRango =true;
-        }else{
-            AnalizadorLexico.listaDeErrores.add("ERROR Linea " + AnalizadorLexico.numLinea + " : la constante FLOAT esta fuera de rango.");
-            AnalizadorLexico.token = 0;
-            AnalizadorLexico.finArchivo =true;
-            AnalizadorLexico.indexArchivo=0;
-            AnalizadorLexico.numLinea=0;
+           //valid
+        }else if(_reading  < MIN_FLOAT) {
+            AnalizadorLexico.listaDeWarnings.add("Warning Linea " + AnalizadorLexico.numLinea + " : constante FLOAT fuera de rango.");
+            _reading = correctionNegativo;
+        }else if(_reading > MAX_FLOAT){
+            AnalizadorLexico.listaDeWarnings.add("Warning Linea " + AnalizadorLexico.numLinea + " : constante FLOAT fuera de rango.");
+            _reading = correctionPositivo;
         }
 
-        if (enRango){
-
             int _indexTDS = AnalizadorLexico.indexTDS;
-            int result = AnalizadorLexico.existeEnTDS(AnalizadorLexico.reading);
+            int result = AnalizadorLexico.existeEnTDS(String.valueOf(_reading));
 
             if (result == -1) {
-                AnalizadorLexico.tablaDeSimbolos.put(AnalizadorLexico.reading, new TDSObject("SINGLE"));
+                AnalizadorLexico.tablaDeSimbolos.put(String.valueOf(_reading), new TDSObject("SINGLE"));
                 AnalizadorLexico.indexTDS++;
             }else{
                 _indexTDS = result;
             }
 
             AnalizadorLexico.token = AnalizadorLexico.getIdToken("CTE");
-            AnalizadorLexico.refTDS = AnalizadorLexico.reading;
+            AnalizadorLexico.refTDS = String.valueOf(_reading);
             AnalizadorLexico.indexTDS++;
 
         }
 
-
-
-
-
-
-
-
-
-    }
 }
