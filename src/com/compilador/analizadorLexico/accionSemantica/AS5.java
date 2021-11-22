@@ -5,43 +5,58 @@ import com.compilador.analizadorLexico.TDSObject;
 
 public class AS5 extends AccionSemantica {
 
-    public static final float MIN_FLOAT = 1.17549435E-38f;
-    public static final float MAX_FLOAT = 3.40282347E+38f;
-    public static final float correctionPositivo = 3.40282346E+38f;
-    public static final float correctionNegativo = 1.17549436E-38f;
 
+    public static final double MIN_FLOAT = 1.17549436E-38;
+    public static final double MAX_FLOAT = 3.40282346E+38 ;
 
+    
     //Controlar rango del float, si esta en rango agregar a TS, si no, error
     @Override
     public void ejecutar(char input) {
 
-        float _reading = Float.parseFloat((AnalizadorLexico.reading.replace('S','E')));
-
-
+        //float _reading = Float.parseFloat((AnalizadorLexico.reading.replace('S','E')));
+    	double numero = 0;
+    	System.out.println("min y max : " + " "+ MIN_FLOAT + " " + MAX_FLOAT);
+    	
         if(AnalizadorLexico.reading.equals(("0.0")) || AnalizadorLexico.reading.equals(("0.")) || AnalizadorLexico.reading.equals((".0"))){
             //valid
-        }else if(MIN_FLOAT < _reading && _reading < MAX_FLOAT){
-           //valid
-        }else if(_reading  < MIN_FLOAT) {
-            AnalizadorLexico.listaDeWarnings.add("Warning Linea " + AnalizadorLexico.numLinea + " : constante FLOAT fuera de rango.");
-            _reading = correctionNegativo;
-        }else if(_reading > MAX_FLOAT){
-            AnalizadorLexico.listaDeWarnings.add("Warning Linea " + AnalizadorLexico.numLinea + " : constante FLOAT fuera de rango.");
-            _reading = correctionPositivo;
         }
+        else {
 
+            if (AnalizadorLexico.reading.contains("S")) {
+                String[] parts = AnalizadorLexico.reading.split("S");
+                
+                
+                numero = (Double.valueOf(parts[0]) * Math.pow(10, Double.valueOf(parts[1])));
+            } else {
+                numero = Double.valueOf(AnalizadorLexico.reading);
+            }
+            if (numero < MIN_FLOAT)
+            {
+            	System.out.println("parseo a min float" );
+            	numero = MIN_FLOAT;
+            	AnalizadorLexico.listaDeWarnings.add("Warning Linea " + AnalizadorLexico.numLinea + " : constante SINGLE fuera de rango.");
+            }
+            else if (numero > MAX_FLOAT) { numero = MAX_FLOAT;
+            System.out.println("parseo a max float");
+            AnalizadorLexico.listaDeWarnings.add("Warning Linea " + AnalizadorLexico.numLinea + " : constante SINGLE fuera de rango.");
+            	}
+            	
+            
+        }
+        System.out.println("este es el numero: " + numero);
             int _indexTDS = AnalizadorLexico.indexTDS;
-            int result = AnalizadorLexico.existeEnTDS(String.valueOf(_reading));
+            int result = AnalizadorLexico.existeEnTDS(String.valueOf(numero));
 
             if (result == -1) {
-                AnalizadorLexico.tablaDeSimbolos.put(String.valueOf(_reading), new TDSObject("SINGLE"));
+                AnalizadorLexico.tablaDeSimbolos.put(String.valueOf(numero), new TDSObject("SINGLE"));
                 AnalizadorLexico.indexTDS++;
             }else{
                 _indexTDS = result;
             }
 
             AnalizadorLexico.token = AnalizadorLexico.getIdToken("CTE");
-            AnalizadorLexico.refTDS = String.valueOf(_reading);
+            AnalizadorLexico.refTDS = String.valueOf(numero);
             AnalizadorLexico.indexTDS++;
 
         }
