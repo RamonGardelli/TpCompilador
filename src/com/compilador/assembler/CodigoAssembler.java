@@ -12,7 +12,8 @@ public class CodigoAssembler {
 	}
 	
 	public void generarCodigo(Nodo nodo) {
-		if (nodo.EsHoja()) {
+		if (nodo.getRef() == "+") {
+			
 			
 		}
 	}

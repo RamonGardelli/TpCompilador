@@ -13,6 +13,10 @@ public class Registro {
 		return this.libre;
 	}
 
+	public String getNombre() {
+		return this.nombre;
+	}
+	
 	public void setLibre(boolean b) {
 		this.libre=b;
 	}
