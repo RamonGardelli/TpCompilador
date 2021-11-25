@@ -45,7 +45,7 @@
   34                    | CONTRACT ':' '(' condicion ';'
   35                    | CONTRACT ':' '(' condicion ')' error
 
-  36  sentSoloEjecutables : sentSoloEjecutables sentEjecutables
+  36  sentSoloEjecutables : sentEjecutables sentSoloEjecutables
   37                      | sentEjecutables
 
   38  sentenciasDeclarativas : declaraVariable
@@ -572,37 +572,32 @@ state 29
 
 state 30
 	bloqueTRYCATCH : sentEjecutables . CATCH BEGIN sentSoloEjecutables END  (7)
+	sentSoloEjecutables : sentEjecutables . sentSoloEjecutables  (36)
 	sentSoloEjecutables : sentEjecutables .  (37)
-
-	CATCH  shift 88
-	PRINT  reduce 37
-	WHILE  reduce 37
-	END  reduce 37
-	ID  reduce 37
-	IF  reduce 37
-	ASIGN  reduce 37
-	'('  reduce 37
-
-
-state 31
-	bloqueEjecutableNormal : sentSoloEjecutables . END  (17)
-	sentSoloEjecutables : sentSoloEjecutables . sentEjecutables  (36)
 
 	PRINT  shift 18
 	WHILE  shift 19
-	END  shift 89
 	ID  shift 60
+	CATCH  shift 88
 	IF  shift 23
 	ASIGN  shift 24
 	'('  shift 25
-	.  error
+	END  reduce 37
 
-	sentEjecutables  goto 90
+	sentEjecutables  goto 61
+	sentSoloEjecutables  goto 89
 	condicion  goto 32
 	asignacion  goto 33
 	sentenciaIF  goto 34
 	sentenciaPRINT  goto 35
 	sentenciaWHILE  goto 36
+
+
+state 31
+	bloqueEjecutableNormal : sentSoloEjecutables . END  (17)
+
+	END  shift 90
+	.  error
 
 
 state 32
@@ -990,32 +985,34 @@ state 60
 
 
 state 61
+	sentSoloEjecutables : sentEjecutables . sentSoloEjecutables  (36)
 	sentSoloEjecutables : sentEjecutables .  (37)
 
-	.  reduce 37
-
-
-state 62
-	bloqueEjecutableNormal : BEGIN sentSoloEjecutables . END  (16)
-	bloqueEjecutableNormal : BEGIN sentSoloEjecutables . error  (18)
-	sentSoloEjecutables : sentSoloEjecutables . sentEjecutables  (36)
-
-	error  shift 122
 	PRINT  shift 18
 	WHILE  shift 19
-	END  shift 123
 	ID  shift 60
 	IF  shift 23
 	ASIGN  shift 24
 	'('  shift 25
-	.  error
+	error  reduce 37
+	END  reduce 37
 
-	sentEjecutables  goto 90
+	sentEjecutables  goto 61
+	sentSoloEjecutables  goto 89
 	condicion  goto 32
 	asignacion  goto 33
 	sentenciaIF  goto 34
 	sentenciaPRINT  goto 35
 	sentenciaWHILE  goto 36
+
+
+state 62
+	bloqueEjecutableNormal : BEGIN sentSoloEjecutables . END  (16)
+	bloqueEjecutableNormal : BEGIN sentSoloEjecutables . error  (18)
+
+	error  shift 122
+	END  shift 123
+	.  error
 
 
 state 63
@@ -1323,15 +1320,15 @@ state 88
 
 
 state 89
-	bloqueEjecutableNormal : sentSoloEjecutables END .  (17)
+	sentSoloEjecutables : sentEjecutables sentSoloEjecutables .  (36)
 
-	.  reduce 17
+	.  reduce 36
 
 
 state 90
-	sentSoloEjecutables : sentSoloEjecutables sentEjecutables .  (36)
+	bloqueEjecutableNormal : sentSoloEjecutables END .  (17)
 
-	.  reduce 36
+	.  reduce 17
 
 
 state 91
@@ -2425,44 +2422,16 @@ state 184
 
 state 185
 	bloqueTRYCATCH : TRY CATCH BEGIN sentSoloEjecutables . END  (8)
-	sentSoloEjecutables : sentSoloEjecutables . sentEjecutables  (36)
 
-	PRINT  shift 18
-	WHILE  shift 19
 	END  shift 235
-	ID  shift 60
-	IF  shift 23
-	ASIGN  shift 24
-	'('  shift 25
 	.  error
-
-	sentEjecutables  goto 90
-	condicion  goto 32
-	asignacion  goto 33
-	sentenciaIF  goto 34
-	sentenciaPRINT  goto 35
-	sentenciaWHILE  goto 36
 
 
 state 186
 	bloqueTRYCATCH : TRY sentEjecutables BEGIN sentSoloEjecutables . END  (9)
-	sentSoloEjecutables : sentSoloEjecutables . sentEjecutables  (36)
 
-	PRINT  shift 18
-	WHILE  shift 19
 	END  shift 236
-	ID  shift 60
-	IF  shift 23
-	ASIGN  shift 24
-	'('  shift 25
 	.  error
-
-	sentEjecutables  goto 90
-	condicion  goto 32
-	asignacion  goto 33
-	sentenciaIF  goto 34
-	sentenciaPRINT  goto 35
-	sentenciaWHILE  goto 36
 
 
 state 187
@@ -2488,23 +2457,9 @@ state 187
 
 state 188
 	bloqueTRYCATCH : TRY sentEjecutables CATCH sentSoloEjecutables . END  (10)
-	sentSoloEjecutables : sentSoloEjecutables . sentEjecutables  (36)
 
-	PRINT  shift 18
-	WHILE  shift 19
 	END  shift 238
-	ID  shift 60
-	IF  shift 23
-	ASIGN  shift 24
-	'('  shift 25
 	.  error
-
-	sentEjecutables  goto 90
-	condicion  goto 32
-	asignacion  goto 33
-	sentenciaIF  goto 34
-	sentenciaPRINT  goto 35
-	sentenciaWHILE  goto 36
 
 
 state 189
@@ -2675,23 +2630,9 @@ state 202
 
 state 203
 	bloqueTRYCATCH : sentEjecutables CATCH BEGIN sentSoloEjecutables . END  (7)
-	sentSoloEjecutables : sentSoloEjecutables . sentEjecutables  (36)
 
-	PRINT  shift 18
-	WHILE  shift 19
 	END  shift 250
-	ID  shift 60
-	IF  shift 23
-	ASIGN  shift 24
-	'('  shift 25
 	.  error
-
-	sentEjecutables  goto 90
-	condicion  goto 32
-	asignacion  goto 33
-	sentenciaIF  goto 34
-	sentenciaPRINT  goto 35
-	sentenciaWHILE  goto 36
 
 
 state 204
@@ -3002,24 +2943,10 @@ state 236
 state 237
 	bloqueTRYCATCH : TRY sentEjecutables CATCH BEGIN sentSoloEjecutables . END  (6)
 	bloqueTRYCATCH : TRY sentEjecutables CATCH BEGIN sentSoloEjecutables . error  (11)
-	sentSoloEjecutables : sentSoloEjecutables . sentEjecutables  (36)
 
 	error  shift 271
-	PRINT  shift 18
-	WHILE  shift 19
 	END  shift 272
-	ID  shift 60
-	IF  shift 23
-	ASIGN  shift 24
-	'('  shift 25
 	.  error
-
-	sentEjecutables  goto 90
-	condicion  goto 32
-	asignacion  goto 33
-	sentenciaIF  goto 34
-	sentenciaPRINT  goto 35
-	sentenciaWHILE  goto 36
 
 
 state 238

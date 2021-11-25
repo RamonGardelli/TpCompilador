@@ -23,7 +23,7 @@ import java.util.Vector;
 %%
 
 programa:ID bloqueDeclarativo bloqueEjecutable {AnalizadorSintactico.agregarAnalisis("Programa reconocido. (Linea " + AnalizadorLexico.numLinea + ")");
-			$$= new ParserVal(new Nodo($1.sval, null, ((Nodo)$3.obj)));
+			$$= new ParserVal(new Nodo($1.sval, (Nodo)$3.obj, null));
 			AnalizadorSintactico.arbol = (Nodo)$$.obj;}
 	;
 
@@ -91,16 +91,16 @@ bloqueEjecutableFunc: BEGIN sentEjecutableFunc RETURN '(' retorno ')' ';' END
 
 
 sentEjecutableFunc: sentEjecutableFunc sentEjecutablesFunc
-				{ if (($1.obj != null) && ($2.obj != null))
-				 	{$$= new ParserVal(new Nodo("S", (Nodo)$2.obj, (Nodo)$1.obj));}
-				  else if(($1.obj == null)) {$$= new ParserVal(new Nodo("S", (Nodo)$2.obj, null));}
-				       else if (($2.obj == null)) {$$= new ParserVal(new Nodo("S", (Nodo)$1.obj, null));}
-				}
-		  | sentEjecutablesFunc
-		  		{
-          		  $$= new ParserVal(new Nodo("S",((Nodo)$1.obj), null));
-          		}
-		  ;
+                { if (($1.obj != null) && ($2.obj != null))
+                     {$$= new ParserVal(new Nodo("S", (Nodo)$2.obj, (Nodo)$1.obj));}
+                  else if(($1.obj == null)) {$$= new ParserVal(new Nodo("S", (Nodo)$2.obj, null));}
+                       else if (($2.obj == null)) {$$= new ParserVal(new Nodo("S", (Nodo)$1.obj, null));}
+                }
+          | sentEjecutablesFunc
+                  {
+                    $$= new ParserVal(new Nodo("S",((Nodo)$1.obj), null));
+                  }
+          ;
 
 sentEjecutablesFunc: sentEjecutables { $$ = $1; }
           | sentenciaCONTRACT { $$ = $1; }
@@ -120,18 +120,17 @@ sentenciaCONTRACT: CONTRACT ':' condicion  ';' {
 
 
 
-sentSoloEjecutables : sentSoloEjecutables sentEjecutables   
-				{ if (($1.obj != null) && ($2.obj != null))
-				 	{$$= new ParserVal(new Nodo("S", (Nodo)$2.obj, (Nodo)$1.obj));}
-				  else if(($1.obj == null)) {$$= new ParserVal(new Nodo("S", (Nodo)$2.obj, null));}
-				       else if (($2.obj == null)) {$$= new ParserVal(new Nodo("S", (Nodo)$1.obj, null));}
-				}
-		    | sentEjecutables	
-				{
-				    $$= new ParserVal(new Nodo("S",((Nodo)$1.obj), null));				    
-				}
-		    ; 
-
+sentSoloEjecutables : sentEjecutables sentSoloEjecutables
+                { if (($2.obj != null) && ($1.obj != null))
+                     {$$= new ParserVal(new Nodo("S", (Nodo)$1.obj, (Nodo)$2.obj));}
+                  else if(($2.obj == null)) {$$= new ParserVal(new Nodo("S", (Nodo)$1.obj, null));}
+                       else if (($1.obj == null)) {$$= new ParserVal(new Nodo("S", (Nodo)$2.obj, null));}
+                }
+            | sentEjecutables
+                {
+                    $$= new ParserVal(new Nodo("S",((Nodo)$1.obj), null));
+                }
+            ;
 
 
 sentenciasDeclarativas : declaraVariable 
@@ -257,12 +256,13 @@ factor  : ID  	{
                      if(lexema != null){
                         AnalizadorLexico.tablaDeSimbolos.remove($1.sval);
                         TDSObject value = AnalizadorLexico.getLexemaObject(lexema);
-                        $$= new ParserVal(new Nodo($1.sval));
+                        $$= new ParserVal(new Nodo(lexema));
                         ((Nodo)$$.obj).setTipo(value.getTipoContenido());
                         //((Nodo)$$.obj).setTipoContenido("VAR");
                      }else{
                          AnalizadorSintactico.agregarError("ID no definido (Linea " + AnalizadorLexico.numLinea + ")");
                          //stop generacion de arbol
+                         
                      }
                 }
 	| CTE		{
@@ -427,7 +427,10 @@ sentenciaIF: IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF ';' 
 		ParserVal auxCuerpo= new ParserVal(new Nodo("Cuerpo",(Nodo)auxThen.obj ,(Nodo)auxElse.obj ));
 		$$= new ParserVal(new Nodo("IF", (Nodo)$2.obj, (Nodo)auxCuerpo.obj));
 		}
-	   | IF condicion  THEN bloqueEjecutable ENDIF ';'{AnalizadorSintactico.agregarAnalisis("sentencia 'IF' sin 'ELSE' (Linea " + AnalizadorLexico.numLinea + ")");}
+	   | IF condicion  THEN bloqueEjecutable ENDIF ';'{AnalizadorSintactico.agregarAnalisis("sentencia 'IF' sin 'ELSE' (Linea " + AnalizadorLexico.numLinea + ")");
+                                                        ParserVal auxThen= new ParserVal(new Nodo("Then", (Nodo)$4.obj, null));
+                                                        ParserVal auxCuerpo= new ParserVal(new Nodo("Cuerpo",(Nodo)auxThen.obj ,null));
+                                                        $$= new ParserVal(new Nodo("IF", (Nodo)$2.obj, (Nodo)auxCuerpo.obj));}
 	   | condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF ';' {AnalizadorSintactico.agregarError("Error falta IF (Linea " + AnalizadorLexico.numLinea + ")");}
 	   | IF THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF ';'{AnalizadorSintactico.agregarError("Error falta condicion (Linea " + AnalizadorLexico.numLinea + ")");}
 	   |IF condicion bloqueEjecutable ELSE bloqueEjecutable ENDIF ';'{AnalizadorSintactico.agregarError("Error falta THEN (Linea " + AnalizadorLexico.numLinea + ")");}

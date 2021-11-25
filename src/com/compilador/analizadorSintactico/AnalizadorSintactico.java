@@ -3,6 +3,7 @@ package com.compilador.analizadorSintactico;
 import com.compilador.analizadorLexico.AnalizadorLexico;
 import com.compilador.analizadorLexico.TDSObject;
 import com.compilador.arbolSintactico.Nodo;
+import com.compilador.assembler.Registro;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -15,6 +16,8 @@ import java.util.Vector;
 
 public class AnalizadorSintactico {
 
+	public static String codigoAssembler = " ";
+	
     public static Vector<String> listaAnalisis = new Vector<>();
 
     public static Vector<String> listaErroresSintacticos = new Vector<>();
@@ -133,9 +136,16 @@ public class AnalizadorSintactico {
             });
             Files.write(file3, tdsData, StandardCharsets.UTF_8);
 
+            Registro r1 = new Registro("EAX");
+            Registro r2 = new Registro("EBX");
+            Registro r3 = new Registro("ECX");
+            Registro r4 = new Registro("EDX");
+                                    
+            String codigo="";
+            Registro[] r = {r1, r2, r3, r4}; 
+            arbol.generarCodigo(r);
+            System.out.println(codigoAssembler);
         }catch(IOException e) {}
-
-
 
     }
     

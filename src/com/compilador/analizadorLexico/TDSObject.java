@@ -5,6 +5,7 @@ public class TDSObject {
     private int contRef = 0;
     private String tipoVariable;
     private String tipoContenido;
+    private float valor;
 
     public String getTipoParametro() {
         return tipoParametro;
@@ -19,7 +20,6 @@ public class TDSObject {
     public TDSObject( String tipoVariable){
         this.tipoVariable = tipoVariable;
         this.contRef++;
-
     }
     
     public int getContRef() {
@@ -50,4 +50,15 @@ public class TDSObject {
 		this.tipoContenido = tipoContenido;
 	}
     
+	public long getValorLong() {
+		return (long)this.valor;
+	}
+	
+	public float getValorFloat() {
+		return this.valor;
+	}
+	
+	public void setValor(float valor) {
+		this.valor=valor;
+	}
 }

@@ -1,5 +1,9 @@
 package com.compilador.arbolSintactico;
 
+import com.compilador.analizadorLexico.AnalizadorLexico;
+import com.compilador.analizadorLexico.TDSObject;
+import com.compilador.analizadorLexico.accionSemantica.AS5;
+import com.compilador.analizadorLexico.accionSemantica.AS7;
 import com.compilador.analizadorSintactico.AnalizadorSintactico;
 import com.compilador.assembler.Registro;
 
@@ -11,6 +15,7 @@ public class Nodo {
     private boolean esHoja; // si es hoja, es una ref a tabla de simbolos.
     private String tipo;
     private boolean esRegistro;
+    private float valor;
 
     public Nodo(String aritmetic, Nodo reglaDer1, Nodo reglaDer2) {
         this.ref = aritmetic;
@@ -22,7 +27,7 @@ public class Nodo {
 
     public Nodo(String refTDS){
         this.ref = refTDS;
-        this.esHoja = true;
+        this.esHoja = true;        
     }
 
     public Nodo getLeft() {
@@ -58,15 +63,38 @@ public class Nodo {
         this.esHoja = esHoja;
     }
     
-    public void setRegistro(boolean esRegistro, Registro r[]) {
+    public String getTipoNodo() {
+    	if (this.esRegistro)
+    		return "R";
+    	return (AnalizadorLexico.getLexemaObject(this.right.getRef()).getTipoVariable());
+    }
+    
+    public float getValor() {
+        if (!esRegistro) {
+        	if ((AnalizadorLexico.getLexemaObject(this.getRef()).getTipoVariable())=="ID") {
+        		return AnalizadorLexico.getLexemaObject(this.getRef()).getValorFloat();    
+        	}
+        	return Float.parseFloat(this.getRef());
+        }
+		return this.valor;
+	}
+
+	public void setValor(float valor) {
+		this.valor = valor;
+	}
+
+	public void setRegistro(boolean esRegistro, Registro r[]) {
     	if ((this.esRegistro) && (!esRegistro)) {
-    		r[Character.getNumericValue(this.ref.charAt(1))].setLibre(true);
+    		for (int i = 0; i<r.length; i++) {
+    			if (r[i].getNombre()==this.ref) {
+    				r[i].setLibre(true);
+    			}
+    		}
     	}
     	this.esRegistro=esRegistro;
     }
 
 	public void generarCodigo(Registro r[]) {
-    	int i=0;
     	if (!(this.right==null)) {
 	    	if ((this.left.EsHoja())&&(!this.right.EsHoja())){
 	    		this.right.generarCodigo(r);
@@ -79,87 +107,120 @@ public class Nodo {
 	    	if ((!this.left.EsHoja())&&(!this.right.EsHoja())){
 				this.left.generarCodigo(r);
 				this.right.generarCodigo(r);
-			}
-	    	boolean registroLibre=false;
+			}	    	
 	    	
-	    	for (i=0; (i<r.length && (!registroLibre)) ; i++) {
-	    		if (r[i].estaLibre()) {
-	    			registroLibre=true;
-	   				r[i].setLibre(false);
-	   			}
-	   		}
-	    	
+	    	int i = this.registroLibre(r);
 	    	this.creacionCodigo(this.ref, i, r);
-	    	this.ref = "R"+i;
-			this.esRegistro=true;
-			this.setEsHoja(true);
-			this.left.setRegistro(false,r);
-			this.left=null;
-			this.right.setRegistro(false,r);
-			this.right=null;
+
     	}
     	else if (this.right==null) {
 			this.left.generarCodigo(r);
+			if ((this.ref=="Then")||(this.ref=="Else")) {
+		    	int i = this.registroLibre(r);
+				this.creacionCodigo(this.ref, i, r);
+			}
     	}
-    	
     }
 	
-	private void creacionCodigo(String r, int i, Registro reg[]) {
-		String izquierda = this.left.getRef();
-		String derecha = this.right.getRef();
-		if (this.left.getRef().contains("@")){
-			izquierda = this.left.getRef().split("@")[0];
-		}
-		
-		if (this.right.getRef().contains("@")){
-			derecha = this.right.getRef().split("@")[0];
-		}
-		
-		if (r==":=") {
-			AnalizadorSintactico.codigoAssembler += ("MOV "+"R"+i+", _"+derecha);
-			AnalizadorSintactico.codigoAssembler += ("\n");
-			AnalizadorSintactico.codigoAssembler += ("MOV "+izquierda+", _"+"R"+i);
-		}
-		else
-			if (r=="+") { 
-				
-				AnalizadorSintactico.codigoAssembler += ("MOV R"+i+", _"+ izquierda);
+	private void creacionCodigo(String r, int i, Registro reg[]) {			
+	    	this.ref = reg[i].getNombre();
+			
+			String izquierda = this.left.getRef();
+			String derecha = this.right.getRef();
+			if (this.left.getRef().contains("@")){
+				izquierda = this.left.getRef().split("@")[0];
+			}
+			
+			if (this.right.getRef().contains("@")){
+				derecha = this.right.getRef().split("@")[0];
+			}
+			
+			if (r==":=") {
+				AnalizadorSintactico.codigoAssembler += ("MOV "+reg[i].getNombre()+", _"+derecha);
 				AnalizadorSintactico.codigoAssembler += ("\n");
-				AnalizadorSintactico.codigoAssembler += ("ADD R"+i+", _"+ derecha);
+				AnalizadorSintactico.codigoAssembler += ("MOV "+izquierda+", _"+""+reg[i].getNombre());
+				TDSObject value = AnalizadorLexico.getLexemaObject(this.left.getRef());
+				value.setValor(this.right.getValor());
+				AnalizadorLexico.tablaDeSimbolos.put(this.left.getRef(), value);
 			}
-			else 
-				if (r=="*") {
-					AnalizadorSintactico.codigoAssembler += ("MOV R"+i+", _"+ izquierda);
+	
+			else
+				if (r=="+") { 
+					AnalizadorSintactico.codigoAssembler += ("MOV "+reg[i].getNombre()+", _"+ izquierda);
 					AnalizadorSintactico.codigoAssembler += ("\n");
-					AnalizadorSintactico.codigoAssembler += ("SUB R"+i+", _"+ derecha);
-			}
-				else 
-					if (r=="-") {
-						AnalizadorSintactico.codigoAssembler += ("MOV R"+i+", _"+ izquierda);
-						AnalizadorSintactico.codigoAssembler += ("\n");
-						AnalizadorSintactico.codigoAssembler += ("SUB R"+i+", _"+ derecha);
+					AnalizadorSintactico.codigoAssembler += ("ADD "+reg[i].getNombre()+", _"+ derecha);
+					this.valor=(this.left.getValor()+this.right.getValor());
+					if (!this.valorPermitido()) {
+						//Aqui deberia cortar la ejecucion, enviando un mensaje de error.
 					}
+				}
+				else 
+					if (r=="*") {
+						AnalizadorSintactico.codigoAssembler += ("MOV "+reg[i].getNombre()+", _"+ izquierda);
+						AnalizadorSintactico.codigoAssembler += ("\n");
+						AnalizadorSintactico.codigoAssembler += ("SUB "+reg[i].getNombre()+", _"+ derecha);
+						this.valor=(this.left.getValor()*this.right.getValor());
+						if (!this.valorPermitido()) {
+							//Aqui deberia cortar la ejecucion, enviando un mensaje de error.
+						}
+				}
 					else 
-						if (r=="/") {
-							AnalizadorSintactico.codigoAssembler += ("MOV R"+i+", _"+ izquierda);
+						if (r=="-") {
+							AnalizadorSintactico.codigoAssembler += ("MOV "+reg[i].getNombre()+", _"+ izquierda);
 							AnalizadorSintactico.codigoAssembler += ("\n");
-							AnalizadorSintactico.codigoAssembler += ("DIV R"+i+", _"+ derecha);
+							AnalizadorSintactico.codigoAssembler += ("SUB "+reg[i].getNombre()+", _"+ derecha);
+							this.valor=(this.left.getValor()-this.right.getValor());
+							if (!this.valorPermitido()) {
+							}
 						}
 						else 
-							if (r=="Then") {
-								AnalizadorSintactico.codigoAssembler += ("JLE Label1");
-								this.left.generarCodigo(reg);
-							}					
-							else 
-								if (r=="Else") {
-									AnalizadorSintactico.codigoAssembler += ("JMP Label2");
-									this.left.generarCodigo(reg);
+							if (r=="/") {
+								if (this.right.getValor()==0) {
+									//Aqui deberia cortar la ejecucion, enviando un mensaje de error.
 								}
-								else 
-									if (r=="Cond") {
-										this.left.generarCodigo(reg);
-									}
-		AnalizadorSintactico.codigoAssembler += ("\n");	
-	}	
+								AnalizadorSintactico.codigoAssembler += ("MOV "+reg[i].getNombre()+", _"+ izquierda);
+								AnalizadorSintactico.codigoAssembler += ("\n");
+								AnalizadorSintactico.codigoAssembler += ("DIV "+reg[i].getNombre()+", _"+ derecha);
+								this.valor=(this.left.getValor()/this.right.getValor());
+								
+								if (!this.valorPermitido()) {
+									//Aqui deberia cortar la ejecucion, enviando un mensaje de error.
+								}
+							}
+							
+			AnalizadorSintactico.codigoAssembler += ("\n");	
+			this.ref=reg[i].getNombre();
+			this.esRegistro=true;
+			this.setEsHoja(true);
+			this.tipo = this.left.getTipo();
+			this.left.setRegistro(false,reg);
+			this.left=null;
+			this.right.setRegistro(false,reg);
+			this.right=null;
+
+		}
+	
+	private boolean valorPermitido() {
+		if (this.tipo == "SINGLE") {
+			if ((this.valor>AS5.MAX_FLOAT) || (this.valor<AS5.MIN_FLOAT))
+				return false;
+		}
+		
+		if (this.tipo == "LONG")
+			if ((this.valor>AS7.MAX_LONG) || (this.valor<AS7.MIN_LONG))
+				return false;
+		
+		return true;
+	}
+	
+	private int registroLibre(Registro[] r) {
+		for (int i=0; (i<r.length) ; i++) {
+    		if (r[i].estaLibre()) {
+   				r[i].setLibre(false);
+   				return i;
+   			}
+   		}
+		return -1;
+	}
 }
 
