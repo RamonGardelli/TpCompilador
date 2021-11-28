@@ -10,6 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.Vector;
@@ -18,9 +19,9 @@ public class AnalizadorSintactico {
 
 	public static String codigoAssembler = " ";
 	
-    public static Vector<String> listaAnalisis = new Vector<>();
+    public static ArrayList<String> listaAnalisis = new ArrayList<>();
 
-    public static Vector<String> listaErroresSintacticos = new Vector<>();
+    public static ArrayList<String> listaErroresSintacticos = new ArrayList<>();
 
     public static Parser p = new Parser();
     
@@ -66,86 +67,84 @@ public class AnalizadorSintactico {
     public static void main(String[] args) {
 
         try{
-            System.out.println("Analisis de Archivo (Lexico + Sintactico):");
-            System.out.println("Ingrese la ruta del archivo:");
-            Scanner scanner = new Scanner(System.in);
-            String path = scanner.next();
-           //String entrada = Files.readString(Paths.get(path));
-            BufferedReader br = new BufferedReader(new FileReader(path));
+            if (args.length != 0 || true) {
 
-            String linea;
-            StringBuilder c = new StringBuilder();
-            while ((linea = br.readLine()) != null) {
-                c.append(linea).append("\n");
-            }
+                //File filex = new File(args[0]);
+                File filex = new File("C:\\Users\\ramon\\IdeaProjects\\TpCompilador\\archivos\\programa\\testprograma.txt");
 
-            String entrada = c + "$";
+                String originalPath = filex.getAbsoluteFile().getParent() + File.separator;
+                String fileName = filex.getName().split("\\.")[0];
+                String dataFile = new String(Files.readAllBytes(Paths.get(filex.getAbsolutePath())));
 
-            String auxFile = Paths.get(path).getFileName().toString();
-            int indexDot = auxFile.lastIndexOf(".");
-            int indexPath = path.lastIndexOf('\\');
-            if(indexPath == -1){
-                indexPath = auxFile.lastIndexOf("/");
-            }
-            String originalPath = path.substring(0,indexPath +1);
-            String fileName = auxFile.substring(0,indexDot);
+                String entrada = dataFile + "$";
 
-            entrada = entrada.replaceAll("\r\n", "\n");
-            AnalizadorLexico.archivo = entrada;
+                entrada = entrada.replaceAll("\r\n", "\n");
+                AnalizadorLexico.archivo = entrada;
 
-            if (p.yyparse() == 0){
-                System.out.println("Parser finalizo");
-                
+                if (p.yyparse() == 0) {
+                    System.out.println("Parser finalizo");
+
+                } else {
+                    System.out.println("Parser no finalizo");
+                }
+
+                String archivoAlName = originalPath + fileName + "_analisisLexico.txt";
+                Path file = Paths.get(archivoAlName);
+                Files.write(file, AnalizadorLexico.salidaTokens, StandardCharsets.UTF_8);
+
+                if (AnalizadorLexico.listaDeErrores.size() == 0) {
+                    AnalizadorLexico.listaDeErrores.add("No se han detectado errores lexicos.");
+                }
+                    String archivoAlErrorName = originalPath + fileName + "_ErroresLexicos.txt";
+                    Path fileError = Paths.get(archivoAlErrorName);
+                    Files.write(fileError, AnalizadorLexico.listaDeErrores, StandardCharsets.UTF_8);
+
+
+                if (AnalizadorLexico.listaDeWarnings.size() == 0) {
+                    AnalizadorLexico.listaDeWarnings.add("No se han detectado warnings lexicos.");
+                }
+                    String archivoAlWarningName = originalPath + fileName + "_WarnLexicos.txt";
+                    Path fileWarning = Paths.get(archivoAlWarningName);
+                    Files.write(fileWarning, AnalizadorLexico.listaDeWarnings, StandardCharsets.UTF_8);
+
+
+                String archivoLAName = originalPath + fileName + "_analisisSintactico.txt";
+                Path file2 = Paths.get(archivoLAName);
+                Files.write(file2, listaAnalisis, StandardCharsets.UTF_8);
+
+                if (listaErroresSintacticos.size() != 0) {
+                    listaErroresSintacticos.add("No se han detectado errores sintacticos.");
+                }
+                    String archivoASerror = originalPath + fileName + "ErroresSintacticos.txt";
+                    Path fileErrorSint = Paths.get(archivoASerror);
+                    Files.write(fileErrorSint, listaErroresSintacticos, StandardCharsets.UTF_8);
+
+                imprimirArbol(arbol);
+                imprimirArbol(arbolFunc);
+                String archivoTDSName = originalPath + fileName + "_tablaDeSimbolos.txt";
+                Path file3 = Paths.get(archivoTDSName);
+                ArrayList<String> tdsData = new ArrayList<>();
+                HashMap<String, TDSObject> data = AnalizadorLexico.tablaDeSimbolos;
+                data.forEach((k, v) -> {
+                    tdsData.add("Lexema: " + k + " | " + v.imprimir());
+                });
+                Files.write(file3, tdsData, StandardCharsets.UTF_8);
+
+                Registro r1 = new Registro("EAX");
+                Registro r2 = new Registro("EBX");
+                Registro r3 = new Registro("ECX");
+                Registro r4 = new Registro("EDX");
+
+                String codigo = "";
+                Registro[] r = {r1, r2, r3, r4};
+                arbol.generarCodigo(r);
+                System.out.println(codigoAssembler);
             }else{
-                System.out.println("Parser no finalizo");
+                System.out.println("Error al cargar archivo, revisa ruta e intenta nuevamente.");
             }
-
-            String archivoAlName =  originalPath + fileName + "_analisisLexico.txt";
-            Path file = Paths.get(archivoAlName);
-            Files.write(file,AnalizadorLexico.salidaTokens, StandardCharsets.UTF_8);
-
-            if(AnalizadorLexico.listaDeErrores.size() != 0){
-                String archivoAlErrorName =  originalPath + fileName + "_ErroresLexicos.txt";
-                Path fileError = Paths.get(archivoAlErrorName);
-                Files.write(fileError,AnalizadorLexico.listaDeErrores , StandardCharsets.UTF_8);
-            }
-
-            if(AnalizadorLexico.listaDeWarnings.size() != 0 ){
-                String archivoAlWarningName =  originalPath + fileName + "_WarnLexicos.txt";
-                Path fileWarning = Paths.get(archivoAlWarningName);
-                Files.write(fileWarning,AnalizadorLexico.listaDeWarnings , StandardCharsets.UTF_8);
-            }
-
-            String archivoLAName = originalPath + fileName + "_analisisSintactico.txt";
-            Path file2 = Paths.get(archivoLAName);
-            Files.write(file2,listaAnalisis, StandardCharsets.UTF_8);
-
-            if(listaErroresSintacticos.size() !=0){
-                String archivoASerror = originalPath + fileName + "ErroresSintacticos.txt";
-                Path fileErrorSint = Paths.get(archivoASerror);
-                Files.write(fileErrorSint,listaErroresSintacticos, StandardCharsets.UTF_8);
-            }
-            imprimirArbol(arbol);
-            imprimirArbol(arbolFunc);
-            String archivoTDSName = originalPath + fileName + "_tablaDeSimbolos.txt";
-            Path file3 = Paths.get(archivoTDSName);
-            Vector<String> tdsData = new Vector<>();
-            HashMap<String, TDSObject> data = AnalizadorLexico.tablaDeSimbolos;
-            data.forEach((k,v)->{
-                tdsData.add("Lexema: " + k + " | " + v.imprimir());
-            });
-            Files.write(file3, tdsData, StandardCharsets.UTF_8);
-
-            Registro r1 = new Registro("EAX");
-            Registro r2 = new Registro("EBX");
-            Registro r3 = new Registro("ECX");
-            Registro r4 = new Registro("EDX");
-                                    
-            String codigo="";
-            Registro[] r = {r1, r2, r3, r4}; 
-            arbol.generarCodigo(r);
-            System.out.println(codigoAssembler);
-        }catch(IOException e) {}
+        }catch(IOException e) {
+            System.out.println("Error en el programa, abortando.");
+        }
 
     }
     

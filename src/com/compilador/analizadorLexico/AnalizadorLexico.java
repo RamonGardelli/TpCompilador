@@ -2,6 +2,7 @@ package com.compilador.analizadorLexico;
 
 import com.compilador.analizadorLexico.accionSemantica.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
@@ -19,8 +20,8 @@ public class AnalizadorLexico {
     public static boolean finArchivo =false;
 
     public static HashMap<String, TDSObject> tablaDeSimbolos = new HashMap<String,TDSObject>();
-    public static Vector<String> listaDeErrores = new Vector<>();
-    public static Vector<String> listaDeWarnings = new Vector<>();
+    public static ArrayList<String> listaDeErrores = new ArrayList<>();
+    public static ArrayList<String> listaDeWarnings = new ArrayList<>();
 
     public static Vector<String> salidaTokens = new Vector<>();
 

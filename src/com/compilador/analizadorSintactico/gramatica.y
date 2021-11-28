@@ -448,12 +448,6 @@ sentenciaIF: IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF ';' 
 sentenciaPRINT: PRINT '(' CADENA ')' ';' {AnalizadorSintactico.agregarAnalisis("sentencia print (Linea " + AnalizadorLexico.numLinea + ")");
 		ParserVal aux = new ParserVal(new Nodo($3.sval));
 		$$= new ParserVal(new Nodo("PRINT", (Nodo)aux.obj, null));}
-
-	      | '(' CADENA ')' ';' {AnalizadorSintactico.agregarError("error falta PRINT (Linea " + AnalizadorLexico.numLinea + ")");}
-	      | PRINT CADENA ')' ';' {AnalizadorSintactico.agregarError("error falta '(' (Linea " + AnalizadorLexico.numLinea + ")");}
-	      | PRINT '('')' ';' {AnalizadorSintactico.agregarError("Warning print vacio' (Linea " + AnalizadorLexico.numLinea + ")");}
-	      | PRINT '(' CADENA ';' {AnalizadorSintactico.agregarError("error falta ')' (Linea " + AnalizadorLexico.numLinea + ")");}
-	      | PRINT '(' CADENA ')' error {AnalizadorSintactico.agregarError("error falta ';' (Linea " + AnalizadorLexico.numLinea + ")");}
 	      | PRINT '(' ID ')' ';'  //(util para Debug, errores innecesarios)
 	      | PRINT '(' CTE ')' ';'
 	      ;
