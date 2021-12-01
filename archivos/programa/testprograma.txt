@@ -1,19 +1,11 @@
 progComent
 
-LONG aa;
-
- 
+LONG Aux_1 ;
 
 BEGIN
 
-aa := 3.;
+Aux_1 := 3999999999999999999999999999999;
 
-WHILE( bb > 3 ) DO
-BEGIN
-	bb := 5;
-	bb := 8;
-END
-
- 
+Aux_1 := -3;
 
 END

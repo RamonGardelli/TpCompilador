@@ -26,9 +26,10 @@ public class AS5 extends AccionSemantica {
                 String[] parts = AnalizadorLexico.reading.split("S");
                 
                 
-                numero = (Double.valueOf(parts[0]) * Math.pow(10, Double.valueOf(parts[1])));
+                numero = (Double.parseDouble(parts[0]) * Math.pow(10, Double.parseDouble(parts[1])));
+                System.out.println("loro, este es el numero parseado :"+numero);
             } else {
-                numero = Double.valueOf(AnalizadorLexico.reading);
+                numero = Double.parseDouble(AnalizadorLexico.reading);
             }
             if (numero < MIN_FLOAT)
             {

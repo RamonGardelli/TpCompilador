@@ -309,6 +309,8 @@ public class AnalizadorLexico {
                 case ')':
                 case '{':
                 case '}':
+                case '\'':
+                case '\"':
                 case ',':
                 case ';':
                     if (MatrizAccionSemantica[estado][13] != null) {

@@ -153,6 +153,10 @@ declaraVariable: tipo listaVariables ';' {
             }
 	       | listaVariables ';' {AnalizadorSintactico.agregarError("error falta 'tipo' (Linea " + AnalizadorLexico.numLinea + ")");}
 	       | tipo listaVariables error {AnalizadorSintactico.agregarError("error falta ';' (Linea " + AnalizadorLexico.numLinea + ")");}
+	       	| ID error{
+	       	        AnalizadorLexico.tablaDeSimbolos.remove($1.sval);
+           	        AnalizadorSintactico.agregarError("Tipo de variable debe ser en mayuscula (Linea " + AnalizadorLexico.numLinea + ")");
+           	      }
 	       ;
 
 listaVariables: listaVariables ',' ID {
@@ -173,6 +177,7 @@ listaVariables: listaVariables ',' ID {
                     AnalizadorLexico.tablaDeSimbolos.put($1.sval + AnalizadorSintactico.ambitoActual,aux);
                 }
 	      }
+
 	      | listaVariables ',' {AnalizadorSintactico.agregarError("falta ID (Linea " + AnalizadorLexico.numLinea + ")");}
 	      // listaVariables ID error por falta de coma, da shift reduce
 	      ;
@@ -286,20 +291,20 @@ factor  : ID  	{
                      }
                 }
 	| CTE		{
-                    if ($1.sval != null){
-                        String var = $1.sval;
-                        if(var.equals("2147483648")){
-
-                             var = "2147483647";
-                             TDSObject aux = AnalizadorLexico.tablaDeSimbolos.remove($1.sval);
-                             AnalizadorLexico.tablaDeSimbolos.put(var,aux);
-                        }
-                        $$= new ParserVal(new Nodo(var));
-                        TDSObject value = AnalizadorLexico.getLexemaObject(var);
-                        if( value != null){
-                            ((Nodo)$$.obj).setTipo(value.getTipoVariable());
-                        }
+	                String var = $1.sval;
+	                TDSObject value = AnalizadorLexico.getLexemaObject(var);
+                    if (value.getTipoVariable() == "LONG"){
+                      if(var.equals("2147483648")){
+                           var = "2147483647";
+                           TDSObject aux = AnalizadorLexico.tablaDeSimbolos.remove($1.sval);
+                           AnalizadorLexico.tablaDeSimbolos.put(var,aux);
+                      }
                     }
+                    $$= new ParserVal(new Nodo(var));
+                    if( value != null){
+                         ((Nodo)$$.obj).setTipo(value.getTipoVariable());
+                    }
+
 	            }
 	| '-' CTE	{
 	                AnalizadorLexico.agregarNegativoTDS($2.sval);
@@ -586,6 +591,6 @@ public int yylex() {
 }
 
 public void yyerror(String string) {
-	//AnalizadorSintactico.agregarError("Parser: " + string);
+	//AnalizadorSintactico.agregarError("Parser token error: " + string);
 	System.out.println("se que imprime en linea  "+ AnalizadorLexico.numLinea + ": " +string);
 }

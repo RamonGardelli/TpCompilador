@@ -109,20 +109,43 @@ public class Nodo {
 				this.right.generarCodigo(r);
 			}	    	
 	    	
-	    	int i = this.registroLibre(r);
-	    	this.creacionCodigo(this.ref, i, r);
+	    	if (this.ref=="WHILE") {
+	    		AnalizadorSintactico.contadorLabel++;
+				String aux = "Label "+AnalizadorSintactico.contadorLabel;
+				AnalizadorSintactico.pilaLabels.push(aux);
+				AnalizadorSintactico.codigoAssembler += (aux);
+		    	int i = this.registroLibre(r);
+		    	this.creacionCodigoLong(this.ref, i, r);
+	    	}
+	    	else {
+		    	int i = this.registroLibre(r);
+		    	this.creacionCodigoLong(this.ref, i, r);
+	    	}
+
 
     	}
     	else if (this.right==null) {
-			this.left.generarCodigo(r);
-			if ((this.ref=="Then")||(this.ref=="Else")) {
-		    	int i = this.registroLibre(r);
-				this.creacionCodigo(this.ref, i, r);
+    		if (this.getRef()=="Else"){
+				AnalizadorSintactico.contadorLabel++;
+				String aux = "Label "+AnalizadorSintactico.contadorLabel;
+				AnalizadorSintactico.pilaLabels.push(aux);
+				AnalizadorSintactico.codigoAssembler += ("JMP "+aux);
+				AnalizadorSintactico.codigoAssembler += (AnalizadorSintactico.pilaLabels.pop());
+				this.left.generarCodigo(r);
+				AnalizadorSintactico.codigoAssembler += (AnalizadorSintactico.pilaLabels.pop());
 			}
+		
+    		else if (this.getLeft().getRef()=="Then") {
+				this.left.generarCodigo(r);
+				AnalizadorSintactico.codigoAssembler += (AnalizadorSintactico.pilaLabels.pop());
+			}
+    			else {
+    				this.left.generarCodigo(r);
+    			}
     	}
     }
 	
-	private void creacionCodigo(String r, int i, Registro reg[]) {			
+	private void creacionCodigoLong(String r, int i, Registro reg[]) {			
 	    	this.ref = reg[i].getNombre();
 			
 			String izquierda = this.left.getRef();
@@ -187,7 +210,42 @@ public class Nodo {
 									//Aqui deberia cortar la ejecucion, enviando un mensaje de error.
 								}
 							}
-							
+							else if ((r=="==")||(r==">=")||(r=="<=")||(r=="!=")) {
+								AnalizadorSintactico.codigoAssembler += ("CMP "+izquierda+", _"+ derecha);
+								
+								if (r=="==") {
+									AnalizadorSintactico.contadorLabel++;
+									String aux = "Label "+AnalizadorSintactico.contadorLabel;
+									AnalizadorSintactico.pilaLabels.push(aux);
+									AnalizadorSintactico.codigoAssembler += ("JNE "+aux);
+								}
+								if (r==">=") {
+									AnalizadorSintactico.contadorLabel++;
+									String aux = "Label "+AnalizadorSintactico.contadorLabel;
+									AnalizadorSintactico.pilaLabels.push(aux);
+									AnalizadorSintactico.codigoAssembler += ("JL "+aux);
+								}
+								
+								if (r=="<=") {
+									AnalizadorSintactico.contadorLabel++;
+									String aux = "Label "+AnalizadorSintactico.contadorLabel;
+									AnalizadorSintactico.pilaLabels.push(aux);
+									AnalizadorSintactico.codigoAssembler += ("JG "+aux);
+								}
+								if (r=="!=") {
+									AnalizadorSintactico.contadorLabel++;
+									String aux = "Label "+AnalizadorSintactico.contadorLabel;
+									AnalizadorSintactico.pilaLabels.push(aux);
+									AnalizadorSintactico.codigoAssembler += ("JE "+aux);
+								}
+							}
+							else if (r=="WHILE") {
+								String aux1 = (AnalizadorSintactico.pilaLabels.pop());
+								String aux2 = (AnalizadorSintactico.pilaLabels.pop());
+								AnalizadorSintactico.codigoAssembler += ("JMP "+aux2);
+								AnalizadorSintactico.codigoAssembler += (aux1);
+							}
+			
 			AnalizadorSintactico.codigoAssembler += ("\n");	
 			this.ref=reg[i].getNombre();
 			this.esRegistro=true;
@@ -197,8 +255,120 @@ public class Nodo {
 			this.left=null;
 			this.right.setRegistro(false,reg);
 			this.right=null;
-
 		}
+	
+	private void creacionCodigoSingle(String r, int i, Registro reg[]) {			
+    	this.ref = reg[i].getNombre();
+		
+		String izquierda = this.left.getRef();
+		String derecha = this.right.getRef();
+		if (this.left.getRef().contains("@")){
+			izquierda = this.left.getRef().split("@")[0];
+		}
+		
+		if (this.right.getRef().contains("@")){
+			derecha = this.right.getRef().split("@")[0];
+		}
+		
+		if (r==":=") {
+			AnalizadorSintactico.codigoAssembler += ("FLD _"+derecha);
+			AnalizadorSintactico.codigoAssembler += ("\n");
+			AnalizadorSintactico.codigoAssembler += ("FSTP _"+izquierda);
+			TDSObject value = AnalizadorLexico.getLexemaObject(this.left.getRef());
+			value.setValor(this.right.getValor());
+			AnalizadorLexico.tablaDeSimbolos.put(this.left.getRef(), value);
+		}
+
+		else
+			if (r=="+") { 
+				AnalizadorSintactico.codigoAssembler += ("MOV "+reg[i].getNombre()+", _"+ izquierda);
+				AnalizadorSintactico.codigoAssembler += ("\n");
+				AnalizadorSintactico.codigoAssembler += ("ADD "+reg[i].getNombre()+", _"+ derecha);
+				this.valor=(this.left.getValor()+this.right.getValor());
+				if (!this.valorPermitido()) {
+					//Aqui deberia cortar la ejecucion, enviando un mensaje de error.
+				}
+			}
+			else 
+				if (r=="*") {
+					AnalizadorSintactico.codigoAssembler += ("MOV "+reg[i].getNombre()+", _"+ izquierda);
+					AnalizadorSintactico.codigoAssembler += ("\n");
+					AnalizadorSintactico.codigoAssembler += ("SUB "+reg[i].getNombre()+", _"+ derecha);
+					this.valor=(this.left.getValor()*this.right.getValor());
+					if (!this.valorPermitido()) {
+						//Aqui deberia cortar la ejecucion, enviando un mensaje de error.
+					}
+			}
+				else 
+					if (r=="-") {
+						AnalizadorSintactico.codigoAssembler += ("MOV "+reg[i].getNombre()+", _"+ izquierda);
+						AnalizadorSintactico.codigoAssembler += ("\n");
+						AnalizadorSintactico.codigoAssembler += ("SUB "+reg[i].getNombre()+", _"+ derecha);
+						this.valor=(this.left.getValor()-this.right.getValor());
+						if (!this.valorPermitido()) {
+						}
+					}
+					else 
+						if (r=="/") {
+							if (this.right.getValor()==0) {
+								//Aqui deberia cortar la ejecucion, enviando un mensaje de error.
+							}
+							AnalizadorSintactico.codigoAssembler += ("MOV "+reg[i].getNombre()+", _"+ izquierda);
+							AnalizadorSintactico.codigoAssembler += ("\n");
+							AnalizadorSintactico.codigoAssembler += ("DIV "+reg[i].getNombre()+", _"+ derecha);
+							this.valor=(this.left.getValor()/this.right.getValor());
+							
+							if (!this.valorPermitido()) {
+								//Aqui deberia cortar la ejecucion, enviando un mensaje de error.
+							}
+						}
+						else if ((r=="==")||(r==">=")||(r=="<=")||(r=="!=")) {
+							AnalizadorSintactico.codigoAssembler += ("CMP "+izquierda+", _"+ derecha);
+							
+							if (r=="==") {
+								AnalizadorSintactico.contadorLabel++;
+								String aux = "Label "+AnalizadorSintactico.contadorLabel;
+								AnalizadorSintactico.pilaLabels.push(aux);
+								AnalizadorSintactico.codigoAssembler += ("JNE "+aux);
+							}
+							if (r==">=") {
+								AnalizadorSintactico.contadorLabel++;
+								String aux = "Label "+AnalizadorSintactico.contadorLabel;
+								AnalizadorSintactico.pilaLabels.push(aux);
+								AnalizadorSintactico.codigoAssembler += ("JL "+aux);
+							}
+							
+							if (r=="<=") {
+								AnalizadorSintactico.contadorLabel++;
+								String aux = "Label "+AnalizadorSintactico.contadorLabel;
+								AnalizadorSintactico.pilaLabels.push(aux);
+								AnalizadorSintactico.codigoAssembler += ("JG "+aux);
+							}
+							if (r=="!=") {
+								AnalizadorSintactico.contadorLabel++;
+								String aux = "Label "+AnalizadorSintactico.contadorLabel;
+								AnalizadorSintactico.pilaLabels.push(aux);
+								AnalizadorSintactico.codigoAssembler += ("JE "+aux);
+							}
+						}
+						else if (r=="WHILE") {
+							String aux1 = (AnalizadorSintactico.pilaLabels.pop());
+							String aux2 = (AnalizadorSintactico.pilaLabels.pop());
+							AnalizadorSintactico.codigoAssembler += ("JMP "+aux2);
+							AnalizadorSintactico.codigoAssembler += (aux1);
+						}
+		
+		AnalizadorSintactico.codigoAssembler += ("\n");	
+		this.ref=reg[i].getNombre();
+		this.esRegistro=true;
+		this.setEsHoja(true);
+		this.tipo = this.left.getTipo();
+		this.left.setRegistro(false,reg);
+		this.left=null;
+		this.right.setRegistro(false,reg);
+		this.right=null;
+	}
+	
 	
 	private boolean valorPermitido() {
 		if (this.tipo == "SINGLE") {

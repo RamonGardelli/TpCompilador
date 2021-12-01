@@ -10,10 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Scanner;
-import java.util.Vector;
+import java.util.*;
 
 public class AnalizadorSintactico {
 
@@ -22,6 +19,12 @@ public class AnalizadorSintactico {
     public static ArrayList<String> listaAnalisis = new ArrayList<>();
 
     public static ArrayList<String> listaErroresSintacticos = new ArrayList<>();
+
+    public static Stack<String> pilaRegistros= new Stack<String>();
+
+    public static Stack<String> pilaLabels = new Stack<String>();
+
+    public static int contadorLabel=0;
 
     public static Parser p = new Parser();
 
@@ -145,7 +148,7 @@ public class AnalizadorSintactico {
 
                     String codigo = "";
                     Registro[] r = {r1, r2, r3, r4};
-                    arbol.generarCodigo(r);
+                    //arbol.generarCodigo(r);
                     System.out.println(codigoAssembler);
                 }else{
                     System.out.println("Error de tipo lexico/sintactico detectado, abortando generacion de codigo.");
