@@ -16,8 +16,7 @@ public class AS5 extends AccionSemantica {
 
         //float _reading = Float.parseFloat((AnalizadorLexico.reading.replace('S','E')));
     	double numero = 0;
-    	System.out.println("min y max : " + " "+ MIN_FLOAT + " " + MAX_FLOAT);
-    	
+
         if(AnalizadorLexico.reading.equals(("0.0")) || AnalizadorLexico.reading.equals(("0.")) || AnalizadorLexico.reading.equals((".0"))){
             //valid
         }
@@ -33,18 +32,15 @@ public class AS5 extends AccionSemantica {
             }
             if (numero < MIN_FLOAT)
             {
-            	System.out.println("parseo a min float" );
             	numero = MIN_FLOAT;
             	AnalizadorLexico.listaDeWarnings.add("Warning Linea " + AnalizadorLexico.numLinea + " : constante SINGLE fuera de rango.");
             }
             else if (numero > MAX_FLOAT) { numero = MAX_FLOAT;
-            System.out.println("parseo a max float");
             AnalizadorLexico.listaDeWarnings.add("Warning Linea " + AnalizadorLexico.numLinea + " : constante SINGLE fuera de rango.");
             	}
             	
             
         }
-        System.out.println("este es el numero: " + numero);
             int _indexTDS = AnalizadorLexico.indexTDS;
             int result = AnalizadorLexico.existeEnTDS(String.valueOf(numero));
 

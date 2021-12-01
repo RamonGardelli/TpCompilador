@@ -75,6 +75,7 @@ public class AnalizadorLexico {
         listaDeTokens.put(282, "||");
         listaDeTokens.put(283, ":=");
         listaDeTokens.put((int) '>', ">");
+        listaDeTokens.put((int) '=', "=");
         listaDeTokens.put((int) '<', "<");
         listaDeTokens.put((int) '(', "(");
         listaDeTokens.put((int) ')', ")");
@@ -132,9 +133,9 @@ public class AnalizadorLexico {
             // 17
             {16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18, 16,16, 16, 16, -1},
             // 18
-            {19, 19, 19, 19, 19, 16, 19, 19, 19, 19, 19, 19, 19, 19, -1,19, 19, 19, 19, -1},
+            {19, 19, 19, 19, 19, 16, 19, 19, 19, 19, 19, 19, 19, 19, -1,18, 19, 19, 19, -1},
             // 19
-            {0, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, -1,16,16, 16, 16, -1},
+            {0, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, -1,19,16, 16, 16, -1},
 
     };
 
@@ -176,9 +177,9 @@ public class AnalizadorLexico {
             // 17
             {null, null, null, null, null, null, null, null, null, null, null, null, null, null, AS11,AS2, null, null, null, null},
             // 18
-            {AS2, AS2, AS2, AS2, AS2, AS11, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2, null, AS2,AS2, AS2, AS2, null},
+            {AS2, AS2, AS2, AS2, AS2, AS11, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2, null, AS11,AS2, AS2, AS2, null},
             // 19
-            {AS8, AS2, AS2, AS2, AS2, AS11, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2, null,AS2, AS2, AS2, AS2, null}
+            {AS8, AS2, AS2, AS2, AS2, AS11, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2, null,AS11, AS2, AS2, AS2, null}
     };
 
 
@@ -470,9 +471,9 @@ public class AnalizadorLexico {
                         ((AccionSemantica) MatrizAccionSemantica[estado][15]).ejecutar(archivo.charAt(indexArchivo));
                         //System.out.println(MatrizAccionSemantica[estado][15]);
                     }
-                    if((estado == 19 && errorCadena) || estado == 18){
+                    /*if((estado == 19 && errorCadena)){
                         listaDeWarnings.add("WARNING Linea " + numLinea +": falta el simbolo + despues de salto de linea en la cadena.");
-                    }
+                    }*/
                     estado = MatrizTransicionEstados[estado][15];
                     //System.out.println("Nuevo Estado: " + estado);
                     break;
@@ -552,18 +553,12 @@ public class AnalizadorLexico {
                         errorCadena =true;
                     }else if (estado == 16 && errorCadena){
                         listaDeErrores.add("ERROR Linea " + (numLinea - 1) +": cadena multilinea no puede llevar dos nuevas lineas seguidas..");
-                        finArchivo=true;
-                        token=0;
-                        indexArchivo=0;
-                        numLinea=0;
+                        token=-1;
                         break;
                     }
                     if(estado == 18){
                         listaDeErrores.add("ERROR Linea " + (numLinea - 1) +": cadena multilinea no puede llevar dos nuevas lineas seguidas..");
-                        finArchivo=true;
-                        token=0;
-                        indexArchivo=0;
-                        numLinea=0;
+                        token=-1;
                         break;
                     }
                     estado = MatrizTransicionEstados[estado][14];
@@ -617,15 +612,18 @@ public class AnalizadorLexico {
             if (estado == -1) {//RESINCRONIZACION
                 listaDeErrores.add("ERROR Linea " + numLinea + ": token \"" + reading + archivo.charAt(indexArchivo) + "\" no reconocido");
                 if (archivo.charAt(indexArchivo) != ';' && archivo.charAt(indexArchivo) != '\n') {
-                    //System.out.println("RESYNC");
+                    System.out.println("RESYNC");
                     indexArchivo++;
                 }
                 estado = 0;
             }
         }
         //System.out.println("Devuelvo token: " +token);
-
-        salidaTokens.add("AL - Linea : " + numLinea + " Token : " + token );
+        if(token == 0 && listaDeErrores.size() == 0){
+            salidaTokens.add("AL - Linea : " + numLinea + " Token : " + token + " End Of File" );
+        }else{
+            salidaTokens.add("AL - Linea : " + numLinea + " Token : " + token + " Lexema: " + listaDeTokens.get(token) );
+        }
 
         return token;
     }

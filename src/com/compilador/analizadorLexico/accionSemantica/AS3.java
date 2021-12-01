@@ -49,10 +49,8 @@ public class AS3 extends AccionSemantica {
 
         if(!validID){
             AnalizadorLexico.listaDeErrores.add("ERROR linea " + AnalizadorLexico.numLinea + " : " + AnalizadorLexico.reading + " no es un identificador o una palabra reservada.");
-            AnalizadorLexico.token = 0;
+            AnalizadorLexico.token = -1;
             AnalizadorLexico.finArchivo =true;
-            AnalizadorLexico.indexArchivo=0;
-            AnalizadorLexico.numLinea=0;
         }
     }
 }

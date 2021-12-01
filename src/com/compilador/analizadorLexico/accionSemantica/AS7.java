@@ -14,7 +14,14 @@ public class AS7 extends AccionSemantica{
     @Override
     public void ejecutar(char input) {
 
-        long _reading = Long.parseLong(AnalizadorLexico.reading);
+        long _reading;
+
+        if(AnalizadorLexico.reading.length() > 10){
+            _reading = Long.parseLong(AnalizadorLexico.reading.substring(0,10));
+        }else{
+            _reading = Long.parseLong(AnalizadorLexico.reading);
+        }
+
         if( _reading >= MIN_LONG && _reading <= (Math.abs(MIN_LONG))){
             //valid
         }else{

@@ -1,18 +1,19 @@
-Funcion
-LONG x;
-SINGLE z;
-LONG FUNC suma (LONG x)
-	LONG y;
-	BEGIN
-		x:= y+x;
-		y:= -2147483649;
-		CONTRACT:(x>4);
-		RETURN (x);
-	END
+progComent
 
+LONG aa;
+
+ 
 
 BEGIN
 
-	x:=-2147483649;
-	x:= suma(x);
+aa := 3.;
+
+WHILE( bb > 3 ) DO
+BEGIN
+	bb := 5;
+	bb := 8;
+END
+
+ 
+
 END

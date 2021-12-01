@@ -12,6 +12,9 @@ public class AS9 extends AccionSemantica {
             case ">":
                 AnalizadorLexico.token = 62;
                 break;
+            case "=":
+                AnalizadorLexico.token = 61;
+                break;
             case "<":
                 AnalizadorLexico.token = 60;
                 break;
