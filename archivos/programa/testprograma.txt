@@ -1,11 +1,13 @@
-progComent
+programaIdent
 
 LONG Aux_1 ;
 
+** este ejemplo usa identificador con letra digito y '_'
+
 BEGIN
 
-Aux_1 := 3999999999999999999999999999999;
+              Aux_1 := 8;
 
-Aux_1 := -3;
+ 
 
 END

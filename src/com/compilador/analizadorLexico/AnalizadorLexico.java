@@ -111,7 +111,7 @@ public class AnalizadorLexico {
             // 6
             {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0, 0, -1},
             // 7
-            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1,-1, -1, -1, -1, -1},
+            {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1,0, -1, -1, -1, -1},
             // 8
             {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1,-1, -1, -1, -1, -1},
             // 9
@@ -155,7 +155,7 @@ public class AnalizadorLexico {
             //6
             {AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS10, AS9, AS9, AS9, AS9,AS9, AS9, AS9, AS9, null},
             // 7
-            {null, null, null, null, null, null, null, null, null, null, AS10, null, null, null, null, null, null, null, null,null},
+            {null, null, null, null, null, null, null, null, null, null, AS10, null, null, null, null, AS9, null, null, null,null},
             // 8
             {null, null, null, null, null, null, null, null, null, null, null, AS14, null, null, null, null, null, null, null,null},
             // 9
@@ -313,6 +313,7 @@ public class AnalizadorLexico {
                 case '\"':
                 case ',':
                 case ';':
+
                     if (MatrizAccionSemantica[estado][13] != null) {
                         ((AccionSemantica) MatrizAccionSemantica[estado][13]).ejecutar(archivo.charAt(indexArchivo));
                         //System.out.println(MatrizAccionSemantica[estado][13]);
@@ -469,6 +470,7 @@ public class AnalizadorLexico {
 
                 case ' ':
                 case '	':
+
                     if (MatrizAccionSemantica[estado][15] != null) {
                         ((AccionSemantica) MatrizAccionSemantica[estado][15]).ejecutar(archivo.charAt(indexArchivo));
                         //System.out.println(MatrizAccionSemantica[estado][15]);
