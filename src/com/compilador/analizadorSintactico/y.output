@@ -92,7 +92,7 @@
   70         | llamadoFunc
 
   71  llamadoFunc : ID '(' ID ')'
-  72              | ID '(' ')' ';'
+  72              | ID '(' ')'
 
   73  declaracionFunc : tipo FUNC ID '(' parametro ')'
   74                  | tipo FUNC ID '(' ')'
@@ -1065,7 +1065,7 @@ state 65
 state 66
 	factor : ID .  (67)
 	llamadoFunc : ID . '(' ID ')'  (71)
-	llamadoFunc : ID . '(' ')' ';'  (72)
+	llamadoFunc : ID . '(' ')'  (72)
 
 	'('  shift 129
 	error  reduce 67
@@ -1775,7 +1775,7 @@ state 128
 
 state 129
 	llamadoFunc : ID '(' . ID ')'  (71)
-	llamadoFunc : ID '(' . ')' ';'  (72)
+	llamadoFunc : ID '(' . ')'  (72)
 
 	ID  shift 185
 	')'  shift 186
@@ -2465,10 +2465,9 @@ state 185
 
 
 state 186
-	llamadoFunc : ID '(' ')' . ';'  (72)
+	llamadoFunc : ID '(' ')' .  (72)
 
-	';'  shift 245
-	.  error
+	.  reduce 72
 
 
 state 187
@@ -2481,7 +2480,7 @@ state 187
 	'-'  shift 69
 	.  error
 
-	expAritmetica  goto 246
+	expAritmetica  goto 245
 	termino  goto 72
 	factor  goto 73
 	llamadoFunc  goto 74
@@ -2580,14 +2579,14 @@ state 196
 state 197
 	bloqueTRYCATCH : TRY CATCH BEGIN sentSoloEjecutables . END  (8)
 
-	END  shift 247
+	END  shift 246
 	.  error
 
 
 state 198
 	bloqueTRYCATCH : TRY sentEjecutables BEGIN sentSoloEjecutables . END  (9)
 
-	END  shift 248
+	END  shift 247
 	.  error
 
 
@@ -2604,7 +2603,7 @@ state 199
 	.  error
 
 	sentEjecutables  goto 64
-	sentSoloEjecutables  goto 249
+	sentSoloEjecutables  goto 248
 	condicion  goto 33
 	asignacion  goto 34
 	sentenciaIF  goto 35
@@ -2615,7 +2614,7 @@ state 199
 state 200
 	bloqueTRYCATCH : TRY sentEjecutables CATCH sentSoloEjecutables . END  (10)
 
-	END  shift 250
+	END  shift 249
 	.  error
 
 
@@ -2632,7 +2631,7 @@ state 201
 	'('  shift 26
 	.  error
 
-	bloqueEjecutable  goto 251
+	bloqueEjecutable  goto 250
 	bloqueTRYCATCH  goto 29
 	bloqueEjecutableNormal  goto 30
 	sentEjecutables  goto 31
@@ -2647,7 +2646,7 @@ state 201
 state 202
 	sentenciaIF : IF THEN bloqueEjecutable ENDIF . ';'  (104)
 
-	';'  shift 252
+	';'  shift 251
 	.  error
 
 
@@ -2664,7 +2663,7 @@ state 203
 	'('  shift 26
 	.  error
 
-	bloqueEjecutable  goto 253
+	bloqueEjecutable  goto 252
 	bloqueTRYCATCH  goto 29
 	bloqueEjecutableNormal  goto 30
 	sentEjecutables  goto 31
@@ -2679,7 +2678,7 @@ state 203
 state 204
 	sentenciaIF : IF condicion THEN ENDIF . ';'  (106)
 
-	';'  shift 254
+	';'  shift 253
 	.  error
 
 
@@ -2692,9 +2691,9 @@ state 205
 	sentenciaIF : IF condicion THEN bloqueEjecutable . ';'  (107)
 	sentenciaIF : IF condicion THEN bloqueEjecutable . ENDIF error  (108)
 
-	ELSE  shift 255
-	ENDIF  shift 256
-	';'  shift 257
+	ELSE  shift 254
+	ENDIF  shift 255
+	';'  shift 256
 	.  error
 
 
@@ -2711,7 +2710,7 @@ state 206
 	'('  shift 26
 	.  error
 
-	bloqueEjecutable  goto 258
+	bloqueEjecutable  goto 257
 	bloqueTRYCATCH  goto 29
 	bloqueEjecutableNormal  goto 30
 	sentEjecutables  goto 31
@@ -2726,7 +2725,7 @@ state 206
 state 207
 	sentenciaIF : IF condicion bloqueEjecutable ENDIF . ';'  (105)
 
-	';'  shift 259
+	';'  shift 258
 	.  error
 
 
@@ -2742,7 +2741,7 @@ state 209
 	comparacion : tipo '(' expAritmetica . ')' comparador expAritmetica  (127)
 	comparacion : tipo '(' expAritmetica . ')' comparador tipo '(' expAritmetica ')'  (129)
 
-	')'  shift 260
+	')'  shift 259
 	'+'  shift 138
 	'-'  shift 139
 	.  error
@@ -2757,7 +2756,7 @@ state 210
 state 211
 	comparacion : expAritmetica comparador tipo . '(' expAritmetica ')'  (128)
 
-	'('  shift 261
+	'('  shift 260
 	.  error
 
 
@@ -2789,7 +2788,7 @@ state 214
 state 215
 	bloqueTRYCATCH : sentEjecutables CATCH BEGIN sentSoloEjecutables . END  (7)
 
-	END  shift 262
+	END  shift 261
 	.  error
 
 
@@ -2806,7 +2805,7 @@ state 216
 	'('  shift 26
 	.  error
 
-	bloqueEjecutable  goto 263
+	bloqueEjecutable  goto 262
 	bloqueTRYCATCH  goto 29
 	bloqueEjecutableNormal  goto 30
 	sentEjecutables  goto 31
@@ -2828,8 +2827,8 @@ state 218
 	declaracionFunc : tipo FUNC ID '(' parametro . ')'  (73)
 	declaracionFunc : tipo FUNC ID '(' parametro . error  (78)
 
-	error  shift 264
-	')'  shift 265
+	error  shift 263
+	')'  shift 264
 	.  error
 
 
@@ -2867,7 +2866,7 @@ state 223
 	'-'  shift 69
 	.  error
 
-	retorno  goto 266
+	retorno  goto 265
 	tipo  goto 227
 	expAritmetica  goto 228
 	termino  goto 72
@@ -2878,7 +2877,7 @@ state 223
 state 224
 	TRYCATCHFunc : BEGIN bloqueTRYCATCH sentEjecutableFunc RETURN . '(' retorno ')' ';' END  (15)
 
-	'('  shift 267
+	'('  shift 266
 	.  error
 
 
@@ -2891,11 +2890,11 @@ state 225
 	SINGLE  shift 5
 	ID  shift 66
 	CTE  shift 67
-	')'  shift 268
+	')'  shift 267
 	'-'  shift 69
 	.  error
 
-	retorno  goto 269
+	retorno  goto 268
 	tipo  goto 227
 	expAritmetica  goto 228
 	termino  goto 72
@@ -2906,14 +2905,14 @@ state 225
 state 226
 	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN retorno . ')' END  (23)
 
-	')'  shift 270
+	')'  shift 269
 	.  error
 
 
 state 227
 	retorno : tipo . '(' expAritmetica ')'  (60)
 
-	'('  shift 271
+	'('  shift 270
 	.  error
 
 
@@ -2931,7 +2930,7 @@ state 228
 state 229
 	bloqueEjecutableFunc : BEGIN sentEjecutableFunc '(' retorno . ')' END  (22)
 
-	')'  shift 272
+	')'  shift 271
 	.  error
 
 
@@ -2940,7 +2939,7 @@ state 230
 	comparacion : tipo . '(' expAritmetica ')' comparador expAritmetica  (127)
 	comparacion : tipo . '(' expAritmetica ')' comparador tipo '(' expAritmetica ')'  (129)
 
-	'('  shift 273
+	'('  shift 272
 	.  error
 
 
@@ -2969,7 +2968,7 @@ state 231
 state 232
 	TRYCATCHFunc : BEGIN sentEjecutableFunc bloqueTRYCATCH RETURN . '(' retorno ')' ';' END  (13)
 
-	'('  shift 274
+	'('  shift 273
 	.  error
 
 
@@ -2978,7 +2977,7 @@ state 233
 	sentEjecutableFunc : sentEjecutableFunc . sentEjecutablesFunc  (26)
 
 	PRINT  shift 19
-	RETURN  shift 275
+	RETURN  shift 274
 	WHILE  shift 20
 	ID  shift 63
 	CONTRACT  shift 45
@@ -3000,14 +2999,14 @@ state 233
 state 234
 	sentenciaCONTRACT : CONTRACT '(' condicion ')' . ';'  (31)
 
-	';'  shift 276
+	';'  shift 275
 	.  error
 
 
 state 235
 	sentenciaCONTRACT : CONTRACT ':' '(' ')' . ';'  (33)
 
-	';'  shift 277
+	';'  shift 276
 	.  error
 
 
@@ -3015,15 +3014,15 @@ state 236
 	sentenciaCONTRACT : CONTRACT ':' '(' condicion . ';'  (34)
 	sentenciaCONTRACT : CONTRACT ':' '(' condicion . ')' error  (35)
 
-	')'  shift 278
-	';'  shift 279
+	')'  shift 277
+	';'  shift 278
 	.  error
 
 
 state 237
 	sentenciaCONTRACT : CONTRACT ':' condicion ')' . ';'  (32)
 
-	';'  shift 280
+	';'  shift 279
 	.  error
 
 
@@ -3036,7 +3035,7 @@ state 238
 state 239
 	bloqueEjecutableFunc : sentEjecutableFunc RETURN '(' retorno . ')' END  (21)
 
-	')'  shift 281
+	')'  shift 280
 	.  error
 
 
@@ -3071,84 +3070,78 @@ state 244
 
 
 state 245
-	llamadoFunc : ID '(' ')' ';' .  (72)
-
-	.  reduce 72
-
-
-state 246
 	expAritmetica : expAritmetica . '+' termino  (61)
 	expAritmetica : expAritmetica . '-' termino  (62)
 	asignacion : ID ASIGN tipo '(' expAritmetica . ')' ';'  (87)
 	comparacion : tipo '(' expAritmetica . ')' comparador expAritmetica  (127)
 	comparacion : tipo '(' expAritmetica . ')' comparador tipo '(' expAritmetica ')'  (129)
 
-	')'  shift 282
+	')'  shift 281
 	'+'  shift 138
 	'-'  shift 139
 	.  error
 
 
-state 247
+state 246
 	bloqueTRYCATCH : TRY CATCH BEGIN sentSoloEjecutables END .  (8)
 
 	.  reduce 8
 
 
-state 248
+state 247
 	bloqueTRYCATCH : TRY sentEjecutables BEGIN sentSoloEjecutables END .  (9)
 
 	.  reduce 9
 
 
-state 249
+state 248
 	bloqueTRYCATCH : TRY sentEjecutables CATCH BEGIN sentSoloEjecutables . END  (6)
 	bloqueTRYCATCH : TRY sentEjecutables CATCH BEGIN sentSoloEjecutables . error  (11)
 
-	error  shift 283
-	END  shift 284
+	error  shift 282
+	END  shift 283
 	.  error
 
 
-state 250
+state 249
 	bloqueTRYCATCH : TRY sentEjecutables CATCH sentSoloEjecutables END .  (10)
 
 	.  reduce 10
 
 
-state 251
+state 250
 	sentenciaIF : IF THEN bloqueEjecutable ELSE bloqueEjecutable . ENDIF ';'  (98)
 
-	ENDIF  shift 285
+	ENDIF  shift 284
 	.  error
 
 
-state 252
+state 251
 	sentenciaIF : IF THEN bloqueEjecutable ENDIF ';' .  (104)
 
 	.  reduce 104
 
 
-state 253
+state 252
 	sentenciaIF : IF condicion THEN ELSE bloqueEjecutable . ENDIF ';'  (100)
 
-	ENDIF  shift 286
+	ENDIF  shift 285
 	.  error
 
 
-state 254
+state 253
 	sentenciaIF : IF condicion THEN ENDIF ';' .  (106)
 
 	.  reduce 106
 
 
-state 255
+state 254
 	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE . bloqueEjecutable ENDIF ';'  (95)
 	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE . ENDIF ';'  (101)
 	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE . bloqueEjecutable ';'  (102)
 	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE . bloqueEjecutable ENDIF error  (103)
 
-	ENDIF  shift 287
+	ENDIF  shift 286
 	PRINT  shift 19
 	WHILE  shift 20
 	BEGIN  shift 21
@@ -3159,7 +3152,7 @@ state 255
 	'('  shift 26
 	.  error
 
-	bloqueEjecutable  goto 288
+	bloqueEjecutable  goto 287
 	bloqueTRYCATCH  goto 29
 	bloqueEjecutableNormal  goto 30
 	sentEjecutables  goto 31
@@ -3171,35 +3164,35 @@ state 255
 	sentenciaWHILE  goto 37
 
 
-state 256
+state 255
 	sentenciaIF : IF condicion THEN bloqueEjecutable ENDIF . ';'  (96)
 	sentenciaIF : IF condicion THEN bloqueEjecutable ENDIF . error  (108)
 
-	error  shift 289
-	';'  shift 290
+	error  shift 288
+	';'  shift 289
 	.  error
 
 
-state 257
+state 256
 	sentenciaIF : IF condicion THEN bloqueEjecutable ';' .  (107)
 
 	.  reduce 107
 
 
-state 258
+state 257
 	sentenciaIF : IF condicion bloqueEjecutable ELSE bloqueEjecutable . ENDIF ';'  (99)
 
-	ENDIF  shift 291
+	ENDIF  shift 290
 	.  error
 
 
-state 259
+state 258
 	sentenciaIF : IF condicion bloqueEjecutable ENDIF ';' .  (105)
 
 	.  reduce 105
 
 
-state 260
+state 259
 	comparacion : tipo '(' expAritmetica ')' . comparador expAritmetica  (127)
 	comparacion : tipo '(' expAritmetica ')' . comparador tipo '(' expAritmetica ')'  (129)
 
@@ -3212,10 +3205,10 @@ state 260
 	'<'  shift 87
 	.  error
 
-	comparador  goto 292
+	comparador  goto 291
 
 
-state 261
+state 260
 	comparacion : expAritmetica comparador tipo '(' . expAritmetica ')'  (128)
 
 	ID  shift 66
@@ -3223,45 +3216,45 @@ state 261
 	'-'  shift 69
 	.  error
 
-	expAritmetica  goto 293
+	expAritmetica  goto 292
 	termino  goto 72
 	factor  goto 73
 	llamadoFunc  goto 74
 
 
-state 262
+state 261
 	bloqueTRYCATCH : sentEjecutables CATCH BEGIN sentSoloEjecutables END .  (7)
 
 	.  reduce 7
 
 
-state 263
+state 262
 	sentenciaIF : condicion THEN bloqueEjecutable ELSE bloqueEjecutable . ENDIF ';'  (97)
 
-	ENDIF  shift 294
+	ENDIF  shift 293
 	.  error
 
 
-state 264
+state 263
 	declaracionFunc : tipo FUNC ID '(' parametro error .  (78)
 
 	.  reduce 78
 
 
-state 265
+state 264
 	declaracionFunc : tipo FUNC ID '(' parametro ')' .  (73)
 
 	.  reduce 73
 
 
-state 266
+state 265
 	TRYCATCHFunc : BEGIN bloqueTRYCATCH RETURN '(' retorno . ')' ';' END  (12)
 
-	')'  shift 295
+	')'  shift 294
 	.  error
 
 
-state 267
+state 266
 	TRYCATCHFunc : BEGIN bloqueTRYCATCH sentEjecutableFunc RETURN '(' . retorno ')' ';' END  (15)
 
 	LONG  shift 4
@@ -3271,7 +3264,7 @@ state 267
 	'-'  shift 69
 	.  error
 
-	retorno  goto 296
+	retorno  goto 295
 	tipo  goto 227
 	expAritmetica  goto 228
 	termino  goto 72
@@ -3279,30 +3272,30 @@ state 267
 	llamadoFunc  goto 74
 
 
-state 268
+state 267
 	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN '(' ')' . END  (24)
 
+	END  shift 296
+	.  error
+
+
+state 268
+	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN '(' retorno . ')' ';' END  (19)
+	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN '(' retorno . END  (25)
+
 	END  shift 297
+	')'  shift 298
 	.  error
 
 
 state 269
-	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN '(' retorno . ')' ';' END  (19)
-	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN '(' retorno . END  (25)
+	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN retorno ')' . END  (23)
 
-	END  shift 298
-	')'  shift 299
+	END  shift 299
 	.  error
 
 
 state 270
-	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN retorno ')' . END  (23)
-
-	END  shift 300
-	.  error
-
-
-state 271
 	retorno : tipo '(' . expAritmetica ')'  (60)
 
 	ID  shift 66
@@ -3310,20 +3303,20 @@ state 271
 	'-'  shift 69
 	.  error
 
-	expAritmetica  goto 301
+	expAritmetica  goto 300
 	termino  goto 72
 	factor  goto 73
 	llamadoFunc  goto 74
 
 
-state 272
+state 271
 	bloqueEjecutableFunc : BEGIN sentEjecutableFunc '(' retorno ')' . END  (22)
 
-	END  shift 302
+	END  shift 301
 	.  error
 
 
-state 273
+state 272
 	retorno : tipo '(' . expAritmetica ')'  (60)
 	comparacion : tipo '(' . expAritmetica ')' comparador expAritmetica  (127)
 	comparacion : tipo '(' . expAritmetica ')' comparador tipo '(' expAritmetica ')'  (129)
@@ -3333,13 +3326,13 @@ state 273
 	'-'  shift 69
 	.  error
 
-	expAritmetica  goto 303
+	expAritmetica  goto 302
 	termino  goto 72
 	factor  goto 73
 	llamadoFunc  goto 74
 
 
-state 274
+state 273
 	TRYCATCHFunc : BEGIN sentEjecutableFunc bloqueTRYCATCH RETURN '(' . retorno ')' ';' END  (13)
 
 	LONG  shift 4
@@ -3349,7 +3342,7 @@ state 274
 	'-'  shift 69
 	.  error
 
-	retorno  goto 304
+	retorno  goto 303
 	tipo  goto 227
 	expAritmetica  goto 228
 	termino  goto 72
@@ -3357,52 +3350,52 @@ state 274
 	llamadoFunc  goto 74
 
 
-state 275
+state 274
 	TRYCATCHFunc : BEGIN sentEjecutableFunc bloqueTRYCATCH sentEjecutableFunc RETURN . '(' retorno ')' ';' END  (14)
 
-	'('  shift 305
+	'('  shift 304
 	.  error
 
 
-state 276
+state 275
 	sentenciaCONTRACT : CONTRACT '(' condicion ')' ';' .  (31)
 
 	.  reduce 31
 
 
-state 277
+state 276
 	sentenciaCONTRACT : CONTRACT ':' '(' ')' ';' .  (33)
 
 	.  reduce 33
 
 
-state 278
+state 277
 	sentenciaCONTRACT : CONTRACT ':' '(' condicion ')' . error  (35)
 
-	error  shift 306
+	error  shift 305
 	.  error
 
 
-state 279
+state 278
 	sentenciaCONTRACT : CONTRACT ':' '(' condicion ';' .  (34)
 
 	.  reduce 34
 
 
-state 280
+state 279
 	sentenciaCONTRACT : CONTRACT ':' condicion ')' ';' .  (32)
 
 	.  reduce 32
 
 
-state 281
+state 280
 	bloqueEjecutableFunc : sentEjecutableFunc RETURN '(' retorno ')' . END  (21)
 
-	END  shift 307
+	END  shift 306
 	.  error
 
 
-state 282
+state 281
 	asignacion : ID ASIGN tipo '(' expAritmetica ')' . ';'  (87)
 	comparacion : tipo '(' expAritmetica ')' . comparador expAritmetica  (127)
 	comparacion : tipo '(' expAritmetica ')' . comparador tipo '(' expAritmetica ')'  (129)
@@ -3411,78 +3404,78 @@ state 282
 	DISTINTO  shift 82
 	MAYORIG  shift 83
 	MENORIG  shift 84
-	';'  shift 308
+	';'  shift 307
 	'='  shift 85
 	'>'  shift 86
 	'<'  shift 87
 	.  error
 
-	comparador  goto 292
+	comparador  goto 291
 
 
-state 283
+state 282
 	bloqueTRYCATCH : TRY sentEjecutables CATCH BEGIN sentSoloEjecutables error .  (11)
 
 	.  reduce 11
 
 
-state 284
+state 283
 	bloqueTRYCATCH : TRY sentEjecutables CATCH BEGIN sentSoloEjecutables END .  (6)
 
 	.  reduce 6
 
 
-state 285
+state 284
 	sentenciaIF : IF THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF . ';'  (98)
+
+	';'  shift 308
+	.  error
+
+
+state 285
+	sentenciaIF : IF condicion THEN ELSE bloqueEjecutable ENDIF . ';'  (100)
 
 	';'  shift 309
 	.  error
 
 
 state 286
-	sentenciaIF : IF condicion THEN ELSE bloqueEjecutable ENDIF . ';'  (100)
+	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE ENDIF . ';'  (101)
 
 	';'  shift 310
 	.  error
 
 
 state 287
-	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE ENDIF . ';'  (101)
-
-	';'  shift 311
-	.  error
-
-
-state 288
 	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable . ENDIF ';'  (95)
 	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable . ';'  (102)
 	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable . ENDIF error  (103)
 
-	ENDIF  shift 312
-	';'  shift 313
+	ENDIF  shift 311
+	';'  shift 312
 	.  error
 
 
-state 289
+state 288
 	sentenciaIF : IF condicion THEN bloqueEjecutable ENDIF error .  (108)
 
 	.  reduce 108
 
 
-state 290
+state 289
 	sentenciaIF : IF condicion THEN bloqueEjecutable ENDIF ';' .  (96)
 
 	.  reduce 96
 
 
-state 291
+state 290
 	sentenciaIF : IF condicion bloqueEjecutable ELSE bloqueEjecutable ENDIF . ';'  (99)
 
-	';'  shift 314
+	';'  shift 313
 	.  error
 
 
-state 292
+state 291
 	comparacion : tipo '(' expAritmetica ')' comparador . expAritmetica  (127)
 	comparacion : tipo '(' expAritmetica ')' comparador . tipo '(' expAritmetica ')'  (129)
 
@@ -3493,74 +3486,93 @@ state 292
 	'-'  shift 69
 	.  error
 
-	tipo  goto 315
-	expAritmetica  goto 316
+	tipo  goto 314
+	expAritmetica  goto 315
 	termino  goto 72
 	factor  goto 73
 	llamadoFunc  goto 74
 
 
-state 293
+state 292
 	expAritmetica : expAritmetica . '+' termino  (61)
 	expAritmetica : expAritmetica . '-' termino  (62)
 	comparacion : expAritmetica comparador tipo '(' expAritmetica . ')'  (128)
 
-	')'  shift 317
+	')'  shift 316
 	'+'  shift 138
 	'-'  shift 139
 	.  error
 
 
-state 294
+state 293
 	sentenciaIF : condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF . ';'  (97)
+
+	';'  shift 317
+	.  error
+
+
+state 294
+	TRYCATCHFunc : BEGIN bloqueTRYCATCH RETURN '(' retorno ')' . ';' END  (12)
 
 	';'  shift 318
 	.  error
 
 
 state 295
-	TRYCATCHFunc : BEGIN bloqueTRYCATCH RETURN '(' retorno ')' . ';' END  (12)
+	TRYCATCHFunc : BEGIN bloqueTRYCATCH sentEjecutableFunc RETURN '(' retorno . ')' ';' END  (15)
 
-	';'  shift 319
+	')'  shift 319
 	.  error
 
 
 state 296
-	TRYCATCHFunc : BEGIN bloqueTRYCATCH sentEjecutableFunc RETURN '(' retorno . ')' ';' END  (15)
-
-	')'  shift 320
-	.  error
-
-
-state 297
 	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN '(' ')' END .  (24)
 
 	.  reduce 24
 
 
-state 298
+state 297
 	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN '(' retorno END .  (25)
 
 	.  reduce 25
 
 
-state 299
+state 298
 	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN '(' retorno ')' . ';' END  (19)
 
-	';'  shift 321
+	';'  shift 320
 	.  error
 
 
-state 300
+state 299
 	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN retorno ')' END .  (23)
 
 	.  reduce 23
 
 
-state 301
+state 300
 	retorno : tipo '(' expAritmetica . ')'  (60)
 	expAritmetica : expAritmetica . '+' termino  (61)
 	expAritmetica : expAritmetica . '-' termino  (62)
+
+	')'  shift 321
+	'+'  shift 138
+	'-'  shift 139
+	.  error
+
+
+state 301
+	bloqueEjecutableFunc : BEGIN sentEjecutableFunc '(' retorno ')' END .  (22)
+
+	.  reduce 22
+
+
+state 302
+	retorno : tipo '(' expAritmetica . ')'  (60)
+	expAritmetica : expAritmetica . '+' termino  (61)
+	expAritmetica : expAritmetica . '-' termino  (62)
+	comparacion : tipo '(' expAritmetica . ')' comparador expAritmetica  (127)
+	comparacion : tipo '(' expAritmetica . ')' comparador tipo '(' expAritmetica ')'  (129)
 
 	')'  shift 322
 	'+'  shift 138
@@ -3568,33 +3580,14 @@ state 301
 	.  error
 
 
-state 302
-	bloqueEjecutableFunc : BEGIN sentEjecutableFunc '(' retorno ')' END .  (22)
-
-	.  reduce 22
-
-
 state 303
-	retorno : tipo '(' expAritmetica . ')'  (60)
-	expAritmetica : expAritmetica . '+' termino  (61)
-	expAritmetica : expAritmetica . '-' termino  (62)
-	comparacion : tipo '(' expAritmetica . ')' comparador expAritmetica  (127)
-	comparacion : tipo '(' expAritmetica . ')' comparador tipo '(' expAritmetica ')'  (129)
+	TRYCATCHFunc : BEGIN sentEjecutableFunc bloqueTRYCATCH RETURN '(' retorno . ')' ';' END  (13)
 
 	')'  shift 323
-	'+'  shift 138
-	'-'  shift 139
 	.  error
 
 
 state 304
-	TRYCATCHFunc : BEGIN sentEjecutableFunc bloqueTRYCATCH RETURN '(' retorno . ')' ';' END  (13)
-
-	')'  shift 324
-	.  error
-
-
-state 305
 	TRYCATCHFunc : BEGIN sentEjecutableFunc bloqueTRYCATCH sentEjecutableFunc RETURN '(' . retorno ')' ';' END  (14)
 
 	LONG  shift 4
@@ -3604,7 +3597,7 @@ state 305
 	'-'  shift 69
 	.  error
 
-	retorno  goto 325
+	retorno  goto 324
 	tipo  goto 227
 	expAritmetica  goto 228
 	termino  goto 72
@@ -3612,71 +3605,71 @@ state 305
 	llamadoFunc  goto 74
 
 
-state 306
+state 305
 	sentenciaCONTRACT : CONTRACT ':' '(' condicion ')' error .  (35)
 
 	.  reduce 35
 
 
-state 307
+state 306
 	bloqueEjecutableFunc : sentEjecutableFunc RETURN '(' retorno ')' END .  (21)
 
 	.  reduce 21
 
 
-state 308
+state 307
 	asignacion : ID ASIGN tipo '(' expAritmetica ')' ';' .  (87)
 
 	.  reduce 87
 
 
-state 309
+state 308
 	sentenciaIF : IF THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF ';' .  (98)
 
 	.  reduce 98
 
 
-state 310
+state 309
 	sentenciaIF : IF condicion THEN ELSE bloqueEjecutable ENDIF ';' .  (100)
 
 	.  reduce 100
 
 
-state 311
+state 310
 	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE ENDIF ';' .  (101)
 
 	.  reduce 101
 
 
-state 312
+state 311
 	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF . ';'  (95)
 	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF . error  (103)
 
-	error  shift 326
-	';'  shift 327
+	error  shift 325
+	';'  shift 326
 	.  error
 
 
-state 313
+state 312
 	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable ';' .  (102)
 
 	.  reduce 102
 
 
-state 314
+state 313
 	sentenciaIF : IF condicion bloqueEjecutable ELSE bloqueEjecutable ENDIF ';' .  (99)
 
 	.  reduce 99
 
 
-state 315
+state 314
 	comparacion : tipo '(' expAritmetica ')' comparador tipo . '(' expAritmetica ')'  (129)
 
-	'('  shift 328
+	'('  shift 327
 	.  error
 
 
-state 316
+state 315
 	expAritmetica : expAritmetica . '+' termino  (61)
 	expAritmetica : expAritmetica . '-' termino  (62)
 	comparacion : tipo '(' expAritmetica ')' comparador expAritmetica .  (127)
@@ -3689,46 +3682,46 @@ state 316
 	';'  reduce 127
 
 
-state 317
+state 316
 	comparacion : expAritmetica comparador tipo '(' expAritmetica ')' .  (128)
 
 	.  reduce 128
 
 
-state 318
+state 317
 	sentenciaIF : condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF ';' .  (97)
 
 	.  reduce 97
 
 
-state 319
+state 318
 	TRYCATCHFunc : BEGIN bloqueTRYCATCH RETURN '(' retorno ')' ';' . END  (12)
 
-	END  shift 329
+	END  shift 328
+	.  error
+
+
+state 319
+	TRYCATCHFunc : BEGIN bloqueTRYCATCH sentEjecutableFunc RETURN '(' retorno ')' . ';' END  (15)
+
+	';'  shift 329
 	.  error
 
 
 state 320
-	TRYCATCHFunc : BEGIN bloqueTRYCATCH sentEjecutableFunc RETURN '(' retorno ')' . ';' END  (15)
+	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN '(' retorno ')' ';' . END  (19)
 
-	';'  shift 330
+	END  shift 330
 	.  error
 
 
 state 321
-	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN '(' retorno ')' ';' . END  (19)
-
-	END  shift 331
-	.  error
-
-
-state 322
 	retorno : tipo '(' expAritmetica ')' .  (60)
 
 	.  reduce 60
 
 
-state 323
+state 322
 	retorno : tipo '(' expAritmetica ')' .  (60)
 	comparacion : tipo '(' expAritmetica ')' . comparador expAritmetica  (127)
 	comparacion : tipo '(' expAritmetica ')' . comparador tipo '(' expAritmetica ')'  (129)
@@ -3742,36 +3735,36 @@ state 323
 	'<'  shift 87
 	')'  reduce 60
 
-	comparador  goto 292
+	comparador  goto 291
+
+
+state 323
+	TRYCATCHFunc : BEGIN sentEjecutableFunc bloqueTRYCATCH RETURN '(' retorno ')' . ';' END  (13)
+
+	';'  shift 331
+	.  error
 
 
 state 324
-	TRYCATCHFunc : BEGIN sentEjecutableFunc bloqueTRYCATCH RETURN '(' retorno ')' . ';' END  (13)
+	TRYCATCHFunc : BEGIN sentEjecutableFunc bloqueTRYCATCH sentEjecutableFunc RETURN '(' retorno . ')' ';' END  (14)
 
-	';'  shift 332
+	')'  shift 332
 	.  error
 
 
 state 325
-	TRYCATCHFunc : BEGIN sentEjecutableFunc bloqueTRYCATCH sentEjecutableFunc RETURN '(' retorno . ')' ';' END  (14)
-
-	')'  shift 333
-	.  error
-
-
-state 326
 	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF error .  (103)
 
 	.  reduce 103
 
 
-state 327
+state 326
 	sentenciaIF : IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF ';' .  (95)
 
 	.  reduce 95
 
 
-state 328
+state 327
 	comparacion : tipo '(' expAritmetica ')' comparador tipo '(' . expAritmetica ')'  (129)
 
 	ID  shift 66
@@ -3779,86 +3772,86 @@ state 328
 	'-'  shift 69
 	.  error
 
-	expAritmetica  goto 334
+	expAritmetica  goto 333
 	termino  goto 72
 	factor  goto 73
 	llamadoFunc  goto 74
 
 
-state 329
+state 328
 	TRYCATCHFunc : BEGIN bloqueTRYCATCH RETURN '(' retorno ')' ';' END .  (12)
 
 	.  reduce 12
 
 
-state 330
+state 329
 	TRYCATCHFunc : BEGIN bloqueTRYCATCH sentEjecutableFunc RETURN '(' retorno ')' ';' . END  (15)
 
-	END  shift 335
+	END  shift 334
 	.  error
 
 
-state 331
+state 330
 	bloqueEjecutableFunc : BEGIN sentEjecutableFunc RETURN '(' retorno ')' ';' END .  (19)
 
 	.  reduce 19
 
 
-state 332
+state 331
 	TRYCATCHFunc : BEGIN sentEjecutableFunc bloqueTRYCATCH RETURN '(' retorno ')' ';' . END  (13)
 
-	END  shift 336
+	END  shift 335
+	.  error
+
+
+state 332
+	TRYCATCHFunc : BEGIN sentEjecutableFunc bloqueTRYCATCH sentEjecutableFunc RETURN '(' retorno ')' . ';' END  (14)
+
+	';'  shift 336
 	.  error
 
 
 state 333
-	TRYCATCHFunc : BEGIN sentEjecutableFunc bloqueTRYCATCH sentEjecutableFunc RETURN '(' retorno ')' . ';' END  (14)
-
-	';'  shift 337
-	.  error
-
-
-state 334
 	expAritmetica : expAritmetica . '+' termino  (61)
 	expAritmetica : expAritmetica . '-' termino  (62)
 	comparacion : tipo '(' expAritmetica ')' comparador tipo '(' expAritmetica . ')'  (129)
 
-	')'  shift 338
+	')'  shift 337
 	'+'  shift 138
 	'-'  shift 139
 	.  error
 
 
-state 335
+state 334
 	TRYCATCHFunc : BEGIN bloqueTRYCATCH sentEjecutableFunc RETURN '(' retorno ')' ';' END .  (15)
 
 	.  reduce 15
 
 
-state 336
+state 335
 	TRYCATCHFunc : BEGIN sentEjecutableFunc bloqueTRYCATCH RETURN '(' retorno ')' ';' END .  (13)
 
 	.  reduce 13
 
 
-state 337
+state 336
 	TRYCATCHFunc : BEGIN sentEjecutableFunc bloqueTRYCATCH sentEjecutableFunc RETURN '(' retorno ')' ';' . END  (14)
 
-	END  shift 339
+	END  shift 338
 	.  error
 
 
-state 338
+state 337
 	comparacion : tipo '(' expAritmetica ')' comparador tipo '(' expAritmetica ')' .  (129)
 
 	.  reduce 129
 
 
-state 339
+state 338
 	TRYCATCHFunc : BEGIN sentEjecutableFunc bloqueTRYCATCH sentEjecutableFunc RETURN '(' retorno ')' ';' END .  (14)
 
 	.  reduce 14
 
 
 41 terminals, 36 nonterminals
-143 grammar rules, 340 states
+143 grammar rules, 339 states

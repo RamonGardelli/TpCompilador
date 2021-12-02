@@ -15,6 +15,8 @@ import java.util.*;
 public class AnalizadorSintactico {
 
     public static String codigoAssembler = " ";
+    
+    public static String variablesCodigoAssembler = " ";
 
     public static ArrayList<String> listaAnalisis = new ArrayList<>();
 
@@ -75,7 +77,7 @@ public class AnalizadorSintactico {
             if (args.length != 0 || true) {
 
                 //File filex = new File(args[0]);
-                File filex = new File("C:\\Users\\ramon\\IdeaProjects\\TpCompilador\\archivos\\programa\\testprograma.txt");
+                File filex = new File("C:\\Users\\Admin\\Desktop\\prueba\\prueba.txt");
 
                 String originalPath = filex.getAbsoluteFile().getParent() + File.separator;
                 String fileName = filex.getName().split("\\.")[0];
@@ -148,7 +150,9 @@ public class AnalizadorSintactico {
 
                     String codigo = "";
                     Registro[] r = {r1, r2, r3, r4};
+                    codigoAssembler+="\n";
                     arbol.generarCodigo(r);
+              
                     System.out.println(codigoAssembler);
                 }else{
                     System.out.println("Error de tipo lexico/sintactico detectado, abortando generacion de codigo.");
@@ -170,5 +174,19 @@ public class AnalizadorSintactico {
         }
     }
 
+    public static void creacionAssembler() {
+    	codigoAssembler+=(".586");
+        codigoAssembler+="\n";
+    	codigoAssembler+=(".model flat, stdcall");
+        codigoAssembler+="\n";
+    	codigoAssembler+=("option casemap :none");
+        codigoAssembler+="\n";
+    	//codigoAssembler+=(".586"); LIBRERIAS
+        codigoAssembler+="\n";
+
+
+
+
+    }
 
 }

@@ -56,7 +56,10 @@ public class Nodo {
     }
 
     public boolean EsHoja() {
-        return esHoja;
+    	if((this.right==null)&&(this.left==null)) {
+    		return true;
+    	}
+        return false;
     }
 
     public void setEsHoja(boolean esHoja) {
@@ -70,6 +73,7 @@ public class Nodo {
     }
     
     public float getValor() {
+    	System.out.println(this.ref);
         if (!esRegistro) {
         	if ((AnalizadorLexico.getLexemaObject(this.getRef()).getTipoVariable())=="ID") {
         		return AnalizadorLexico.getLexemaObject(this.getRef()).getValorFloat();    
@@ -145,16 +149,17 @@ public class Nodo {
 				AnalizadorSintactico.codigoAssembler += (AnalizadorSintactico.pilaLabels.pop());
 			}
     		
-    		else if (this.getLeft().getRef()=="Then") {
-				this.left.generarCodigo(r);
-				AnalizadorSintactico.codigoAssembler += (AnalizadorSintactico.pilaLabels.pop());
-
+    		else {
+    			if (this.getLeft().getRef()=="Then") {
+					this.left.generarCodigo(r);
+					AnalizadorSintactico.codigoAssembler += (AnalizadorSintactico.pilaLabels.pop());
 			}
     			else {
     				this.left.generarCodigo(r);
     			}
     	}
        }
+	}
 	
 	private void creacionCodigoLong(String r, int i, Registro reg[]) {			
 	    	this.ref = reg[i].getNombre();
@@ -253,6 +258,22 @@ public class Nodo {
 									AnalizadorSintactico.codigoAssembler += ("\n");
 									AnalizadorSintactico.codigoAssembler += ("JE "+aux);
 								}
+								
+								if (r==">") {
+									AnalizadorSintactico.contadorLabel++;
+									String aux = "Label "+AnalizadorSintactico.contadorLabel;
+									AnalizadorSintactico.pilaLabels.push(aux);
+									AnalizadorSintactico.codigoAssembler += ("\n");
+									AnalizadorSintactico.codigoAssembler += ("JBE "+aux);
+								}
+								
+								if (r=="<") {
+									AnalizadorSintactico.contadorLabel++;
+									String aux = "Label "+AnalizadorSintactico.contadorLabel;
+									AnalizadorSintactico.pilaLabels.push(aux);
+									AnalizadorSintactico.codigoAssembler += ("\n");
+									AnalizadorSintactico.codigoAssembler += ("JGE "+aux);
+								}		
 							}
 							else if (r=="WHILE") {
 								String aux1 = (AnalizadorSintactico.pilaLabels.pop());
@@ -260,6 +281,13 @@ public class Nodo {
 								AnalizadorSintactico.codigoAssembler += ("JMP "+aux2);
 								AnalizadorSintactico.codigoAssembler += (aux1);
 							}		
+							else if(r=="PRINT") {
+								AnalizadorSintactico.codigoAssembler += ("invoke MessageBox, NULL, addr msj_"+this.left.ref+", addr msj_"+this.left.ref+", MB_OK");
+								AnalizadorSintactico.variablesCodigoAssembler+=("msj_"+this.left.ref);
+							}
+							else if(r=="LF") {
+								AnalizadorSintactico.codigoAssembler += ("CALL "+this.left.ref);
+							}
 			AnalizadorSintactico.codigoAssembler += ("\n");	
 			this.ref=reg[i].getNombre();
 			this.esRegistro=true;
@@ -335,6 +363,24 @@ public class Nodo {
 								AnalizadorSintactico.codigoAssembler += ("\n");
 								AnalizadorSintactico.codigoAssembler += ("JE "+aux);
 							}
+							
+							if (r==">") {
+								AnalizadorSintactico.contadorLabel++;
+								String aux = "@Label "+AnalizadorSintactico.contadorLabel;
+								AnalizadorSintactico.pilaLabels.push(aux);
+								AnalizadorSintactico.codigoAssembler += ("\n");
+								AnalizadorSintactico.codigoAssembler += ("JBE "+aux);
+							}
+							
+							if (r=="<") {
+								AnalizadorSintactico.contadorLabel++;
+								String aux = "@Label "+AnalizadorSintactico.contadorLabel;
+								AnalizadorSintactico.pilaLabels.push(aux);
+								AnalizadorSintactico.codigoAssembler += ("\n");
+								AnalizadorSintactico.codigoAssembler += ("JGE "+aux);
+							}
+							
+							
 						}
 						else if (r=="WHILE") {
 							String aux1 = (AnalizadorSintactico.pilaLabels.pop());
@@ -343,6 +389,15 @@ public class Nodo {
 							AnalizadorSintactico.codigoAssembler += ("\n");
 							AnalizadorSintactico.codigoAssembler += (aux1);
 						}
+		
+						else if(r=="PRINT") {
+							AnalizadorSintactico.codigoAssembler += ("invoke MessageBox, NULL, addr msj_"+this.left.ref+", addr msj_"+this.left.ref+", MB_OK");
+							AnalizadorSintactico.variablesCodigoAssembler+=("msj_"+this.left.ref);
+						}
+						else if(r=="LF") {
+							AnalizadorSintactico.codigoAssembler += ("CALL "+this.left.ref);
+						}
+						
 		
 		AnalizadorSintactico.codigoAssembler += ("\n");	
 		this.esRegistro=true;
