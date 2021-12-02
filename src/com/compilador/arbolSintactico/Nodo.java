@@ -73,7 +73,6 @@ public class Nodo {
     }
     
     public float getValor() {
-    	System.out.println(this.ref);
         if (!esRegistro) {
         	if ((AnalizadorLexico.getLexemaObject(this.getRef()).getTipoVariable())=="ID") {
         		return AnalizadorLexico.getLexemaObject(this.getRef()).getValorFloat();    
@@ -100,7 +99,6 @@ public class Nodo {
 
 	public void generarCodigo(Registro r[]) {
     	if (!(this.right==null)) {
-    		
 	    	if (this.ref=="WHILE") {
 	    		AnalizadorSintactico.contadorLabel++;
 				String aux = "Label "+AnalizadorSintactico.contadorLabel;
@@ -406,7 +404,6 @@ public class Nodo {
 		this.left=null;
 		this.right=null;
 	}
-	
 	
 	private boolean valorPermitido() {
 		if (this.tipo == "SINGLE") {
