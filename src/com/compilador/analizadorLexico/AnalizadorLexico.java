@@ -133,9 +133,9 @@ public class AnalizadorLexico {
             // 17
             {16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18, 16,16, 16, 16, -1},
             // 18
-            {19, 19, 19, 19, 19, 16, 19, 19, 19, 19, 19, 19, 19, 19, -1,18, 19, 19, 19, -1},
+            {19, 19, 19, 19, 19, 16, 19, 19, 19, 19, 19, 19, 19, 19, 19,18, 19, 19, 19, -1},
             // 19
-            {0, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, -1,19,16, 16, 16, -1},
+            {0, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 19,19,16, 16, 16, -1},
 
     };
 
@@ -177,9 +177,9 @@ public class AnalizadorLexico {
             // 17
             {null, null, null, null, null, null, null, null, null, null, null, null, null, null, AS11,AS2, null, null, null, null},
             // 18
-            {AS2, AS2, AS2, AS2, AS2, AS11, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2, null, AS11,AS2, AS2, AS2, null},
+            {AS2, AS2, AS2, AS2, AS2, AS11, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS11, AS11,AS2, AS2, AS2, null},
             // 19
-            {AS8, AS2, AS2, AS2, AS2, AS11, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2, null,AS11, AS2, AS2, AS2, null}
+            {AS8, AS2, AS2, AS2, AS2, AS11, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS11,AS11, AS2, AS2, AS2, null}
     };
 
 
@@ -560,7 +560,7 @@ public class AnalizadorLexico {
                         token=-1;
                         break;
                     }
-                    if(estado == 18){
+                    if(estado == 18 || estado == 19){
                         listaDeErrores.add("ERROR Linea " + (numLinea - 1) +": cadena multilinea no puede llevar dos nuevas lineas seguidas..");
                         token=-1;
                         break;
@@ -622,7 +622,7 @@ public class AnalizadorLexico {
                 estado = 0;
             }
         }
-        //System.out.println("Devuelvo token: " +token);
+        //System.out.println("Devuelvo token: " +token + " y buffer era:" +reading);
         if(token == 0 && listaDeErrores.size() == 0){
             salidaTokens.add("AL - Linea : " + numLinea + " Token : " + token + " End Of File" );
         }else{

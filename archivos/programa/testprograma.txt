@@ -1,23 +1,18 @@
-progCteRangoAcept
 
-SINGLE a, b, c;
+progComent
 
+LONG Aux_1 ;
 
 BEGIN
-    a:=1.0;
-    b:=1.0;
-    IF (b==a) THEN
-    BEGIN
-       c:=4.0;
-    END
-    ENDIF;
 
-    b:=2.0;
+              PRINT ( % Cadena % ) ;
 
-    IF (b<>a) THEN
-    BEGIN
-       c:=5.0;
-	   b:=5.0;
-    END
-    ENDIF;
+              PRINT ( % Cadena * +
+
+              + Fin cadena % ) ;
+
+              PRINT (% Cadena
+
+                             + Fin cadena %)
+
 END
