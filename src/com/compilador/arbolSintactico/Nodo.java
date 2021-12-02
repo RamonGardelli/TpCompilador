@@ -114,8 +114,6 @@ public class Nodo {
 				String aux = "Label "+AnalizadorSintactico.contadorLabel;
 				AnalizadorSintactico.pilaLabels.push(aux);
 				AnalizadorSintactico.codigoAssembler += (aux);
-		    	int i = this.registroLibre(r);
-		    	this.creacionCodigoLong(this.ref, i, r);
 	    	}
 	    	else {
 		    	int i = this.registroLibre(r);
@@ -124,7 +122,7 @@ public class Nodo {
 			    	this.creacionCodigoLong(this.ref, i, r);
 		    	}
 		    	else if (this.tipo=="SINGLE") {
-		    		this.creacionCodigoSingle(this.ref, i);
+		    		this.creacionCodigoSingle(this.ref);
 		    	}
 	    	}
 
@@ -263,7 +261,7 @@ public class Nodo {
 			this.right=null;
 		}
 	
-	private void creacionCodigoSingle(String r, int i) {					
+	private void creacionCodigoSingle(String r) {					
 		String izquierda = this.left.getRef();
 		String derecha = this.right.getRef();
 		if (this.left.getRef().contains("@")){
