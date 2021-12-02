@@ -1,18 +1,14 @@
+progCteRangoAcept
 
-progComent
+SINGLE a, b;
 
-LONG Aux_1 ;
+SINGLE FUNC X ()
+BEGIN
+    RETURN (3.0);
+END
+
 
 BEGIN
-
-              PRINT ( % Cadena % ) ;
-
-              PRINT ( % Cadena * +
-
-              + Fin cadena % ) ;
-
-              PRINT (% Cadena
-
-                             + Fin cadena %)
-
+    a:=1.0;
+    b:=X();
 END

@@ -377,10 +377,11 @@ llamadoFunc: ID '(' ID ')'
 
 declaracionFunc : tipo FUNC ID '(' parametro ')' {AnalizadorSintactico.agregarAnalisis("Declaracion de funcion en (Linea " + AnalizadorLexico.numLinea + ")");
             if( AnalizadorSintactico.esVariableRedeclarada($3.sval + AnalizadorSintactico.ambitoActual)){
-                //corto arbol
+                AnalizadorSintactico.agregarError("ERROR: ID ya fue utilizado (Linea " + AnalizadorLexico.numLinea + ")");
             }else{
                 TDSObject aux = AnalizadorLexico.tablaDeSimbolos.remove($3.sval);
                 aux.setTipoContenido(AnalizadorSintactico.tipoActual);
+                aux.setEsFuncion(true);
                 aux.setTipoParametro(((TDSObject)((Object[])($5.obj))[1]).getTipoContenido());
                 AnalizadorLexico.tablaDeSimbolos.put($3.sval + AnalizadorSintactico.ambitoActual,aux);
                 $$=$3;
@@ -390,10 +391,11 @@ declaracionFunc : tipo FUNC ID '(' parametro ')' {AnalizadorSintactico.agregarAn
 			}
 		|tipo FUNC ID '(' ')' {AnalizadorSintactico.agregarAnalisis("Declaracion de funcion en (Linea " + AnalizadorLexico.numLinea + ")");
 		     if( AnalizadorSintactico.esVariableRedeclarada($3.sval + AnalizadorSintactico.ambitoActual)){
-                   //corto arbol
+                   AnalizadorSintactico.agregarError("ERROR: ID ya fue utilizado (Linea " + AnalizadorLexico.numLinea + ")");
              }else{
                 TDSObject aux = AnalizadorLexico.tablaDeSimbolos.remove($3.sval);
                 aux.setTipoContenido(AnalizadorSintactico.tipoActual);
+                aux.setEsFuncion(true);
                 AnalizadorLexico.tablaDeSimbolos.put($3.sval + AnalizadorSintactico.ambitoActual,aux);
                 $$=$3;
              }

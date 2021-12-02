@@ -6,6 +6,17 @@ public class TDSObject {
     private String tipoVariable;
     private String tipoContenido;
     private float valor;
+    private boolean esFuncion = false;
+
+    public boolean esFuncion() {
+        return esFuncion;
+    }
+
+    public void setEsFuncion(boolean esFuncion) {
+        this.esFuncion = esFuncion;
+    }
+
+
 
     public String getTipoParametro() {
         return tipoParametro;
