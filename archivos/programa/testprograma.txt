@@ -1,29 +1,23 @@
-progComent
+progCteRangoAcept
 
-LONG aa, bb;
+SINGLE a, b, c;
 
- 
-
-LONG FUNC funcion ( LONG x )
-
-              LONG z;
-
-              BEGIN
-
-                             x:= 2 + z ;
-
-                             RETURN ( x );
-
-              END
-
- 
 
 BEGIN
+    a:=1.0;
+    b:=1.0;
+    IF (b==a) THEN
+    BEGIN
+       c:=4.0;
+    END
+    ENDIF;
 
-aa := 3;
+    b:=2.0;
 
-aa := bb/aa;
-
- 
-
+    IF (b<>a) THEN
+    BEGIN
+       c:=5.0;
+	   b:=5.0;
+    END
+    ENDIF;
 END

@@ -1081,7 +1081,7 @@ case 34:
 break;
 case 35:
 //#line 124 "gramatica.y"
-{AnalizadorSintactico.agregarError("error falta ';' (Linea " + AnalizadorLexico.numLinea + ")");}
+{AnalizadorSintactico.agregarError("error falta ';' (Linea " + (AnalizadorLexico.numLinea-1) + ")");}
 break;
 case 36:
 //#line 130 "gramatica.y"
@@ -1185,7 +1185,7 @@ case 52:
 break;
 case 53:
 //#line 200 "gramatica.y"
-{AnalizadorSintactico.agregarError("error falta ';' (Linea " + AnalizadorLexico.numLinea + ")");}
+{AnalizadorSintactico.agregarError("error falta ';' (Linea " + (AnalizadorLexico.numLinea-1) + ")");}
 break;
 case 54:
 //#line 203 "gramatica.y"
@@ -1591,7 +1591,7 @@ case 102:
 break;
 case 103:
 //#line 500 "gramatica.y"
-{AnalizadorSintactico.agregarError("error falta ';' (Linea " + AnalizadorLexico.numLinea + ")");}
+{AnalizadorSintactico.agregarError("error falta ';' (Linea " + (AnalizadorLexico.numLinea-1) + ")");}
 break;
 case 104:
 //#line 501 "gramatica.y"
@@ -1611,7 +1611,7 @@ case 107:
 break;
 case 108:
 //#line 505 "gramatica.y"
-{AnalizadorSintactico.agregarError("error falta ';' (Linea " + AnalizadorLexico.numLinea + ")");}
+{AnalizadorSintactico.agregarError("error falta ';' (Linea " + (AnalizadorLexico.numLinea-1) + ")");}
 break;
 case 109:
 //#line 508 "gramatica.y"
@@ -1637,7 +1637,7 @@ case 113:
 break;
 case 114:
 //#line 515 "gramatica.y"
-{AnalizadorSintactico.agregarError("error falta ';' (Linea " + AnalizadorLexico.numLinea + ")");}
+{AnalizadorSintactico.agregarError("error falta ';' (Linea " + (AnalizadorLexico.numLinea-1) + ")");}
 break;
 case 117:
 //#line 520 "gramatica.y"
@@ -1709,7 +1709,7 @@ case 134:
 break;
 case 135:
 //#line 560 "gramatica.y"
-{yyval = new ParserVal("!=");}
+{yyval = new ParserVal("<>");}
 break;
 case 136:
 //#line 561 "gramatica.y"

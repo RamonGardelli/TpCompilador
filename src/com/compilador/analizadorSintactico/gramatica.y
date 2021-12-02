@@ -557,7 +557,7 @@ comparacion: expAritmetica comparador expAritmetica
 comparador: '>' 	{$$ = new ParserVal(">");}
 	  | '<'		{$$ = new ParserVal("<");}
 	  | IGUAL	{$$ = new ParserVal("==");}
-	  | DISTINTO	{$$ = new ParserVal("!=");}
+	  | DISTINTO	{$$ = new ParserVal("<>");}
 	  | MAYORIG	{$$ = new ParserVal(">=");}
 	  | MENORIG	{$$ = new ParserVal("<=");}
 	  | '=' {

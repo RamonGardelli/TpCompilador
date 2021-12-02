@@ -221,7 +221,7 @@ public class Nodo {
 									//Aqui deberia cortar la ejecucion, enviando un mensaje de error.
 								}
 							}
-							else if ((r=="==")||(r==">=")||(r=="<=")||(r=="!=")) {
+							else if ((r=="==")||(r==">=")||(r=="<=")||(r=="<>")) {
 								AnalizadorSintactico.codigoAssembler += ("CMP "+izquierda+", _"+ derecha);
 								
 								if (r=="==") {
@@ -246,7 +246,7 @@ public class Nodo {
 									AnalizadorSintactico.codigoAssembler += ("\n");
 									AnalizadorSintactico.codigoAssembler += ("JG "+aux);
 								}
-								if (r=="!=") {
+								if (r=="<>") {
 									AnalizadorSintactico.contadorLabel++;
 									String aux = "Label "+AnalizadorSintactico.contadorLabel;
 									AnalizadorSintactico.pilaLabels.push(aux);
@@ -305,7 +305,7 @@ public class Nodo {
 							}
 							this.imprimirDivision(derecha, izquierda);
 						}
-						else if ((r=="==")||(r==">=")||(r=="<=")||(r=="!=")) {
+						else if ((r=="==")||(r==">=")||(r=="<=")||(r=="<>")) {
 							AnalizadorSintactico.codigoAssembler += ("FCOM ");
 							AnalizadorSintactico.codigoAssembler += ("\n");
 
@@ -328,7 +328,7 @@ public class Nodo {
 								AnalizadorSintactico.pilaLabels.push(aux);
 								AnalizadorSintactico.codigoAssembler += ("JG "+aux);
 							}
-							if (r=="!=") {
+							if (r=="<>") {
 								AnalizadorSintactico.contadorLabel++;
 								String aux = "@Label "+AnalizadorSintactico.contadorLabel;
 								AnalizadorSintactico.pilaLabels.push(aux);
