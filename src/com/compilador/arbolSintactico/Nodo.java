@@ -83,19 +83,28 @@ public class Nodo {
 		this.valor = valor;
 	}
 
-	public void setRegistro(boolean esRegistro, Registro r[]) {
-    	if ((this.esRegistro) && (!esRegistro)) {
+	public void setRegistro(boolean Registro, Registro r[]) {
+    	if ((this.esRegistro) && (!Registro)) {
     		for (int i = 0; i<r.length; i++) {
     			if (r[i].getNombre()==this.ref) {
     				r[i].setLibre(true);
     			}
     		}
     	}
-    	this.esRegistro=esRegistro;
+    	this.esRegistro=Registro;
     }
 
 	public void generarCodigo(Registro r[]) {
     	if (!(this.right==null)) {
+    		
+	    	if (this.ref=="WHILE") {
+	    		AnalizadorSintactico.contadorLabel++;
+				String aux = "Label "+AnalizadorSintactico.contadorLabel;
+				AnalizadorSintactico.pilaLabels.push(aux);
+				AnalizadorSintactico.codigoAssembler += (aux);
+				AnalizadorSintactico.codigoAssembler += ("\n");
+	    	}
+	    	
 	    	if ((this.left.EsHoja())&&(!this.right.EsHoja())){
 	    		this.right.generarCodigo(r);
 	    		}
@@ -109,45 +118,43 @@ public class Nodo {
 				this.right.generarCodigo(r);
 			}	    	
 	    	
-	    	if (this.ref=="WHILE") {
-	    		AnalizadorSintactico.contadorLabel++;
-				String aux = "Label "+AnalizadorSintactico.contadorLabel;
-				AnalizadorSintactico.pilaLabels.push(aux);
-				AnalizadorSintactico.codigoAssembler += (aux);
-	    	}
-	    	else {
 		    	int i = this.registroLibre(r);
 		    	
-		    	if (this.tipo=="LONG") {
+		    	if ((this.right.getTipo()=="LONG")||(this.left.getTipo()=="LONG")) {
 			    	this.creacionCodigoLong(this.ref, i, r);
 		    	}
-		    	else if (this.tipo=="SINGLE") {
+		    	else if ((this.right.getTipo()=="SINGLE")||(this.left.getTipo()=="SINGLE")){
 		    		this.creacionCodigoSingle(this.ref);
 		    	}
-	    	}
-
+		    	else if (this.ref=="WHILE") {
+		    		this.creacionCodigoSingle(this.ref);
+		    	}
 
     	}
     	else if (this.right==null) {
     		if (this.getRef()=="Else"){
 				AnalizadorSintactico.contadorLabel++;
 				String aux = "Label "+AnalizadorSintactico.contadorLabel;
-				AnalizadorSintactico.pilaLabels.push(aux);
 				AnalizadorSintactico.codigoAssembler += ("JMP "+aux);
+				AnalizadorSintactico.codigoAssembler += ("\n");
 				AnalizadorSintactico.codigoAssembler += (AnalizadorSintactico.pilaLabels.pop());
+				AnalizadorSintactico.pilaLabels.push(aux);
+				AnalizadorSintactico.codigoAssembler += ("\n");
 				this.left.generarCodigo(r);
+				AnalizadorSintactico.codigoAssembler += ("\n");
 				AnalizadorSintactico.codigoAssembler += (AnalizadorSintactico.pilaLabels.pop());
 			}
-		
+    		
     		else if (this.getLeft().getRef()=="Then") {
 				this.left.generarCodigo(r);
 				AnalizadorSintactico.codigoAssembler += (AnalizadorSintactico.pilaLabels.pop());
+
 			}
     			else {
     				this.left.generarCodigo(r);
     			}
     	}
-    }
+       }
 	
 	private void creacionCodigoLong(String r, int i, Registro reg[]) {			
 	    	this.ref = reg[i].getNombre();
@@ -169,8 +176,8 @@ public class Nodo {
 				TDSObject value = AnalizadorLexico.getLexemaObject(this.left.getRef());
 				value.setValor(this.right.getValor());
 				AnalizadorLexico.tablaDeSimbolos.put(this.left.getRef(), value);
+				reg[i].setLibre(true);
 			}
-	
 			else
 				if (r=="+") { 
 					AnalizadorSintactico.codigoAssembler += ("MOV "+reg[i].getNombre()+", _"+ izquierda);
@@ -221,12 +228,14 @@ public class Nodo {
 									AnalizadorSintactico.contadorLabel++;
 									String aux = "Label "+AnalizadorSintactico.contadorLabel;
 									AnalizadorSintactico.pilaLabels.push(aux);
+									AnalizadorSintactico.codigoAssembler += ("\n");
 									AnalizadorSintactico.codigoAssembler += ("JNE "+aux);
 								}
 								if (r==">=") {
 									AnalizadorSintactico.contadorLabel++;
 									String aux = "Label "+AnalizadorSintactico.contadorLabel;
 									AnalizadorSintactico.pilaLabels.push(aux);
+									AnalizadorSintactico.codigoAssembler += ("\n");
 									AnalizadorSintactico.codigoAssembler += ("JL "+aux);
 								}
 								
@@ -234,12 +243,14 @@ public class Nodo {
 									AnalizadorSintactico.contadorLabel++;
 									String aux = "Label "+AnalizadorSintactico.contadorLabel;
 									AnalizadorSintactico.pilaLabels.push(aux);
+									AnalizadorSintactico.codigoAssembler += ("\n");
 									AnalizadorSintactico.codigoAssembler += ("JG "+aux);
 								}
 								if (r=="!=") {
 									AnalizadorSintactico.contadorLabel++;
 									String aux = "Label "+AnalizadorSintactico.contadorLabel;
 									AnalizadorSintactico.pilaLabels.push(aux);
+									AnalizadorSintactico.codigoAssembler += ("\n");
 									AnalizadorSintactico.codigoAssembler += ("JE "+aux);
 								}
 							}
@@ -248,8 +259,7 @@ public class Nodo {
 								String aux2 = (AnalizadorSintactico.pilaLabels.pop());
 								AnalizadorSintactico.codigoAssembler += ("JMP "+aux2);
 								AnalizadorSintactico.codigoAssembler += (aux1);
-							}
-			
+							}		
 			AnalizadorSintactico.codigoAssembler += ("\n");	
 			this.ref=reg[i].getNombre();
 			this.esRegistro=true;
@@ -259,7 +269,7 @@ public class Nodo {
 			this.left=null;
 			this.right.setRegistro(false,reg);
 			this.right=null;
-		}
+	}
 	
 	private void creacionCodigoSingle(String r) {					
 		String izquierda = this.left.getRef();
@@ -335,13 +345,10 @@ public class Nodo {
 						}
 		
 		AnalizadorSintactico.codigoAssembler += ("\n");	
-		//this.ref=reg[i].getNombre();
 		this.esRegistro=true;
 		this.setEsHoja(true);
 		this.tipo = this.left.getTipo();
-		//this.left.setRegistro(false,reg);
 		this.left=null;
-		//this.right.setRegistro(false,reg);
 		this.right=null;
 	}
 	
