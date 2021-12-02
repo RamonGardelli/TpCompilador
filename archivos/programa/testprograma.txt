@@ -1,12 +1,28 @@
-programaIdent
+progComent
 
-LONG Aux_1 ;
+LONG aa, bb;
 
-** este ejemplo usa identificador con letra digito y '_'
+ 
+
+LONG FUNC funcion ( LONG x )
+
+              LONG z;
+
+              BEGIN
+
+                             x:= 2 + z ;
+
+                             RETURN ( x );
+
+              END
+
+ 
 
 BEGIN
 
-              Aux_1 := 8;
+aa := 3;
+
+aa := bb/aa;
 
  
 

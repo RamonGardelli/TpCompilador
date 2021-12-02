@@ -119,7 +119,13 @@ public class Nodo {
 	    	}
 	    	else {
 		    	int i = this.registroLibre(r);
-		    	this.creacionCodigoLong(this.ref, i, r);
+		    	
+		    	if (this.tipo=="LONG") {
+			    	this.creacionCodigoLong(this.ref, i, r);
+		    	}
+		    	else if (this.tipo=="SINGLE") {
+		    		this.creacionCodigoSingle(this.ref, i);
+		    	}
 	    	}
 
 
@@ -257,9 +263,7 @@ public class Nodo {
 			this.right=null;
 		}
 	
-	private void creacionCodigoSingle(String r, int i, Registro reg[]) {			
-    	this.ref = reg[i].getNombre();
-		
+	private void creacionCodigoSingle(String r, int i) {					
 		String izquierda = this.left.getRef();
 		String derecha = this.right.getRef();
 		if (this.left.getRef().contains("@")){
@@ -271,83 +275,56 @@ public class Nodo {
 		}
 		
 		if (r==":=") {
-			AnalizadorSintactico.codigoAssembler += ("FLD _"+derecha);
-			AnalizadorSintactico.codigoAssembler += ("\n");
-			AnalizadorSintactico.codigoAssembler += ("FSTP _"+izquierda);
-			TDSObject value = AnalizadorLexico.getLexemaObject(this.left.getRef());
-			value.setValor(this.right.getValor());
-			AnalizadorLexico.tablaDeSimbolos.put(this.left.getRef(), value);
+			this.imprimirAsignacion(derecha, izquierda);
 		}
 
 		else
 			if (r=="+") { 
-				AnalizadorSintactico.codigoAssembler += ("MOV "+reg[i].getNombre()+", _"+ izquierda);
-				AnalizadorSintactico.codigoAssembler += ("\n");
-				AnalizadorSintactico.codigoAssembler += ("ADD "+reg[i].getNombre()+", _"+ derecha);
-				this.valor=(this.left.getValor()+this.right.getValor());
-				if (!this.valorPermitido()) {
-					//Aqui deberia cortar la ejecucion, enviando un mensaje de error.
+				this.imprimirSuma(derecha, izquierda);
 				}
-			}
 			else 
 				if (r=="*") {
-					AnalizadorSintactico.codigoAssembler += ("MOV "+reg[i].getNombre()+", _"+ izquierda);
-					AnalizadorSintactico.codigoAssembler += ("\n");
-					AnalizadorSintactico.codigoAssembler += ("SUB "+reg[i].getNombre()+", _"+ derecha);
-					this.valor=(this.left.getValor()*this.right.getValor());
-					if (!this.valorPermitido()) {
-						//Aqui deberia cortar la ejecucion, enviando un mensaje de error.
+					this.imprimirMultiplicacion(derecha, izquierda);
 					}
-			}
 				else 
 					if (r=="-") {
-						AnalizadorSintactico.codigoAssembler += ("MOV "+reg[i].getNombre()+", _"+ izquierda);
-						AnalizadorSintactico.codigoAssembler += ("\n");
-						AnalizadorSintactico.codigoAssembler += ("SUB "+reg[i].getNombre()+", _"+ derecha);
-						this.valor=(this.left.getValor()-this.right.getValor());
-						if (!this.valorPermitido()) {
+						this.imprimirResta(derecha, izquierda);
 						}
-					}
 					else 
 						if (r=="/") {
 							if (this.right.getValor()==0) {
 								//Aqui deberia cortar la ejecucion, enviando un mensaje de error.
 							}
-							AnalizadorSintactico.codigoAssembler += ("MOV "+reg[i].getNombre()+", _"+ izquierda);
-							AnalizadorSintactico.codigoAssembler += ("\n");
-							AnalizadorSintactico.codigoAssembler += ("DIV "+reg[i].getNombre()+", _"+ derecha);
-							this.valor=(this.left.getValor()/this.right.getValor());
-							
-							if (!this.valorPermitido()) {
-								//Aqui deberia cortar la ejecucion, enviando un mensaje de error.
-							}
+							this.imprimirDivision(derecha, izquierda);
 						}
 						else if ((r=="==")||(r==">=")||(r=="<=")||(r=="!=")) {
-							AnalizadorSintactico.codigoAssembler += ("CMP "+izquierda+", _"+ derecha);
-							
+							AnalizadorSintactico.codigoAssembler += ("FCOM ");
+							AnalizadorSintactico.codigoAssembler += ("\n");
+
 							if (r=="==") {
 								AnalizadorSintactico.contadorLabel++;
-								String aux = "Label "+AnalizadorSintactico.contadorLabel;
+								String aux = "@Label "+AnalizadorSintactico.contadorLabel;
 								AnalizadorSintactico.pilaLabels.push(aux);
 								AnalizadorSintactico.codigoAssembler += ("JNE "+aux);
 							}
 							if (r==">=") {
 								AnalizadorSintactico.contadorLabel++;
-								String aux = "Label "+AnalizadorSintactico.contadorLabel;
+								String aux = "@Label "+AnalizadorSintactico.contadorLabel;
 								AnalizadorSintactico.pilaLabels.push(aux);
 								AnalizadorSintactico.codigoAssembler += ("JL "+aux);
 							}
 							
 							if (r=="<=") {
 								AnalizadorSintactico.contadorLabel++;
-								String aux = "Label "+AnalizadorSintactico.contadorLabel;
+								String aux = "@Label "+AnalizadorSintactico.contadorLabel;
 								AnalizadorSintactico.pilaLabels.push(aux);
 								AnalizadorSintactico.codigoAssembler += ("JG "+aux);
 							}
 							if (r=="!=") {
 								AnalizadorSintactico.contadorLabel++;
-								String aux = "Label "+AnalizadorSintactico.contadorLabel;
+								String aux = "@Label "+AnalizadorSintactico.contadorLabel;
 								AnalizadorSintactico.pilaLabels.push(aux);
+								AnalizadorSintactico.codigoAssembler += ("\n");
 								AnalizadorSintactico.codigoAssembler += ("JE "+aux);
 							}
 						}
@@ -355,17 +332,18 @@ public class Nodo {
 							String aux1 = (AnalizadorSintactico.pilaLabels.pop());
 							String aux2 = (AnalizadorSintactico.pilaLabels.pop());
 							AnalizadorSintactico.codigoAssembler += ("JMP "+aux2);
+							AnalizadorSintactico.codigoAssembler += ("\n");
 							AnalizadorSintactico.codigoAssembler += (aux1);
 						}
 		
 		AnalizadorSintactico.codigoAssembler += ("\n");	
-		this.ref=reg[i].getNombre();
+		//this.ref=reg[i].getNombre();
 		this.esRegistro=true;
 		this.setEsHoja(true);
 		this.tipo = this.left.getTipo();
-		this.left.setRegistro(false,reg);
+		//this.left.setRegistro(false,reg);
 		this.left=null;
-		this.right.setRegistro(false,reg);
+		//this.right.setRegistro(false,reg);
 		this.right=null;
 	}
 	
@@ -392,5 +370,128 @@ public class Nodo {
    		}
 		return -1;
 	}
+	
+	private void imprimirAsignacion (String derecha, String izquierda) {
+		if (!(this.right.esRegistro)) {
+			AnalizadorSintactico.codigoAssembler += ("FLD _"+derecha);
+			AnalizadorSintactico.codigoAssembler += ("\n");
+			AnalizadorSintactico.codigoAssembler += ("FSTP _"+izquierda);
+			
+		}
+		else if (this.right.esRegistro) {
+			AnalizadorSintactico.codigoAssembler += ("FSTP _"+izquierda);
+		}
+		TDSObject value = AnalizadorLexico.getLexemaObject(this.left.getRef());
+		value.setValor(this.right.getValor());
+		AnalizadorLexico.tablaDeSimbolos.put(this.left.getRef(), value);
+	}
+	
+	private void imprimirSuma(String derecha, String izquierda) {
+		if (!(this.right.esRegistro)&&(!(this.left.esRegistro))) {
+			AnalizadorSintactico.codigoAssembler += ("FLD _"+ izquierda);
+			AnalizadorSintactico.codigoAssembler += ("\n");
+			AnalizadorSintactico.codigoAssembler += ("FLD _"+ derecha);
+			AnalizadorSintactico.codigoAssembler += ("\n");
+			AnalizadorSintactico.codigoAssembler += ("FADD");
+			
+		}
+		else if (!(this.right.esRegistro)&&(this.left.esRegistro)) {
+			AnalizadorSintactico.codigoAssembler += ("FLD _"+ derecha);
+			AnalizadorSintactico.codigoAssembler += ("\n");
+			AnalizadorSintactico.codigoAssembler += ("FADD");
+		}
+			else if((this.right.esRegistro)&&(!this.left.esRegistro)) {
+				AnalizadorSintactico.codigoAssembler += ("FLD _"+ izquierda);
+				AnalizadorSintactico.codigoAssembler += ("\n");
+				AnalizadorSintactico.codigoAssembler += ("FADD");
+			} 
+			else if ((this.right.esRegistro)&&(this.left.esRegistro)) {
+				AnalizadorSintactico.codigoAssembler += ("FADD");
+			}
+		this.valor=(this.left.getValor()+this.right.getValor());
+		if (!this.valorPermitido()) {
+			//Aqui deberia cortar la ejecucion, enviando un mensaje de error.
+		}
+	}
+
+	private void imprimirResta(String derecha, String izquierda) {
+		if (!(this.right.esRegistro)&&(!(this.left.esRegistro))) {
+			AnalizadorSintactico.codigoAssembler += ("FLD , _"+ izquierda);
+			AnalizadorSintactico.codigoAssembler += ("FLD _"+ derecha);
+			AnalizadorSintactico.codigoAssembler += ("\n");
+			AnalizadorSintactico.codigoAssembler += ("FSUB");
+		}
+		else if (!(this.right.esRegistro)&&(this.left.esRegistro)) {
+			AnalizadorSintactico.codigoAssembler += ("FLD _"+ derecha);
+			AnalizadorSintactico.codigoAssembler += ("\n");
+			AnalizadorSintactico.codigoAssembler += ("FSUB");
+		}
+			else if((this.right.esRegistro)&&(!this.left.esRegistro)) {
+				AnalizadorSintactico.codigoAssembler += ("FLD _"+ izquierda);
+				AnalizadorSintactico.codigoAssembler += ("\n");
+				AnalizadorSintactico.codigoAssembler += ("FSUB");
+			} 
+			else if ((this.right.esRegistro)&&(this.left.esRegistro)) {
+				AnalizadorSintactico.codigoAssembler += ("FSUB");
+			}
+		this.valor=(this.left.getValor()-this.right.getValor());
+		if (!this.valorPermitido()) {
+			//Aqui deberia cortar la ejecucion, enviando un mensaje de error.
+		}
+	}
+	
+	private void imprimirMultiplicacion(String derecha, String izquierda) {
+		if (!(this.right.esRegistro)&&(!(this.left.esRegistro))) {
+			AnalizadorSintactico.codigoAssembler += ("FLD , _"+ izquierda);
+			AnalizadorSintactico.codigoAssembler += ("FLD _"+ derecha);
+			AnalizadorSintactico.codigoAssembler += ("\n");
+			AnalizadorSintactico.codigoAssembler += ("FMUL");
+		}
+		else if (!(this.right.esRegistro)&&(this.left.esRegistro)) {
+			AnalizadorSintactico.codigoAssembler += ("FLD _"+ derecha);
+			AnalizadorSintactico.codigoAssembler += ("\n");
+			AnalizadorSintactico.codigoAssembler += ("FMUL");
+		}
+			else if((this.right.esRegistro)&&(!this.left.esRegistro)) {
+				AnalizadorSintactico.codigoAssembler += ("FLD _"+ izquierda);
+				AnalizadorSintactico.codigoAssembler += ("\n");
+				AnalizadorSintactico.codigoAssembler += ("FMUL");
+			} 
+			else if ((this.right.esRegistro)&&(this.left.esRegistro)) {
+				AnalizadorSintactico.codigoAssembler += ("FMUL");
+			}
+		this.valor=(this.left.getValor()*this.right.getValor());
+		if (!this.valorPermitido()) {
+			//Aqui deberia cortar la ejecucion, enviando un mensaje de error.
+		}
+	}
+	
+	private void imprimirDivision(String derecha, String izquierda) {
+		if (!(this.right.esRegistro)&&(!(this.left.esRegistro))) {
+			AnalizadorSintactico.codigoAssembler += ("FLD , _"+ izquierda);
+			AnalizadorSintactico.codigoAssembler += ("FLD _"+ derecha);
+			AnalizadorSintactico.codigoAssembler += ("\n");
+			AnalizadorSintactico.codigoAssembler += ("FDIV");
+		}
+		else if (!(this.right.esRegistro)&&(this.left.esRegistro)) {
+			AnalizadorSintactico.codigoAssembler += ("FLD _"+ derecha);
+			AnalizadorSintactico.codigoAssembler += ("\n");
+			AnalizadorSintactico.codigoAssembler += ("FDIV");
+		}
+			else if((this.right.esRegistro)&&(!this.left.esRegistro)) {
+				AnalizadorSintactico.codigoAssembler += ("FLD _"+ izquierda);
+				AnalizadorSintactico.codigoAssembler += ("\n");
+				AnalizadorSintactico.codigoAssembler += ("FDIV");
+			} 
+			else if ((this.right.esRegistro)&&(this.left.esRegistro)) {
+				AnalizadorSintactico.codigoAssembler += ("FDIV");
+			}
+		this.valor=(this.left.getValor()/this.right.getValor());
+		if (!this.valorPermitido()) {
+			//Aqui deberia cortar la ejecucion, enviando un mensaje de error.
+		}
+	}
+	
+	
 }
 

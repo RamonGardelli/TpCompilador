@@ -148,7 +148,7 @@ public class AnalizadorSintactico {
 
                     String codigo = "";
                     Registro[] r = {r1, r2, r3, r4};
-                    //arbol.generarCodigo(r);
+                    arbol.generarCodigo(r);
                     System.out.println(codigoAssembler);
                 }else{
                     System.out.println("Error de tipo lexico/sintactico detectado, abortando generacion de codigo.");

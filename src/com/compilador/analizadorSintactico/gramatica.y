@@ -121,7 +121,7 @@ sentenciaCONTRACT: CONTRACT ':' condicion  ';' {
 		 | CONTRACT ':' condicion ')' ';'{AnalizadorSintactico.agregarError("error falta '(' (Linea " + AnalizadorLexico.numLinea + ")");}
 		 | CONTRACT ':' '('')' ';'{AnalizadorSintactico.agregarError("error falta condicion (Linea " + AnalizadorLexico.numLinea + ")");}
 		 | CONTRACT ':''(' condicion ';' {AnalizadorSintactico.agregarError("error falta ')' (Linea " + AnalizadorLexico.numLinea + ")");}
-		 | CONTRACT ':''(' condicion ')' error {AnalizadorSintactico.agregarError("error falta ';' (Linea " + AnalizadorLexico.numLinea + ")");}
+		 | CONTRACT ':''(' condicion ')' error {AnalizadorSintactico.agregarError("error falta ';' (Linea " + (AnalizadorLexico.numLinea-1) + ")");}
 		 ;
 
 
@@ -152,11 +152,12 @@ declaraVariable: tipo listaVariables ';' {
                     AnalizadorSintactico.agregarAnalisis("Declaracion de variable. (Linea " + AnalizadorLexico.numLinea + ")");
             }
 	       | listaVariables ';' {AnalizadorSintactico.agregarError("error falta 'tipo' (Linea " + AnalizadorLexico.numLinea + ")");}
-	       | tipo listaVariables error {AnalizadorSintactico.agregarError("error falta ';' (Linea " + AnalizadorLexico.numLinea + ")");}
-	       	| ID error{
+	       | tipo listaVariables error {AnalizadorSintactico.agregarError("error falta ';' (Linea " + (AnalizadorLexico.numLinea-1) + ")");}
+	       | ID error{
 	       	        AnalizadorLexico.tablaDeSimbolos.remove($1.sval);
-           	        AnalizadorSintactico.agregarError("Tipo de variable debe ser en mayuscula (Linea " + AnalizadorLexico.numLinea + ")");
+           	        AnalizadorLexico.listaDeErrores.add("Tipo de variable debe ser en mayuscula (Linea " + (AnalizadorLexico.numLinea-1) + ")");
            	      }
+           | tipo error {AnalizadorSintactico.agregarError("error falta ';' (Linea " + (AnalizadorLexico.numLinea-1) + ")");}
 	       ;
 
 listaVariables: listaVariables ',' ID {
@@ -177,7 +178,6 @@ listaVariables: listaVariables ',' ID {
                     AnalizadorLexico.tablaDeSimbolos.put($1.sval + AnalizadorSintactico.ambitoActual,aux);
                 }
 	      }
-
 	      | listaVariables ',' {AnalizadorSintactico.agregarError("falta ID (Linea " + AnalizadorLexico.numLinea + ")");}
 	      // listaVariables ID error por falta de coma, da shift reduce
 	      ;
@@ -197,7 +197,7 @@ declaraFunc: declaracionFunc bloqueDeclarativo bloqueEjecutableFunc {
 declaraVarFunc:  encabezadoFunc listaVariables ';' {AnalizadorSintactico.agregarAnalisis("Declaracion de variable. (Linea " + AnalizadorLexico.numLinea + ")");
             }
 	      | encabezadoFunc ';' {AnalizadorSintactico.agregarError("error falta variable (Linea " + AnalizadorLexico.numLinea + ")");}
-	      | encabezadoFunc listaVariables error {AnalizadorSintactico.agregarError("error falta ';' (Linea " + AnalizadorLexico.numLinea + ")");}
+	      | encabezadoFunc listaVariables error {AnalizadorSintactico.agregarError("error falta ';' (Linea " + (AnalizadorLexico.numLinea-1) + ")");}
 	      ;
 
 encabezadoFunc: tipo FUNC '(' tipo ')' {
@@ -497,12 +497,12 @@ sentenciaIF: IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF ';' 
 	   |IF condicion THEN ELSE bloqueEjecutable ENDIF ';'{AnalizadorSintactico.agregarError("warning if vacio (Linea " + AnalizadorLexico.numLinea + ")");}
 	   | IF condicion THEN bloqueEjecutable ELSE ENDIF ';'{AnalizadorSintactico.agregarError("warning else vacio (Linea " + AnalizadorLexico.numLinea + ")");}
 	   |IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable ';'{AnalizadorSintactico.agregarError("error falta ENDIF (Linea " + AnalizadorLexico.numLinea + ")");}
-	   |IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF error {AnalizadorSintactico.agregarError("error falta ';' (Linea " + AnalizadorLexico.numLinea + ")");}
+	   |IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF error {AnalizadorSintactico.agregarError("error falta ';' (Linea " + (AnalizadorLexico.numLinea-1) + ")");}
 	   | IF THEN bloqueEjecutable ENDIF ';' {AnalizadorSintactico.agregarError("error falta condicion (Linea " + AnalizadorLexico.numLinea + ")");}
 	   | IF condicion bloqueEjecutable ENDIF ';' {AnalizadorSintactico.agregarError("error falta THEN (Linea " + AnalizadorLexico.numLinea + ")");}
 	   | IF condicion THEN ENDIF ';' {AnalizadorSintactico.agregarError("warning if vacio (Linea " + AnalizadorLexico.numLinea + ")");}
 	   | IF condicion THEN bloqueEjecutable ';' {AnalizadorSintactico.agregarError("error falta ENDIF (Linea " + AnalizadorLexico.numLinea + ")");}
-	   | IF condicion THEN bloqueEjecutable ENDIF error {AnalizadorSintactico.agregarError("error falta ';' (Linea " + AnalizadorLexico.numLinea + ")");}
+	   | IF condicion THEN bloqueEjecutable ENDIF error {AnalizadorSintactico.agregarError("error falta ';' (Linea " + (AnalizadorLexico.numLinea-1) + ")");}
 	   ;
 
 sentenciaPRINT: PRINT '(' CADENA ')' ';' {AnalizadorSintactico.agregarAnalisis("sentencia print (Linea " + AnalizadorLexico.numLinea + ")");
@@ -512,7 +512,7 @@ sentenciaPRINT: PRINT '(' CADENA ')' ';' {AnalizadorSintactico.agregarAnalisis("
 	      | PRINT CADENA ')' ';' {AnalizadorSintactico.agregarError("error falta '(' (Linea " + AnalizadorLexico.numLinea + ")");}
 	      | PRINT '('')' ';' {AnalizadorSintactico.agregarError("Warning print vacio' (Linea " + AnalizadorLexico.numLinea + ")");}
 	      | PRINT '(' CADENA ';' {AnalizadorSintactico.agregarError("error falta ')' (Linea " + AnalizadorLexico.numLinea + ")");}
-	      | PRINT '(' CADENA ')' error {AnalizadorSintactico.agregarError("error falta ';' (Linea " + AnalizadorLexico.numLinea + ")");}
+	      | PRINT '(' CADENA ')' error {AnalizadorSintactico.agregarError("error falta ';' (Linea " + (AnalizadorLexico.numLinea-1) + ")");}
 	      | PRINT '(' ID ')' ';'  //(util para Debug, errores innecesarios)
 	      | PRINT '(' CTE ')' ';'
 	      ;
@@ -594,5 +594,5 @@ public int yylex() {
 
 public void yyerror(String string) {
 	//AnalizadorSintactico.agregarError("Parser token error: " + string);
-	System.out.println("se que imprime en linea  "+ AnalizadorLexico.numLinea + ": " +string);
+	//System.out.println("token error en linea  "+ AnalizadorLexico.numLinea + ": " +string);
 }
