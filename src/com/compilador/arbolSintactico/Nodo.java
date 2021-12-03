@@ -145,6 +145,7 @@ public class Nodo {
 			String izquierda = this.left.getRef();
 			if(derecha=="LF") {
 				derecha = this.right.getRight().getRef();
+				AnalizadorSintactico.codigoAssembler += ("CALL "+this.left.ref);
 			}
 				
 			if (this.left.getRef().contains("@")){
@@ -262,10 +263,13 @@ public class Nodo {
 		String derecha = this.right.getRef();
 		if(derecha=="LF") {
 			derecha = this.right.getLeft().getRef();
+			AnalizadorSintactico.codigoAssembler += ("CALL "+this.right.getLeft().getRef());
+			AnalizadorSintactico.codigoAssembler += "\n";
 		}
 		if(izquierda=="LF") {
 			izquierda = this.left.getLeft().getRef();
-
+			AnalizadorSintactico.codigoAssembler += ("CALL "+this.left.getLeft().getRef());
+			AnalizadorSintactico.codigoAssembler += "\n";
 		}
 		
 		if (this.left.getRef().contains("@")){
@@ -358,7 +362,6 @@ public class Nodo {
 							AnalizadorSintactico.variablesCodigoAssembler+=("msj_"+this.left.ref);
 						}
 						else if(r=="LF") {
-							
 							AnalizadorSintactico.codigoAssembler += ("CALL "+this.left.ref);
 						}
 						
@@ -496,7 +499,5 @@ public class Nodo {
 				AnalizadorSintactico.codigoAssembler += ("FDIV");
 			}
 	}
-	
-	
 }
 

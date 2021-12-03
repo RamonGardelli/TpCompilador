@@ -155,16 +155,18 @@ public class AnalizadorSintactico {
                     String codigo = "";
                     Registro[] r = {r1, r2, r3, r4};
                     codigoAssembler+="\n";
-                    //this.creacionAssembler();
+                    this.creacionAssembler();
                     //codigoAssemblerFinal+=TODAS LAS VARIABLES DE LA TABLA DE SIMBOLOS
-                    arbol.generarCodigo(r);
                     codigoAssemblerFinal+=variablesCodigoAssembler;
                     codigoAssemblerFinal+="\n";
                     codigoAssemblerFinal+=(".code");
                     codigoAssemblerFinal+="\n";
-                    //codigoAssemblerFinal+=TODO EL ARBOL DE FUNCIONES!
+                    arbolFunciones(arbolFunc, r);
+                    codigoAssemblerFinal+=codigoAssembler;
+                    codigoAssembler=" ";
                     codigoAssemblerFinal+=("start: ");
                     codigoAssemblerFinal+="\n";
+                    arbol.generarCodigo(r);
                     codigoAssemblerFinal+=codigoAssembler;
                     codigoAssemblerFinal+="end start";
                     System.out.println(codigoAssemblerFinal);
@@ -199,5 +201,21 @@ public class AnalizadorSintactico {
     	codigoAssemblerFinal+="\n";
     	codigoAssemblerFinal+=(".data");
     }
-
+    
+    public static void arbolFunciones(Nodo arbol, Registro r[]) {
+    	if (arbol.getLeft()!=null) {
+    		codigoAssemblerFinal+=(arbol.getLeft().getRef()+":");
+        	arbol.getLeft().generarCodigo(r);
+    		codigoAssembler+=("ret");
+    		codigoAssembler+="\n";
+    		codigoAssembler+="\n";
+    	}
+    	if (arbol.getRight()!=null) {
+        	arbolFunciones(arbol.getRight(), r);
+    	}
+    }
+    
+    public static void memoriaPrograma() {
+    	
+    }
 }
