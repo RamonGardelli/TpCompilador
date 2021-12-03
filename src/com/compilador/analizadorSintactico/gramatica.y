@@ -80,6 +80,9 @@ bloqueEjecutableFunc: BEGIN sentEjecutableFunc RETURN '(' retorno ')' ';' END
             {
                 $$ = new ParserVal(new Nodo("BF",(Nodo)$2.obj,(Nodo)$5.obj));
             }
+            |BEGIN RETURN '(' retorno ')' ';' END {
+                $$ = new ParserVal(new Nodo("BF",null,(Nodo)$4.obj));
+            }
 			|TRYCATCHFunc {$$=$1;}
 		    | sentEjecutableFunc RETURN '(' retorno ')' END {AnalizadorSintactico.agregarError("error falta BEGIN (Linea " + AnalizadorLexico.numLinea + ")");}
 		    | BEGIN sentEjecutableFunc '(' retorno ')' END {AnalizadorSintactico.agregarError("error falta RETURN (Linea " + AnalizadorLexico.numLinea + ")");}
@@ -350,7 +353,6 @@ llamadoFunc: ID '(' ID ')'
 			System.out.println("Tercer print");
 		    ParserVal aux2= new ParserVal($3.sval);
 		    ParserVal aux= new ParserVal($1.sval);
-		    System.out.println((Nodo)aux.sval.getRef());
 		    $$= new ParserVal(new Nodo("LF",(Nodo)aux.obj, (Nodo)aux2.obj ));
 		    ((Nodo)$$.obj).setTipo(value.getTipoContenido());
 		  }else{
