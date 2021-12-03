@@ -351,8 +351,13 @@ llamadoFunc: ID '(' ID ')'
 				System.out.println("Segundo print");
 			}
 			System.out.println("Tercer print");
-		    ParserVal aux2= new ParserVal($3.sval);
-		    ParserVal aux= new ParserVal($1.sval);
+			
+			ParserVal aux= new ParserVal(new Nodo(variable, null, null ));
+			ParserVal aux2= new ParserVal(new Nodo(variable2, null, null ));
+			
+		    System.out.println("Soy el nodo :D :"+(Nodo)aux2.obj);
+		    System.out.println("Soy el nodo :D :"+(Nodo)aux.obj);
+		    
 		    $$= new ParserVal(new Nodo("LF",(Nodo)aux.obj, (Nodo)aux2.obj ));
 		    ((Nodo)$$.obj).setTipo(value.getTipoContenido());
 		  }else{
@@ -365,7 +370,7 @@ llamadoFunc: ID '(' ID ')'
        		  if(variable != null){
        		    AnalizadorLexico.tablaDeSimbolos.remove($1.sval);
        		    TDSObject value = AnalizadorLexico.getLexemaObject(variable);
-       		    ParserVal aux= new ParserVal($1.sval);
+       		    ParserVal aux= new ParserVal(new Nodo(variable, null, null ));
        		    $$= new ParserVal(new Nodo("LF",(Nodo)aux.obj, null ));
        		    ((Nodo)$$.obj).setTipo(value.getTipoContenido());
        		  }else{
