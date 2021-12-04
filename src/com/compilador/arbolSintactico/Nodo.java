@@ -147,15 +147,7 @@ public class Nodo {
 				derecha = this.right.getRight().getRef();
 				AnalizadorSintactico.codigoAssembler += ("CALL "+this.left.ref);
 			}
-				
-			if (this.left.getRef().contains("@")){
-				izquierda = this.left.getRef().split("@")[0];
-			}
-			
-			if (this.right.getRef().contains("@")){
-				derecha = this.right.getRef().split("@")[0];
-			}
-			
+
 			if (r==":=") {
 				AnalizadorSintactico.codigoAssembler += ("MOV "+reg[i].getNombre()+", _"+derecha);
 				AnalizadorSintactico.codigoAssembler += ("\n");
@@ -172,7 +164,8 @@ public class Nodo {
 					if (r=="*") {
 						AnalizadorSintactico.codigoAssembler += ("MOV "+reg[i].getNombre()+", _"+ izquierda);
 						AnalizadorSintactico.codigoAssembler += ("\n");
-						AnalizadorSintactico.codigoAssembler += ("SUB "+reg[i].getNombre()+", _"+ derecha);
+						AnalizadorSintactico.codigoAssembler += ("MUL "+reg[i].getNombre()+", _"+ derecha);
+						AnalizadorSintactico.codigoAssembler += ("JO @LABEL_Overflow");
 				}
 					else 
 						if (r=="-") {
@@ -182,6 +175,10 @@ public class Nodo {
 						}
 						else 
 							if (r=="/") {
+								AnalizadorSintactico.codigoAssembler += ("CMP "+ " 0, _" + derecha);
+								AnalizadorSintactico.codigoAssembler += ("\n");
+								AnalizadorSintactico.codigoAssembler += ("JE _CERO");
+								AnalizadorSintactico.codigoAssembler += ("\n");
 								AnalizadorSintactico.codigoAssembler += ("MOV "+reg[i].getNombre()+", _"+ izquierda);
 								AnalizadorSintactico.codigoAssembler += ("\n");
 								AnalizadorSintactico.codigoAssembler += ("DIV "+reg[i].getNombre()+", _"+ derecha);
@@ -242,8 +239,10 @@ public class Nodo {
 								AnalizadorSintactico.codigoAssembler += (aux1);
 							}		
 							else if(r=="PRINT") {
-								AnalizadorSintactico.codigoAssembler += ("invoke MessageBox, NULL, addr msj_"+this.left.ref+", addr msj_"+this.left.ref+", MB_OK");
-								AnalizadorSintactico.variablesCodigoAssembler+=("msj_"+this.left.ref);
+								String aux = left.ref.replace(" ", "_");
+				 				aux = aux.replace("	", "_");
+								AnalizadorSintactico.codigoAssembler += ("invoke MessageBox, NULL, addr msj_"+aux+", addr msj_"+aux+", MB_OK");
+								AnalizadorSintactico.variablesCodigoAssembler+=("msj_"+aux);
 							}
 							else if(r=="LF") {
 								AnalizadorSintactico.codigoAssembler += ("CALL "+this.left.ref);
@@ -271,14 +270,12 @@ public class Nodo {
 			AnalizadorSintactico.codigoAssembler += ("CALL "+this.left.getLeft().getRef());
 			AnalizadorSintactico.codigoAssembler += "\n";
 		}
+
+		if (derecha.charAt(0) == '.')
+            derecha = "0" + derecha;
 		
-		if (this.left.getRef().contains("@")){
-			izquierda = this.left.getRef().split("@")[0];
-		}
-		
-		if (this.right.getRef().contains("@")){
-			derecha = this.right.getRef().split("@")[0];
-		}
+		if (izquierda.charAt(0) == '.')
+            izquierda = "0" +izquierda;
 		
 		if (r==":=") {
 			this.imprimirAsignacion(derecha, izquierda);
@@ -358,8 +355,10 @@ public class Nodo {
 						}
 		
 						else if(r=="PRINT") {
-							AnalizadorSintactico.codigoAssembler += ("invoke MessageBox, NULL, addr msj_"+this.left.ref+", addr msj_"+this.left.ref+", MB_OK");
-							AnalizadorSintactico.variablesCodigoAssembler+=("msj_"+this.left.ref);
+							String aux = left.ref.replace(" ", "_");
+			 				aux = aux.replace("	", "_");
+							AnalizadorSintactico.codigoAssembler += ("invoke MessageBox, NULL, addr msj_"+aux+", addr msj_"+aux+", MB_OK");
+							AnalizadorSintactico.variablesCodigoAssembler+=("msj_"+aux);
 						}
 						else if(r=="LF") {
 							AnalizadorSintactico.codigoAssembler += ("CALL "+this.left.ref);
@@ -372,19 +371,6 @@ public class Nodo {
 		this.left=null;
 		this.right=null;
 	}
-	
-	/*private boolean valorPermitido() {
-		if (this.tipo == "SINGLE") {
-			if ((this.valor>AS5.MAX_FLOAT) || (this.valor<AS5.MIN_FLOAT))
-				return false;
-		}
-		
-		if (this.tipo == "LONG")
-			if ((this.valor>AS7.MAX_LONG) || (this.valor<AS7.MIN_LONG))
-				return false;
-		
-		return true;
-	}*/
 	
 	private int registroLibre(Registro[] r) {
 		for (int i=0; (i<r.length) ; i++) {
@@ -459,14 +445,17 @@ public class Nodo {
 	private void imprimirMultiplicacion(String derecha, String izquierda) {
 		if (!(this.right.esRegistro)&&(!(this.left.esRegistro))) {
 			AnalizadorSintactico.codigoAssembler += ("FLD , _"+ izquierda);
+			AnalizadorSintactico.codigoAssembler += ("\n");
 			AnalizadorSintactico.codigoAssembler += ("FLD _"+ derecha);
 			AnalizadorSintactico.codigoAssembler += ("\n");
 			AnalizadorSintactico.codigoAssembler += ("FMUL");
+
 		}
 		else if (!(this.right.esRegistro)&&(this.left.esRegistro)) {
 			AnalizadorSintactico.codigoAssembler += ("FLD _"+ derecha);
 			AnalizadorSintactico.codigoAssembler += ("\n");
 			AnalizadorSintactico.codigoAssembler += ("FMUL");
+			
 		}
 			else if((this.right.esRegistro)&&(!this.left.esRegistro)) {
 				AnalizadorSintactico.codigoAssembler += ("FLD _"+ izquierda);
@@ -476,28 +465,68 @@ public class Nodo {
 			else if ((this.right.esRegistro)&&(this.left.esRegistro)) {
 				AnalizadorSintactico.codigoAssembler += ("FMUL");
 			}
+		
+		AnalizadorSintactico.codigoAssembler += ("\n");
+		AnalizadorSintactico.codigoAssembler += ("FSTP _AUX1");
+		AnalizadorSintactico.codigoAssembler += ("\n");
+		AnalizadorSintactico.codigoAssembler += ("FLD _max_single");
+		AnalizadorSintactico.codigoAssembler += ("\n");
+		AnalizadorSintactico.codigoAssembler += ("FLD _AUX1");
+		AnalizadorSintactico.codigoAssembler += ("\n");
+		AnalizadorSintactico.codigoAssembler += ("FCOM");
+		AnalizadorSintactico.codigoAssembler += ("\n");
+		AnalizadorSintactico.codigoAssembler += ("FSTSW AUX_2_bytes");
+		AnalizadorSintactico.codigoAssembler += ("\n");
+		AnalizadorSintactico.codigoAssembler += ("SAHF");
+		AnalizadorSintactico.codigoAssembler += ("\n");
+		AnalizadorSintactico.codigoAssembler += ("JA @LABEL_OVF");	
+		AnalizadorSintactico.codigoAssembler += ("\n");
 	}
 	
-	private void imprimirDivision(String derecha, String izquierda) {
+	private void imprimirDivision(String derecha, String izquierda) {	
 		if (!(this.right.esRegistro)&&(!(this.left.esRegistro))) {
 			AnalizadorSintactico.codigoAssembler += ("FLD , _"+ izquierda);
+			AnalizadorSintactico.codigoAssembler += ("\n");
 			AnalizadorSintactico.codigoAssembler += ("FLD _"+ derecha);
 			AnalizadorSintactico.codigoAssembler += ("\n");
+			AnalizadorSintactico.codigoAssembler += ("FTST");
+			AnalizadorSintactico.codigoAssembler += ("\n");
+			AnalizadorSintactico.codigoAssembler += ("FSTSW aux_mem_2bytes"); 
+			AnalizadorSintactico.codigoAssembler += ("\n");
+			AnalizadorSintactico.codigoAssembler += ("MOV ax , aux_mem_2bytes");
+			AnalizadorSintactico.codigoAssembler += ("\n");
+			AnalizadorSintactico.codigoAssembler += ("SAHF");
+			AnalizadorSintactico.codigoAssembler += ("JE @LABEL_DIVCERO");
+			AnalizadorSintactico.codigoAssembler += ("\n");
 			AnalizadorSintactico.codigoAssembler += ("FDIV");
+
 		}
 		else if (!(this.right.esRegistro)&&(this.left.esRegistro)) {
 			AnalizadorSintactico.codigoAssembler += ("FLD _"+ derecha);
 			AnalizadorSintactico.codigoAssembler += ("\n");
+			AnalizadorSintactico.codigoAssembler += ("FTST");
+			AnalizadorSintactico.codigoAssembler += ("\n");
+			AnalizadorSintactico.codigoAssembler += ("JE @LABEL_DIVCERO");
+			AnalizadorSintactico.codigoAssembler += ("\n");
 			AnalizadorSintactico.codigoAssembler += ("FDIV");
 		}
 			else if((this.right.esRegistro)&&(!this.left.esRegistro)) {
+				AnalizadorSintactico.codigoAssembler += ("FTST");
+				AnalizadorSintactico.codigoAssembler += ("\n");
+				AnalizadorSintactico.codigoAssembler += ("JE @LABEL_DIVCERO");
 				AnalizadorSintactico.codigoAssembler += ("FLD _"+ izquierda);
 				AnalizadorSintactico.codigoAssembler += ("\n");
 				AnalizadorSintactico.codigoAssembler += ("FDIV");
 			} 
 			else if ((this.right.esRegistro)&&(this.left.esRegistro)) {
+				AnalizadorSintactico.codigoAssembler += ("FTST");
+				AnalizadorSintactico.codigoAssembler += ("\n");
+				AnalizadorSintactico.codigoAssembler += ("JE @LABEL_DIVCERO");
+				AnalizadorSintactico.codigoAssembler += ("\n");
 				AnalizadorSintactico.codigoAssembler += ("FDIV");
 			}
+		
+		
 	}
 }
 

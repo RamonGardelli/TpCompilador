@@ -155,8 +155,9 @@ public class AnalizadorSintactico {
                     String codigo = "";
                     Registro[] r = {r1, r2, r3, r4};
                     codigoAssembler+="\n";
-                    this.creacionAssembler();
+                    //this.creacionAssembler();
                     //codigoAssemblerFinal+=TODAS LAS VARIABLES DE LA TABLA DE SIMBOLOS
+                    memoriaPrograma();
                     codigoAssemblerFinal+=variablesCodigoAssembler;
                     codigoAssemblerFinal+="\n";
                     codigoAssemblerFinal+=(".code");
@@ -168,6 +169,9 @@ public class AnalizadorSintactico {
                     codigoAssemblerFinal+="\n";
                     arbol.generarCodigo(r);
                     codigoAssemblerFinal+=codigoAssembler;
+                    labels();
+                    codigoAssemblerFinal+="invoke ExitProcess, 0";
+                    codigoAssemblerFinal+="\n";
                     codigoAssemblerFinal+="end start";
                     System.out.println(codigoAssemblerFinal);
                 }else{
@@ -216,6 +220,57 @@ public class AnalizadorSintactico {
     }
     
     public static void memoriaPrograma() {
-    	
+    	 codigoAssemblerFinal+="msj_division_cero db \" ERROR, el divisor es igual a cero. No se puede proceder con la operacion \",0";
+         codigoAssemblerFinal+="msj_overflow_producto\"ERROR, se detecto overflow. No se puede proceder con la operacion\",0";
+         codigoAssemblerFinal+="msj_recursion\"ERROR, se detecto una recursion. No se puede proceder con la operacion\",0";	 
+         
+         AnalizadorLexico.tablaDeSimbolos.entrySet().forEach(entry->{
+ 			if (entry.getValue().getTipoVariable()=="CADENA") {
+ 				String aux = entry.getKey().replace(" ", "_");
+ 				aux = aux.replace("	", "_");
+ 	 			codigoAssemblerFinal+=(aux+" DB "+"\""+entry.getKey()+"\""+"\n");
+				}
+ 			else {
+ 			codigoAssemblerFinal+=("_"+entry.getKey());  
+	 			if (entry.getValue().getTipoVariable()=="ID") {
+	 				if(entry.getValue().getTipoContenido()=="LONG") {
+	 					codigoAssemblerFinal+=" DD ? \n";
+	 				}
+	 				else {
+	 					codigoAssemblerFinal+=" DQ ? \n";
+	 				}
+	 			}
+	 			else if (entry.getValue().getTipoVariable()=="SINGLE") {
+	 				String aux = entry.getKey();
+	 				if (entry.getKey().charAt(0) == '.')
+	                    aux = "0" + aux;
+	 				codigoAssemblerFinal+=" DQ "+aux+"\n";
+	 			}
+		 			else if (entry.getValue().getTipoVariable()=="LONG") {
+		 				codigoAssemblerFinal+=" DD "+entry.getKey()+"\n";
+		 			}
+ 			}
+	 		}); 
+	}
+    
+    public static void labels () {
+    	codigoAssemblerFinal+="@LABEL_OVF";
+        codigoAssemblerFinal+="\n";
+        codigoAssemblerFinal+="invoke MessageBox, NULL, addr mensaje_overflow_producto, addr mensaje_overflow_producto, MB_OK";
+        codigoAssemblerFinal+="\n";
+        codigoAssemblerFinal+="JMP @LABEL_END";
+        codigoAssemblerFinal+="\n";
+        codigoAssemblerFinal+="@LABEL_RECURSION";
+        codigoAssemblerFinal+="\n";
+        codigoAssemblerFinal+="invoke MessageBox, NULL, addr mensaje_recursion, addr mensaje_recursion, MB_OK";
+        codigoAssemblerFinal+="\n";
+        codigoAssemblerFinal+="JMP @LABEL_END";
+        codigoAssemblerFinal+="\n";
+        codigoAssemblerFinal+="@LABEL_DIVCERO";                   
+        codigoAssemblerFinal+="\n";
+        codigoAssemblerFinal+="invoke MessageBox, NULL, addr mensaje_division_cero, addr mensaje_division_cero, MB_OK";
+        codigoAssemblerFinal+="\n";
+        codigoAssemblerFinal+="@LABEL_END:";
+        codigoAssemblerFinal+="\n";	
     }
 }
