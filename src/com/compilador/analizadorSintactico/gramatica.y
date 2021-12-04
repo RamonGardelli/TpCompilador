@@ -343,20 +343,15 @@ llamadoFunc: ID '(' ID ')'
 		  if(variable != null && variable2!= null){
 		    AnalizadorLexico.tablaDeSimbolos.remove($1.sval);
 			AnalizadorLexico.tablaDeSimbolos.remove($3.sval);
-			System.out.println("Primer print");
 		    TDSObject value = AnalizadorLexico.getLexemaObject(variable);
 			TDSObject value2 = AnalizadorLexico.getLexemaObject(variable2);
 			if (!value.getTipoParametro().equals(value2.getTipoContenido())){
 			    AnalizadorSintactico.agregarError("El tipo enviado como parametro es distinto al esperado (Linea " + AnalizadorLexico.numLinea + ")");
-				System.out.println("Segundo print");
 			}
-			System.out.println("Tercer print");
 			
 			ParserVal aux= new ParserVal(new Nodo(variable, null, null ));
 			ParserVal aux2= new ParserVal(new Nodo(variable2, null, null ));
-			
-		    System.out.println("Soy el nodo :D :"+(Nodo)aux2.obj);
-		    System.out.println("Soy el nodo :D :"+(Nodo)aux.obj);
+		
 		    
 		    $$= new ParserVal(new Nodo("LF",(Nodo)aux.obj, (Nodo)aux2.obj ));
 		    ((Nodo)$$.obj).setTipo(value.getTipoContenido());

@@ -20,6 +20,8 @@ public class AnalizadorSintactico {
     
     public static String variablesCodigoAssembler = " ";
 
+    public static String ambitoActualAssembler = " ";
+    
     public static ArrayList<String> listaAnalisis = new ArrayList<>();
 
     public static ArrayList<String> listaErroresSintacticos = new ArrayList<>();
@@ -223,6 +225,9 @@ public class AnalizadorSintactico {
     	 codigoAssemblerFinal+="msj_division_cero db \" ERROR, el divisor es igual a cero. No se puede proceder con la operacion \",0";
          codigoAssemblerFinal+="msj_overflow_producto\"ERROR, se detecto overflow. No se puede proceder con la operacion\",0";
          codigoAssemblerFinal+="msj_recursion\"ERROR, se detecto una recursion. No se puede proceder con la operacion\",0";	 
+         codigoAssemblerFinal+="_aux_ambito_actual";
+         codigoAssemblerFinal+="_aux_ambito_anterior";
+         
          
          AnalizadorLexico.tablaDeSimbolos.entrySet().forEach(entry->{
  			if (entry.getValue().getTipoVariable()=="CADENA") {

@@ -108,9 +108,10 @@ public class Nodo {
 		    	else if ((this.right.getTipo()=="SINGLE")||(this.left.getTipo()=="SINGLE")){
 		    		this.creacionCodigoSingle(this.ref);
 		    	}
-		    	else if (this.ref=="WHILE") {
+		    	else if ((this.ref=="WHILE")||(this.ref=="LF")) {
 		    		this.creacionCodigoSingle(this.ref);
 		    	}
+		    	
 
     	}
     	else if (this.right==null) {
@@ -245,7 +246,24 @@ public class Nodo {
 								AnalizadorSintactico.variablesCodigoAssembler+=("msj_"+aux);
 							}
 							else if(r=="LF") {
+								String aux = AnalizadorSintactico.ambitoActualAssembler;
+								AnalizadorSintactico.ambitoActualAssembler=this.left.getRef();
+								AnalizadorSintactico.codigoAssembler += ("MOV _aux_ambito_anterior,  "+aux);
+								AnalizadorSintactico.codigoAssembler += ("\n");
+								AnalizadorSintactico.codigoAssembler += ("MOV _aux_ambito_actual,  "+this.left.ref); 
+								AnalizadorSintactico.codigoAssembler += ("\n");
+								AnalizadorSintactico.codigoAssembler += ("CMP_aux_ambito_anterior, _aux_ambito_actual");
+								AnalizadorSintactico.codigoAssembler += ("\n");
+								AnalizadorSintactico.codigoAssembler += ("JE @LABEL_RECURSION");
+								AnalizadorSintactico.codigoAssembler += ("\n");
 								AnalizadorSintactico.codigoAssembler += ("CALL "+this.left.ref);
+								AnalizadorSintactico.codigoAssembler += ("\n");
+								AnalizadorSintactico.ambitoActualAssembler=aux;
+							}
+							else if (r=="BF") {
+								//Return
+								AnalizadorSintactico.codigoAssembler += ("\n");
+								AnalizadorSintactico.codigoAssembler += ("MOV _aux_ambito_actual, _aux_ambito_anterior"); 
 							}
 			AnalizadorSintactico.codigoAssembler += ("\n");	
 			this.ref=reg[i].getNombre();
@@ -361,10 +379,25 @@ public class Nodo {
 							AnalizadorSintactico.variablesCodigoAssembler+=("msj_"+aux);
 						}
 						else if(r=="LF") {
+							String aux = AnalizadorSintactico.ambitoActualAssembler;
+							AnalizadorSintactico.ambitoActualAssembler=this.left.getRef();
+							AnalizadorSintactico.codigoAssembler += ("MOV _aux_ambito_anterior,  "+aux);
+							AnalizadorSintactico.codigoAssembler += ("\n");
+							AnalizadorSintactico.codigoAssembler += ("MOV _aux_ambito_actual,  "+this.left.ref); 
+							AnalizadorSintactico.codigoAssembler += ("\n");
+							AnalizadorSintactico.codigoAssembler += ("CMP_aux_ambito_anterior, _aux_ambito_actual");
+							AnalizadorSintactico.codigoAssembler += ("\n");
+							AnalizadorSintactico.codigoAssembler += ("JE @LABEL_RECURSION");
+							AnalizadorSintactico.codigoAssembler += ("\n");
 							AnalizadorSintactico.codigoAssembler += ("CALL "+this.left.ref);
+							AnalizadorSintactico.codigoAssembler += ("\n");
+							AnalizadorSintactico.ambitoActualAssembler=aux;
 						}
-						
-		
+						else if (r=="BF") {
+							//Return
+							AnalizadorSintactico.codigoAssembler += ("\n");
+							AnalizadorSintactico.codigoAssembler += ("MOV _aux_ambito_actual, _aux_ambito_anterior"); 
+						}
 		AnalizadorSintactico.codigoAssembler += ("\n");	
 		this.esRegistro=true;
 		this.tipo = this.left.getTipo();
