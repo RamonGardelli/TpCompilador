@@ -7,8 +7,19 @@ public class TDSObject {
     private String tipoContenido;
     private float valor;
     private boolean esFuncion = false;
+    private String nombreParametro;
+    
+    
+    
+    public String getNombreParametro() {
+		return nombreParametro;
+	}
 
-    public boolean esFuncion() {
+	public void setNombreParametro(String nombreParametro) {
+		this.nombreParametro = nombreParametro;
+	}
+
+	public boolean esFuncion() {
         return esFuncion;
     }
 

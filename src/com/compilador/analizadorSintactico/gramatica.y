@@ -187,19 +187,15 @@ listaVariables: listaVariables ',' ID {
 
 declaraFunc: declaracionFunc bloqueDeclarativo bloqueEjecutableFunc {
         AnalizadorSintactico.agregarAnalisis("Funcion reconocida en. (Linea " + AnalizadorLexico.numLinea + ")");
-        System.out.println("Primero: "+ $1.sval+AnalizadorSintactico.ambitoActual);
         AnalizadorSintactico.ambitoActual = AnalizadorSintactico.ambitoActual.substring(0,AnalizadorSintactico.ambitoActual.lastIndexOf("@"));
         $$=new ParserVal (new Nodo($1.sval+AnalizadorSintactico.ambitoActual, (Nodo)$3.obj, null));
-        System.out.println("Segundo: "+$1.sval+AnalizadorSintactico.ambitoActual);
         
         }
 	   | declaracionFunc bloqueEjecutableFunc {
 	        AnalizadorSintactico.agregarAnalisis("Funcion reconocida en. (Linea " + AnalizadorLexico.numLinea + ")");
-	                System.out.println("Primero: "+ $1.sval+AnalizadorSintactico.ambitoActual);
 	        
 	        AnalizadorSintactico.ambitoActual = AnalizadorSintactico.ambitoActual.substring(0,AnalizadorSintactico.ambitoActual.lastIndexOf("@"));
-	                System.out.println("Segundo: "+$1.sval+AnalizadorSintactico.ambitoActual);
-	        
+	         
 	        $$=new ParserVal (new Nodo($1.sval+AnalizadorSintactico.ambitoActual, (Nodo)$2.obj, null));
 	   }
 	   ;
@@ -392,6 +388,7 @@ declaracionFunc : tipo FUNC ID '(' parametro ')' {AnalizadorSintactico.agregarAn
                 aux.setTipoContenido(AnalizadorSintactico.tipoActual);
                 aux.setEsFuncion(true);
                 aux.setTipoParametro(((TDSObject)((Object[])($5.obj))[1]).getTipoContenido());
+                aux.setNombreParametro(((Object[])($5.obj))[0] + AnalizadorSintactico.ambitoActual+"@"+$3.sval);
                 AnalizadorLexico.tablaDeSimbolos.put($3.sval + AnalizadorSintactico.ambitoActual,aux);
                 $$=$3;
             }

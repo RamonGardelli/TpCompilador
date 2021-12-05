@@ -153,7 +153,6 @@ public class AnalizadorSintactico {
                 if (!errorPrograma) {        	
                 	obtenerFunciones();
                     //imprimirArbol(arbol);
-                    System.out.println("EL ARBOL DE FUNCION: \n");
                 	imprimirArbol(arbolFunc);
                     Registro r1 = new Registro("EAX");
                     Registro r2 = new Registro("EBX");

@@ -741,7 +741,7 @@ final static String yyrule[] = {
 "tipo : SINGLE",
 };
 
-//#line 602 "gramatica.y"
+//#line 603 "gramatica.y"
 
 
 public int yylex() {
@@ -1185,7 +1185,7 @@ case 51:
 	        
 	        AnalizadorSintactico.ambitoActual = AnalizadorSintactico.ambitoActual.substring(0,AnalizadorSintactico.ambitoActual.lastIndexOf("@"));
 	                System.out.println("Segundo: "+val_peek(1).sval+AnalizadorSintactico.ambitoActual);
-	        
+	         
 	        yyval=new ParserVal (new Nodo(val_peek(1).sval+AnalizadorSintactico.ambitoActual, (Nodo)val_peek(0).obj, null));
 	   }
 break;
@@ -1413,6 +1413,7 @@ case 74:
                 aux.setTipoContenido(AnalizadorSintactico.tipoActual);
                 aux.setEsFuncion(true);
                 aux.setTipoParametro(((TDSObject)((Object[])(val_peek(1).obj))[1]).getTipoContenido());
+                aux.setNombreParametro(((Object[])(val_peek(1).obj))[0] + AnalizadorSintactico.ambitoActual+"@"+val_peek(3).sval);
                 AnalizadorLexico.tablaDeSimbolos.put(val_peek(3).sval + AnalizadorSintactico.ambitoActual,aux);
                 yyval=val_peek(3);
             }
@@ -1421,7 +1422,7 @@ case 74:
 			}
 break;
 case 75:
-//#line 401 "gramatica.y"
+//#line 402 "gramatica.y"
 {AnalizadorSintactico.agregarAnalisis("Declaracion de funcion en (Linea " + AnalizadorLexico.numLinea + ")");
 		     if( AnalizadorSintactico.esVariableRedeclarada(val_peek(2).sval + AnalizadorSintactico.ambitoActual)){
                    AnalizadorSintactico.agregarError("ERROR: ID ya fue utilizado (Linea " + AnalizadorLexico.numLinea + ")");
@@ -1436,23 +1437,23 @@ case 75:
             }
 break;
 case 76:
-//#line 413 "gramatica.y"
+//#line 414 "gramatica.y"
 {AnalizadorSintactico.agregarError("error falta tipo (Linea " + AnalizadorLexico.numLinea + ")");}
 break;
 case 77:
-//#line 414 "gramatica.y"
+//#line 415 "gramatica.y"
 {AnalizadorSintactico.agregarError("error falta FUNC (Linea " + AnalizadorLexico.numLinea + ")");}
 break;
 case 78:
-//#line 415 "gramatica.y"
+//#line 416 "gramatica.y"
 {AnalizadorSintactico.agregarError("error falta '(' (Linea " + AnalizadorLexico.numLinea + ")");}
 break;
 case 79:
-//#line 416 "gramatica.y"
+//#line 417 "gramatica.y"
 {AnalizadorSintactico.agregarError("error falta ')' (Linea " + AnalizadorLexico.numLinea + ")");}
 break;
 case 80:
-//#line 420 "gramatica.y"
+//#line 421 "gramatica.y"
 {
                     Object[] obj = new Object[2] ;
                     obj[0] = val_peek(0).sval;
@@ -1463,27 +1464,27 @@ case 80:
 		     }
 break;
 case 81:
-//#line 428 "gramatica.y"
+//#line 429 "gramatica.y"
 {AnalizadorSintactico.agregarError("error falta FUNC (Linea " + AnalizadorLexico.numLinea + ")");}
 break;
 case 82:
-//#line 433 "gramatica.y"
-{yyval=val_peek(0);}
-break;
-case 83:
 //#line 434 "gramatica.y"
 {yyval=val_peek(0);}
 break;
-case 84:
+case 83:
 //#line 435 "gramatica.y"
 {yyval=val_peek(0);}
 break;
-case 85:
+case 84:
 //#line 436 "gramatica.y"
 {yyval=val_peek(0);}
 break;
+case 85:
+//#line 437 "gramatica.y"
+{yyval=val_peek(0);}
+break;
 case 86:
-//#line 439 "gramatica.y"
+//#line 440 "gramatica.y"
 {
 
                     String variable = AnalizadorSintactico.getReferenciaPorAmbito(val_peek(3).sval);
@@ -1508,7 +1509,7 @@ case 86:
 					}
 break;
 case 87:
-//#line 461 "gramatica.y"
+//#line 462 "gramatica.y"
 {
 
 	                        AnalizadorLexico.listaDeWarnings.add("WARNING Linea " + AnalizadorLexico.numLinea +": falta el simbolo : de la asignacion.");
@@ -1534,39 +1535,39 @@ case 87:
         					}
 break;
 case 88:
-//#line 484 "gramatica.y"
+//#line 485 "gramatica.y"
 {AnalizadorSintactico.agregarAnalisis("Sentencia ejecutable asignacion casteada (Linea " + AnalizadorLexico.numLinea + ")");}
 break;
 case 89:
-//#line 485 "gramatica.y"
+//#line 486 "gramatica.y"
 {AnalizadorSintactico.agregarError("Error falta ID (Linea " + AnalizadorLexico.numLinea + ")");}
 break;
 case 90:
-//#line 486 "gramatica.y"
+//#line 487 "gramatica.y"
 {AnalizadorSintactico.agregarError("Error falta ASIGN (Linea " + AnalizadorLexico.numLinea + ")");}
 break;
 case 91:
-//#line 487 "gramatica.y"
-{AnalizadorSintactico.agregarError("Error falta ';' (Linea " + (AnalizadorLexico.numLinea-1) + ")");}
-break;
-case 92:
 //#line 488 "gramatica.y"
 {AnalizadorSintactico.agregarError("Error falta ';' (Linea " + (AnalizadorLexico.numLinea-1) + ")");}
 break;
-case 93:
+case 92:
 //#line 489 "gramatica.y"
-{AnalizadorSintactico.agregarError("Error falta ';' y falta :  (Linea " + (AnalizadorLexico.numLinea -1) + ")");}
+{AnalizadorSintactico.agregarError("Error falta ';' (Linea " + (AnalizadorLexico.numLinea-1) + ")");}
 break;
-case 94:
+case 93:
 //#line 490 "gramatica.y"
 {AnalizadorSintactico.agregarError("Error falta ';' y falta :  (Linea " + (AnalizadorLexico.numLinea -1) + ")");}
 break;
-case 95:
+case 94:
 //#line 491 "gramatica.y"
+{AnalizadorSintactico.agregarError("Error falta ';' y falta :  (Linea " + (AnalizadorLexico.numLinea -1) + ")");}
+break;
+case 95:
+//#line 492 "gramatica.y"
 {AnalizadorSintactico.agregarError("Error, no puede asignarse un comparador(Linea " + AnalizadorLexico.numLinea + ")");}
 break;
 case 96:
-//#line 495 "gramatica.y"
+//#line 496 "gramatica.y"
 {AnalizadorSintactico.agregarAnalisis("sentencia 'IF' (Linea " + 				AnalizadorLexico.numLinea + ")");
         if(val_peek(6).obj == null)
             break;
@@ -1577,7 +1578,7 @@ case 96:
 		}
 break;
 case 97:
-//#line 503 "gramatica.y"
+//#line 504 "gramatica.y"
 {AnalizadorSintactico.agregarAnalisis("sentencia 'IF' sin 'ELSE' (Linea " + AnalizadorLexico.numLinea + ")");
 	                                                    if(val_peek(4).obj == null)
                                                            break;
@@ -1586,119 +1587,119 @@ case 97:
                                                         yyval= new ParserVal(new Nodo("IF", (Nodo)val_peek(4).obj, (Nodo)auxCuerpo.obj));}
 break;
 case 98:
-//#line 509 "gramatica.y"
+//#line 510 "gramatica.y"
 {AnalizadorSintactico.agregarError("Error falta IF (Linea " + AnalizadorLexico.numLinea + ")");}
 break;
 case 99:
-//#line 510 "gramatica.y"
+//#line 511 "gramatica.y"
 {AnalizadorSintactico.agregarError("Error falta condicion (Linea " + AnalizadorLexico.numLinea + ")");}
 break;
 case 100:
-//#line 511 "gramatica.y"
+//#line 512 "gramatica.y"
 {AnalizadorSintactico.agregarError("Error falta THEN (Linea " + AnalizadorLexico.numLinea + ")");}
 break;
 case 101:
-//#line 512 "gramatica.y"
+//#line 513 "gramatica.y"
 {AnalizadorSintactico.agregarError("warning if vacio (Linea " + AnalizadorLexico.numLinea + ")");}
 break;
 case 102:
-//#line 513 "gramatica.y"
+//#line 514 "gramatica.y"
 {AnalizadorSintactico.agregarError("warning else vacio (Linea " + AnalizadorLexico.numLinea + ")");}
 break;
 case 103:
-//#line 514 "gramatica.y"
+//#line 515 "gramatica.y"
 {AnalizadorSintactico.agregarError("error falta ENDIF (Linea " + AnalizadorLexico.numLinea + ")");}
 break;
 case 104:
-//#line 515 "gramatica.y"
+//#line 516 "gramatica.y"
 {AnalizadorSintactico.agregarError("error falta ';' (Linea " + (AnalizadorLexico.numLinea-1) + ")");}
 break;
 case 105:
-//#line 516 "gramatica.y"
+//#line 517 "gramatica.y"
 {AnalizadorSintactico.agregarError("error falta condicion (Linea " + AnalizadorLexico.numLinea + ")");}
 break;
 case 106:
-//#line 517 "gramatica.y"
+//#line 518 "gramatica.y"
 {AnalizadorSintactico.agregarError("error falta THEN (Linea " + AnalizadorLexico.numLinea + ")");}
 break;
 case 107:
-//#line 518 "gramatica.y"
+//#line 519 "gramatica.y"
 {AnalizadorSintactico.agregarError("warning if vacio (Linea " + AnalizadorLexico.numLinea + ")");}
 break;
 case 108:
-//#line 519 "gramatica.y"
+//#line 520 "gramatica.y"
 {AnalizadorSintactico.agregarError("error falta ENDIF (Linea " + AnalizadorLexico.numLinea + ")");}
 break;
 case 109:
-//#line 520 "gramatica.y"
+//#line 521 "gramatica.y"
 {AnalizadorSintactico.agregarError("error falta ';' (Linea " + (AnalizadorLexico.numLinea-1) + ")");}
 break;
 case 110:
-//#line 523 "gramatica.y"
+//#line 524 "gramatica.y"
 {AnalizadorSintactico.agregarAnalisis("sentencia print (Linea " + AnalizadorLexico.numLinea + ")");
 		ParserVal aux = new ParserVal(new Nodo(val_peek(2).sval));
 		yyval= new ParserVal(new Nodo("PRINT", (Nodo)aux.obj, null));}
 break;
 case 111:
-//#line 526 "gramatica.y"
+//#line 527 "gramatica.y"
 {AnalizadorSintactico.agregarError("error falta PRINT (Linea " + AnalizadorLexico.numLinea + ")");}
 break;
 case 112:
-//#line 527 "gramatica.y"
+//#line 528 "gramatica.y"
 {AnalizadorSintactico.agregarError("error falta '(' (Linea " + AnalizadorLexico.numLinea + ")");}
 break;
 case 113:
-//#line 528 "gramatica.y"
+//#line 529 "gramatica.y"
 {AnalizadorSintactico.agregarError("Warning print vacio' (Linea " + AnalizadorLexico.numLinea + ")");}
 break;
 case 114:
-//#line 529 "gramatica.y"
+//#line 530 "gramatica.y"
 {AnalizadorSintactico.agregarError("error falta ')' (Linea " + AnalizadorLexico.numLinea + ")");}
 break;
 case 115:
-//#line 530 "gramatica.y"
+//#line 531 "gramatica.y"
 {AnalizadorSintactico.agregarError("error falta ';' (Linea " + (AnalizadorLexico.numLinea-1) + ")");}
 break;
 case 118:
-//#line 535 "gramatica.y"
+//#line 536 "gramatica.y"
 {AnalizadorSintactico.agregarAnalisis("sentencia 'WHILE' (Linea " + AnalizadorLexico.numLinea + ")");
 		 if(val_peek(2).obj == null)
              break;
 		yyval= new ParserVal(new Nodo("WHILE", (Nodo)val_peek(2).obj, (Nodo)val_peek(0).obj));}
 break;
 case 119:
-//#line 539 "gramatica.y"
+//#line 540 "gramatica.y"
 {AnalizadorSintactico.agregarError("error falta WHILE (Linea " + AnalizadorLexico.numLinea + ")");}
 break;
 case 120:
-//#line 540 "gramatica.y"
+//#line 541 "gramatica.y"
 {AnalizadorSintactico.agregarError("error falta condicion (Linea " + AnalizadorLexico.numLinea + ")");}
 break;
 case 121:
-//#line 541 "gramatica.y"
+//#line 542 "gramatica.y"
 {AnalizadorSintactico.agregarError("error falta DO (Linea " + AnalizadorLexico.numLinea + ")");}
 break;
 case 122:
-//#line 542 "gramatica.y"
+//#line 543 "gramatica.y"
 {AnalizadorSintactico.agregarError("error WHILE vacio (Linea " + AnalizadorLexico.numLinea + ")");}
 break;
 case 123:
-//#line 546 "gramatica.y"
+//#line 547 "gramatica.y"
 {yyval=val_peek(1);}
 break;
 case 125:
-//#line 550 "gramatica.y"
+//#line 551 "gramatica.y"
 {
 	     if(val_peek(0).obj == null)
              break;
 	     yyval = new ParserVal(new Nodo("Cond", (Nodo)val_peek(0).obj, null));}
 break;
 case 126:
-//#line 554 "gramatica.y"
+//#line 555 "gramatica.y"
 {AnalizadorSintactico.agregarError("opLogico de mas (Linea " + AnalizadorLexico.numLinea + ")");}
 break;
 case 127:
-//#line 558 "gramatica.y"
+//#line 559 "gramatica.y"
 {
 		  if(val_peek(2).obj == null || val_peek(0).obj == null){
              break;
@@ -1708,65 +1709,65 @@ case 127:
 		}
 break;
 case 131:
-//#line 568 "gramatica.y"
-{AnalizadorSintactico.agregarError("falta expresion (Linea " + AnalizadorLexico.numLinea + ")");}
-break;
-case 132:
 //#line 569 "gramatica.y"
 {AnalizadorSintactico.agregarError("falta expresion (Linea " + AnalizadorLexico.numLinea + ")");}
 break;
+case 132:
+//#line 570 "gramatica.y"
+{AnalizadorSintactico.agregarError("falta expresion (Linea " + AnalizadorLexico.numLinea + ")");}
+break;
 case 133:
-//#line 572 "gramatica.y"
+//#line 573 "gramatica.y"
 {yyval = new ParserVal(">");}
 break;
 case 134:
-//#line 573 "gramatica.y"
+//#line 574 "gramatica.y"
 {yyval = new ParserVal("<");}
 break;
 case 135:
-//#line 574 "gramatica.y"
+//#line 575 "gramatica.y"
 {yyval = new ParserVal("==");}
 break;
 case 136:
-//#line 575 "gramatica.y"
+//#line 576 "gramatica.y"
 {yyval = new ParserVal("<>");}
 break;
 case 137:
-//#line 576 "gramatica.y"
+//#line 577 "gramatica.y"
 {yyval = new ParserVal(">=");}
 break;
 case 138:
-//#line 577 "gramatica.y"
+//#line 578 "gramatica.y"
 {yyval = new ParserVal("<=");}
 break;
 case 139:
-//#line 578 "gramatica.y"
+//#line 579 "gramatica.y"
 {
 	           AnalizadorLexico.listaDeWarnings.add("WARNING Linea " + AnalizadorLexico.numLinea +": se esperaba comparacion ==.");
 	           yyval = new ParserVal("==");
 	        }
 break;
 case 140:
-//#line 584 "gramatica.y"
+//#line 585 "gramatica.y"
 {yyval= new ParserVal("&&");}
 break;
 case 141:
-//#line 585 "gramatica.y"
+//#line 586 "gramatica.y"
 {yyval= new ParserVal("||");}
 break;
 case 142:
-//#line 589 "gramatica.y"
+//#line 590 "gramatica.y"
 {AnalizadorSintactico.tipoActual = "LONG";
              yyval = new ParserVal("LONG");
             }
 break;
 case 143:
-//#line 592 "gramatica.y"
+//#line 593 "gramatica.y"
 {AnalizadorSintactico.tipoActual = "SINGLE";
              yyval = new ParserVal("SINGLE");
              }
 break;
-//#line 1693 "Parser.java"
+//#line 1694 "Parser.java"
 //########## END OF USER-SUPPLIED ACTIONS ##########
     }//switch
     //#### Now let's reduce... ####

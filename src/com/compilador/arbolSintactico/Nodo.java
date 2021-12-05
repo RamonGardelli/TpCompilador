@@ -142,12 +142,9 @@ public class Nodo {
     		    			this.left.getLeft().generarCodigo(r);
     		    			if (this.getLeft().getRight()!=null) {
         		    			this.left.getRight().generarCodigo(r);
-        		    			System.out.println("aaaaaaaaaa\n\n\n\n"+this.getRef());
-
 								int aux = AnalizadorSintactico.flagsFunc.get(this.getRef());
 								AnalizadorSintactico.codigoAssembler += ("MOV _retFunc_"+aux+", "+this.getLeft().getRight().getRef());
 								AnalizadorSintactico.codigoAssembler += ("\n");
-
     		    			}
     		    		}	
         			else {
@@ -276,6 +273,11 @@ public class Nodo {
 									AnalizadorSintactico.codigoAssembler += ("\n");
 									AnalizadorSintactico.codigoAssembler += ("JE @LABEL_RECURSION");
 									AnalizadorSintactico.codigoAssembler += ("\n");
+									if (this.right!=null) {
+										String nombreParametro = AnalizadorLexico.tablaDeSimbolos.get(this.left.getRef()).getNombreParametro();
+										AnalizadorSintactico.codigoAssembler += ("MOV "+nombreParametro+", "+this.right.getRef());
+										AnalizadorSintactico.codigoAssembler += ("\n");
+									}
 									AnalizadorSintactico.codigoAssembler += ("MOV _flagFunc_"+aux+", 1\n");
 									AnalizadorSintactico.codigoAssembler += ("CALL "+izqAux);
 									AnalizadorSintactico.codigoAssembler += ("\n");
@@ -409,22 +411,17 @@ public class Nodo {
 							AnalizadorSintactico.codigoAssembler += ("\n");
 							AnalizadorSintactico.codigoAssembler += ("JE @LABEL_RECURSION");
 							AnalizadorSintactico.codigoAssembler += ("\n");
+							if (this.right!=null) {
+								String nombreParametro = AnalizadorLexico.tablaDeSimbolos.get(this.left.getRef()).getNombreParametro();
+								AnalizadorSintactico.codigoAssembler += ("MOV "+nombreParametro+", "+this.right.getRef());
+								AnalizadorSintactico.codigoAssembler += ("\n");
+							}
 							AnalizadorSintactico.codigoAssembler += ("MOV _flagFunc_"+aux+", 1\n");
 							AnalizadorSintactico.codigoAssembler += ("CALL "+izqAux);
 							AnalizadorSintactico.codigoAssembler += ("\n");
 							AnalizadorSintactico.codigoAssembler += ("MOV _flagFunc_"+aux+", 0\n");
 
-
-						}
-						else if (this.getLeft().getRef()=="BF") {
-							//Return
-							int aux = AnalizadorSintactico.flagsFunc.get(this.left.getRef());
-							AnalizadorSintactico.codigoAssembler += ("\n");
-							AnalizadorSintactico.codigoAssembler += ("MOV _flagFunc_"+aux+", 0\n");
-							System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-						}
-		
-						
+						}			
 		AnalizadorSintactico.codigoAssembler += ("\n");	
 		this.esRegistro=true;
 		this.tipo = this.left.getTipo();
