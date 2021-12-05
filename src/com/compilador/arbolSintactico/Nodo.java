@@ -145,8 +145,9 @@ public class Nodo {
         		    			System.out.println("aaaaaaaaaa\n\n\n\n"+this.getRef());
 
 								int aux = AnalizadorSintactico.flagsFunc.get(this.getRef());
-								AnalizadorSintactico.codigoAssembler += ("\n");
 								AnalizadorSintactico.codigoAssembler += ("MOV _retFunc_"+aux+", "+this.getLeft().getRight().getRef());
+								AnalizadorSintactico.codigoAssembler += ("\n");
+
     		    			}
     		    		}	
         			else {
