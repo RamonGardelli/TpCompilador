@@ -43,7 +43,11 @@ public class AnalizadorSintactico {
     public static String tipoActual = "";
 
     public static boolean errorPrograma = false;
-
+        
+    public static HashMap<String, Integer> flagsFunc = new HashMap<String, Integer>();
+    
+    public static int contadorFunc=1;
+    
     public static void agregarAnalisis(String analisis) {
         listaAnalisis.add(analisis);
     }
@@ -146,9 +150,11 @@ public class AnalizadorSintactico {
                 });
                 Files.write(file3, tdsData, StandardCharsets.UTF_8);
 
-                if (!errorPrograma) {
-                    imprimirArbol(arbol);
-                    imprimirArbol(arbolFunc);
+                if (!errorPrograma) {        	
+                	obtenerFunciones();
+                    //imprimirArbol(arbol);
+                    System.out.println("EL ARBOL DE FUNCION: \n");
+                	imprimirArbol(arbolFunc);
                     Registro r1 = new Registro("EAX");
                     Registro r2 = new Registro("EBX");
                     Registro r3 = new Registro("ECX");
@@ -169,6 +175,7 @@ public class AnalizadorSintactico {
                     codigoAssembler=" ";
                     codigoAssemblerFinal+=("start: ");
                     codigoAssemblerFinal+="\n";
+                    arbolFunc.generarCodigoFunciones(r);
                     arbol.generarCodigo(r);
                     codigoAssemblerFinal+=codigoAssembler;
                     labels();
@@ -209,24 +216,26 @@ public class AnalizadorSintactico {
     }
     
     public static void arbolFunciones(Nodo arbol, Registro r[]) {
-    	if (arbol.getLeft()!=null) {
-    		codigoAssemblerFinal+=(arbol.getLeft().getRef()+":");
-        	arbol.getLeft().generarCodigo(r);
-    		codigoAssembler+=("ret");
-    		codigoAssembler+="\n";
-    		codigoAssembler+="\n";
-    	}
-    	if (arbol.getRight()!=null) {
-        	arbolFunciones(arbol.getRight(), r);
-    	}
+    	if(arbol!=null) {
+	    	if (arbol.getLeft()!=null) {
+	    		codigoAssemblerFinal+=(arbol.getLeft().getRef()+":");
+	        	arbol.getLeft().generarCodigo(r);
+	    		codigoAssembler+=("ret");
+	    		codigoAssembler+="\n";
+	    		codigoAssembler+="\n";
+	    	}
+	    	if (arbol.getRight()!=null) {
+	        	arbolFunciones(arbol.getRight(), r);
+	    	}
+    	}	
     }
     
     public static void memoriaPrograma() {
-    	 codigoAssemblerFinal+="msj_division_cero db \" ERROR, el divisor es igual a cero. No se puede proceder con la operacion \",0";
-         codigoAssemblerFinal+="msj_overflow_producto\"ERROR, se detecto overflow. No se puede proceder con la operacion\",0";
-         codigoAssemblerFinal+="msj_recursion\"ERROR, se detecto una recursion. No se puede proceder con la operacion\",0";	 
-         codigoAssemblerFinal+="_aux_ambito_actual";
-         codigoAssemblerFinal+="_aux_ambito_anterior";
+    	 codigoAssemblerFinal+="msj_division_cero db \" ERROR, el divisor es igual a cero. No se puede proceder con la operacion \",0\n";
+         codigoAssemblerFinal+="msj_overflow_producto\"ERROR, se detecto overflow. No se puede proceder con la operacion\",0\n";
+         codigoAssemblerFinal+="msj_recursion\"ERROR, se detecto una recursion. No se puede proceder con la operacion\",0\n";	 
+         codigoAssemblerFinal+="_aux_ambito_actual\n";
+         codigoAssemblerFinal+="_aux_ambito_anterior\n";
          
          
          AnalizadorLexico.tablaDeSimbolos.entrySet().forEach(entry->{
@@ -256,6 +265,18 @@ public class AnalizadorSintactico {
 		 			}
  			}
 	 		}); 
+         	flagsFunc.entrySet().forEach(entry->{
+     			codigoAssemblerFinal+=("_funcFlag_"+entry.getValue());  
+				codigoAssemblerFinal+=" DB 0 \n";
+ 	 		}); 
+         	
+        	flagsFunc.entrySet().forEach(entry->{
+     			codigoAssemblerFinal+=("_retFunc_"+entry.getValue());  
+     			if (AnalizadorLexico.tablaDeSimbolos.get(entry.getKey()).getTipoContenido()=="LONG")
+     				codigoAssemblerFinal+=" DD ? \n";
+     			else
+     				codigoAssemblerFinal+=" DQ ? \n";
+ 	 		}); 
 	}
     
     public static void labels () {
@@ -278,4 +299,13 @@ public class AnalizadorSintactico {
         codigoAssemblerFinal+="@LABEL_END:";
         codigoAssemblerFinal+="\n";	
     }
+    
+    public static void obtenerFunciones() {
+        AnalizadorLexico.tablaDeSimbolos.entrySet().forEach((entry)->{
+  			if (entry.getValue().esFuncion()) {
+  				flagsFunc.put(entry.getKey(), contadorFunc);
+  				contadorFunc++;
+  			}
+ 	 		}); 
+ 	}
 }
