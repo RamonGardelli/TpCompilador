@@ -175,7 +175,6 @@ public class AnalizadorSintactico {
                     codigoAssembler=" ";
                     codigoAssemblerFinal+=("start: ");
                     codigoAssemblerFinal+="\n";
-                    arbolFunc.generarCodigoFunciones(r);
                     arbol.generarCodigo(r);
                     codigoAssemblerFinal+=codigoAssembler;
                     labels();

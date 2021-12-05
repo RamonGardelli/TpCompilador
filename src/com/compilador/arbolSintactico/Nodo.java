@@ -78,7 +78,8 @@ public class Nodo {
     }
 
 	public void generarCodigo(Registro r[]) {
-    	
+   		
+		
     	if (!(this.right==null)) {
 	    	if (this.ref=="WHILE") {
 	    		AnalizadorSintactico.contadorLabel++;
@@ -87,7 +88,7 @@ public class Nodo {
 				AnalizadorSintactico.codigoAssembler += (aux);
 				AnalizadorSintactico.codigoAssembler += ("\n");
 	    	}
-	    	
+    		
 	    	if ((this.left.EsHoja())&&(!this.right.EsHoja())){
 	    		this.right.generarCodigo(r);
 	    		}
@@ -136,22 +137,25 @@ public class Nodo {
         			if (this.getLeft().getRef()=="Then") {
     					this.left.generarCodigo(r);
     					AnalizadorSintactico.codigoAssembler += (AnalizadorSintactico.pilaLabels.pop());
-    			}
+        			}
+        			else if (this.getLeft().getRef()=="BF") {
+    		    			this.left.getLeft().generarCodigo(r);
+    		    			if (this.getLeft().getRight()!=null) {
+        		    			this.left.getRight().generarCodigo(r);
+        		    			System.out.println("aaaaaaaaaa\n\n\n\n"+this.getRef());
+
+								int aux = AnalizadorSintactico.flagsFunc.get(this.getRef());
+								AnalizadorSintactico.codigoAssembler += ("\n");
+								AnalizadorSintactico.codigoAssembler += ("MOV _retFunc_"+aux+", "+this.getLeft().getRight().getRef());
+    		    			}
+    		    		}	
         			else {
         				this.left.generarCodigo(r);
         			}
     			}
     	}
        }
-    	
-    	if (this.getLeft()!=null) {
-    		if (this.getLeft().getRef()=="BF") {
-    			int aux = AnalizadorSintactico.flagsFunc.get(this.getRef());
-    			AnalizadorSintactico.codigoAssembler += ("\n");
-    			AnalizadorSintactico.codigoAssembler += ("MOV _flagFunc_"+aux+", 0\n");
-    		}
-    	}
-	}
+    }
 	
 	private void creacionCodigoLong(String r, int i, Registro reg[]) {			
 	    	this.ref = reg[i].getNombre();
@@ -277,6 +281,7 @@ public class Nodo {
 									AnalizadorSintactico.codigoAssembler += ("MOV _flagFunc_"+aux+", 0\n");
 
 								}
+				
 			AnalizadorSintactico.codigoAssembler += ("\n");	
  			this.ref=reg[i].getNombre();
 			this.esRegistro=true;

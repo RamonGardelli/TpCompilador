@@ -187,13 +187,20 @@ listaVariables: listaVariables ',' ID {
 
 declaraFunc: declaracionFunc bloqueDeclarativo bloqueEjecutableFunc {
         AnalizadorSintactico.agregarAnalisis("Funcion reconocida en. (Linea " + AnalizadorLexico.numLinea + ")");
-        $$=new ParserVal (new Nodo($1.sval, (Nodo)$3.obj, null));
+        System.out.println("Primero: "+ $1.sval+AnalizadorSintactico.ambitoActual);
         AnalizadorSintactico.ambitoActual = AnalizadorSintactico.ambitoActual.substring(0,AnalizadorSintactico.ambitoActual.lastIndexOf("@"));
+        $$=new ParserVal (new Nodo($1.sval+AnalizadorSintactico.ambitoActual, (Nodo)$3.obj, null));
+        System.out.println("Segundo: "+$1.sval+AnalizadorSintactico.ambitoActual);
+        
         }
 	   | declaracionFunc bloqueEjecutableFunc {
 	        AnalizadorSintactico.agregarAnalisis("Funcion reconocida en. (Linea " + AnalizadorLexico.numLinea + ")");
-	        $$=new ParserVal (new Nodo($1.sval, (Nodo)$2.obj, null));
+	                System.out.println("Primero: "+ $1.sval+AnalizadorSintactico.ambitoActual);
+	        
 	        AnalizadorSintactico.ambitoActual = AnalizadorSintactico.ambitoActual.substring(0,AnalizadorSintactico.ambitoActual.lastIndexOf("@"));
+	                System.out.println("Segundo: "+$1.sval+AnalizadorSintactico.ambitoActual);
+	        
+	        $$=new ParserVal (new Nodo($1.sval+AnalizadorSintactico.ambitoActual, (Nodo)$2.obj, null));
 	   }
 	   ;
 
