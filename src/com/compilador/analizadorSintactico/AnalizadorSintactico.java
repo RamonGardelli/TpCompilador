@@ -83,8 +83,8 @@ public class AnalizadorSintactico {
             if (args.length != 0 || true) {
 
                 //File filex = new File(args[0]);
-                //File filex = new File("C:\\Users\\Admin\\Desktop\\prueba\\prueba.txt");
-                File filex = new File("C:\\Users\\ramon\\IdeaProjects\\TpCompilador\\archivos\\programa\\testprograma.txt");
+            	File filex = new File("C:\\Users\\Admin\\Desktop\\prueba\\prueba.txt");
+                //File filex = new File("C:\\Users\\ramon\\IdeaProjects\\TpCompilador\\archivos\\programa\\testprograma.txt");
 
 
                 String originalPath = filex.getAbsoluteFile().getParent() + File.separator;
@@ -250,7 +250,9 @@ public class AnalizadorSintactico {
  	 			codigoAssemblerFinal+=(aux+" DB "+"\""+entry.getKey()+"\""+"\n");
 				}
  			else {
- 			codigoAssemblerFinal+=("_"+entry.getKey());  
+ 			String auxValor=entry.getKey();
+ 			auxValor=auxValor.replace(".", "_");
+ 			codigoAssemblerFinal+=("_"+auxValor);  
 	 			if (entry.getValue().getTipoVariable()=="ID") {
 	 				if(entry.getValue().getTipoContenido()=="LONG") {
 	 					codigoAssemblerFinal+=" DD ? \n";
@@ -261,7 +263,7 @@ public class AnalizadorSintactico {
 	 			}
 	 			else if (entry.getValue().getTipoVariable()=="SINGLE") {
 	 				String aux = entry.getKey();
-	 				if (entry.getKey().charAt(0) == '.')
+	 				if (entry.getKey().charAt(0) == '_')
 	                    aux = "0" + aux;
 	 				codigoAssemblerFinal+=" DQ "+aux+"\n";
 	 			}

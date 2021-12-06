@@ -120,10 +120,17 @@ public class Nodo {
             if ((this.right.getTipo() == "LONG") || (this.left.getTipo() == "LONG")) {
                 this.creacionCodigoLong(this.ref, i, r);
             } else if ((this.right.getTipo() == "SINGLE") || (this.left.getTipo() == "SINGLE")) {
-                this.creacionCodigoSingle(this.ref);
-            } else if ((this.ref == "WHILE") || (this.ref == "LF")) {
-                this.creacionCodigoSingle(this.ref);
+                this.creacionCodigoSingle(this.ref, r);
+            } else if ((this.ref == "WHILE")) {
+                this.creacionCodigoSingle(this.ref, r);
             }
+              else if  (this.ref == "LF") {
+            	  if (this.getTipo()=="LONG") {
+                      this.creacionCodigoLong(this.ref, i, r);
+            	  }
+            	  else if (this.getTipo()=="SINGLE")
+                      this.creacionCodigoSingle(this.ref, r);
+              }
 
 
         } else if (this.right == null) {
@@ -148,12 +155,27 @@ public class Nodo {
                         if (this.getLeft().getRight() != null) {
                             this.left.getRight().generarCodigo(r);
                             int aux = AnalizadorSintactico.flagsFunc.get(this.getRef());
-                            if(this.getLeft().getRight().isRegistro()){
-                                AnalizadorSintactico.codigoAssembler += ("MOV _retFunc_" + aux + ", " + this.getLeft().getRight().getRef());
-                            }else{
-                                AnalizadorSintactico.codigoAssembler += ("MOV _retFunc_" + aux + ", _" + this.getLeft().getRight().getRef());
+                            
+                            if (this.getLeft().getRight().getTipo()=="LONG") {
+                            	
+                            	if (this.getLeft().getRight().isRegistro()){
+                                    AnalizadorSintactico.codigoAssembler += ("MOV _retFunc_" + aux + ", " + this.getLeft().getRight().getRef());
+                                    AnalizadorSintactico.codigoAssembler += ("\n");
+                                }else{
+                                	int j = this.registroLibre(r);
+                                    AnalizadorSintactico.codigoAssembler += ("MOV " + r[j].getNombre() + ", _" + this.getLeft().getRight().getRef());
+                                    AnalizadorSintactico.codigoAssembler += ("\n");
+                                    AnalizadorSintactico.codigoAssembler += ("MOV _retFunc_" + aux + ", " + r[j].getNombre());
+                                    AnalizadorSintactico.codigoAssembler += ("\n");
+                                    r[j].setLibre(true);
+                                }}
+                            else if  (this.getLeft().getRight().getTipo()=="SINGLE") {
+                                AnalizadorSintactico.codigoAssembler += ("FLD _" + this.getLeft().getRight().getRef());
+                                AnalizadorSintactico.codigoAssembler += ("\n");
+                                AnalizadorSintactico.codigoAssembler += ("FSTP _retFunc_" + aux);
+                                AnalizadorSintactico.codigoAssembler += ("\n");
+
                             }
-                            AnalizadorSintactico.codigoAssembler += ("\n");
                         }
                     } else {
                         this.left.generarCodigo(r);
@@ -260,11 +282,13 @@ public class Nodo {
             String aux2 = (AnalizadorSintactico.pilaLabels.pop());
             AnalizadorSintactico.codigoAssembler += ("JMP " + aux2);
             AnalizadorSintactico.codigoAssembler += (aux1);
+            
         } else if (r == "PRINT") {
             String aux = left.ref.replace(" ", "_");
             aux = aux.replace("	", "_");
             AnalizadorSintactico.codigoAssembler += ("invoke MessageBox, NULL, addr msj_" + aux + ", addr msj_" + aux + ", MB_OK");
             AnalizadorSintactico.variablesCodigoAssembler += ("msj_" + aux);
+            
         } else if (r == "LF") {
             int aux = AnalizadorSintactico.flagsFunc.get(this.left.getRef());
             String izqAux = this.left.getRef();
@@ -277,7 +301,11 @@ public class Nodo {
                 if (this.right.isRegistro()){
                     AnalizadorSintactico.codigoAssembler += ("MOV _" + nombreParametro + ", " + this.right.getRef());
                 }else{
-                    AnalizadorSintactico.codigoAssembler += ("MOV _" + nombreParametro + ", _" + this.right.getRef());
+                	int j = this.registroLibre(reg);
+                    AnalizadorSintactico.codigoAssembler += ("MOV " + reg[j].getNombre() + ", _" + this.right.getRef());
+                    AnalizadorSintactico.codigoAssembler += ("\n");
+                    AnalizadorSintactico.codigoAssembler += ("MOV _" + nombreParametro + ", " + reg[j].getNombre());
+                    reg[j].setLibre(true);
                 }
                 AnalizadorSintactico.codigoAssembler += ("\n");
             }
@@ -298,7 +326,7 @@ public class Nodo {
         this.right = null;
     }
 
-    private void creacionCodigoSingle(String r) {
+    private void creacionCodigoSingle(String r, Registro reg[]) {
         String izquierda = this.left.getRef();
         String derecha = this.right.getRef();
 
@@ -326,6 +354,10 @@ public class Nodo {
 
         if (izquierda.charAt(0) == '.')
             izquierda = "0" + izquierda;
+        
+        izquierda=izquierda.replace(".", "_");
+        derecha=derecha.replace(".", "_");
+
 
         if (r == ":=") {
             this.imprimirAsignacion(derecha, izquierda);
@@ -405,12 +437,9 @@ public class Nodo {
             AnalizadorSintactico.codigoAssembler += ("\n");
             if (this.right != null) {
                 String nombreParametro = AnalizadorLexico.tablaDeSimbolos.get(this.left.getRef()).getNombreParametro();
-                if (this.right.isRegistro()){
-                    AnalizadorSintactico.codigoAssembler += ("MOV _" + nombreParametro + ", " + this.right.getRef());
-                }else{
-                    //int regLibre = registroLibre();
-                    AnalizadorSintactico.codigoAssembler += ("MOV _" + nombreParametro + ", _" + this.right.getRef());
-                }
+                AnalizadorSintactico.codigoAssembler += ("FLD _" + this.right.getRef());
+                AnalizadorSintactico.codigoAssembler += ("\n");
+                AnalizadorSintactico.codigoAssembler += ("FSTP _" + nombreParametro);
                 AnalizadorSintactico.codigoAssembler += ("\n");
             }
             AnalizadorSintactico.codigoAssembler += ("MOV _funcFlag_" + aux + ", 1\n");
