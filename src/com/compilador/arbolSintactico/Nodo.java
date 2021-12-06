@@ -245,8 +245,9 @@ public class Nodo {
         } else if (r == "*") {
             AnalizadorSintactico.codigoAssembler += ("MOV " + reg[i].getNombre() + ", " + izquierda);
             AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("MUL " + reg[i].getNombre() + ", " + derecha);
-            AnalizadorSintactico.codigoAssembler += ("JO @LABEL_Overflow");
+            AnalizadorSintactico.codigoAssembler += ("IMUL " + reg[i].getNombre() + ", " + derecha);
+            AnalizadorSintactico.codigoAssembler += ("\n");
+            AnalizadorSintactico.codigoAssembler += ("JO @LABEL_OVF");
         } else if (r == "-") {
             AnalizadorSintactico.codigoAssembler += ("MOV " + reg[i].getNombre() + ", " + izquierda);
             AnalizadorSintactico.codigoAssembler += ("\n");

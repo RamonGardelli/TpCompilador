@@ -1,17 +1,10 @@
 progCteRangoAcept
 
-LONG a, b,c,d;
+LONG a, b,c;
 
-LONG FUNC X(LONG z)
-BEGIN
-	z:=1;
-	RETURN (z);
-END
 
 BEGIN
-	d:=1;
-	a:=1;
-	c:=a+d;
-	b:=c+d;
-	b:=X(a);
+	b:=2147483647;
+	a:=2147483647;
+	c:=a*b;
 END
