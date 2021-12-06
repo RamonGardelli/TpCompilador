@@ -14,14 +14,12 @@ import java.util.*;
 
 public class AnalizadorSintactico {
 
-    public static String codigoAssembler = " ";
+    public static String codigoAssembler = "";
     
-    public static String codigoAssemblerFinal = " ";
+    public static String codigoAssemblerFinal = "";
     
     public static String variablesCodigoAssembler = " ";
 
-    public static String ambitoActualAssembler = " ";
-    
     public static ArrayList<String> listaAnalisis = new ArrayList<>();
 
     public static ArrayList<String> listaErroresSintacticos = new ArrayList<>();
@@ -85,8 +83,8 @@ public class AnalizadorSintactico {
             if (args.length != 0 || true) {
 
                 //File filex = new File(args[0]);
-                File filex = new File("C:\\Users\\Admin\\Desktop\\prueba\\prueba.txt");
-                //File filex = new File("C:\\Users\\ramon\\IdeaProjects\\TpCompilador\\archivos\\programa\\testprograma.txt");
+                //File filex = new File("C:\\Users\\Admin\\Desktop\\prueba\\prueba.txt");
+                File filex = new File("C:\\Users\\ramon\\IdeaProjects\\TpCompilador\\archivos\\programa\\testprograma.txt");
 
 
                 String originalPath = filex.getAbsoluteFile().getParent() + File.separator;
@@ -154,16 +152,15 @@ public class AnalizadorSintactico {
                 	obtenerFunciones();
                     //imprimirArbol(arbol);
                 	imprimirArbol(arbolFunc);
+                    System.out.println(" ");
                     Registro r1 = new Registro("EAX");
                     Registro r2 = new Registro("EBX");
                     Registro r3 = new Registro("ECX");
                     Registro r4 = new Registro("EDX");
 
-                    String codigo = "";
                     Registro[] r = {r1, r2, r3, r4};
                     codigoAssembler+="\n";
-                    //this.creacionAssembler();
-                    //codigoAssemblerFinal+=TODAS LAS VARIABLES DE LA TABLA DE SIMBOLOS
+                    creacionAssembler();
                     memoriaPrograma();
                     codigoAssemblerFinal+=variablesCodigoAssembler;
                     codigoAssemblerFinal+="\n";
@@ -171,11 +168,13 @@ public class AnalizadorSintactico {
                     codigoAssemblerFinal+="\n";
                     arbolFunciones(arbolFunc, r);
                     codigoAssemblerFinal+=codigoAssembler;
-                    codigoAssembler=" ";
-                    codigoAssemblerFinal+=("start: ");
+                    codigoAssembler="";
+                    codigoAssemblerFinal+=("start:");
                     codigoAssemblerFinal+="\n";
                     arbol.generarCodigo(r);
                     codigoAssemblerFinal+=codigoAssembler;
+                    codigoAssemblerFinal+="JMP @LABEL_END";
+                    codigoAssemblerFinal+="\n";
                     labels();
                     codigoAssemblerFinal+="invoke ExitProcess, 0";
                     codigoAssemblerFinal+="\n";
@@ -201,16 +200,26 @@ public class AnalizadorSintactico {
         }
     }
 
-    public void creacionAssembler() {
-    	codigoAssemblerFinal+=(".586");
+    public static void creacionAssembler() {
+    	codigoAssemblerFinal+=(".386");
     	codigoAssemblerFinal+="\n";
     	codigoAssemblerFinal+=(".model flat, stdcall");
     	codigoAssemblerFinal+="\n";
     	codigoAssemblerFinal+=("option casemap :none");
     	codigoAssemblerFinal+="\n";
-    	//codigoAssembler+=(".586"); LIBRERIAS
-    	codigoAssemblerFinal+="\n";
+        codigoAssemblerFinal+=("include \\masm32\\include\\windows.inc");
+        codigoAssemblerFinal+="\n";
+        codigoAssemblerFinal+=("include \\masm32\\include\\kernel32.inc");
+        codigoAssemblerFinal+="\n";
+        codigoAssemblerFinal+=("include \\masm32\\include\\user32.inc");
+        codigoAssemblerFinal+="\n";
+        codigoAssemblerFinal+=("includelib \\masm32\\lib\\kernel32.lib");
+        codigoAssemblerFinal+="\n";
+        codigoAssemblerFinal+=("includelib \\masm32\\lib\\user32.lib");
+        codigoAssemblerFinal+="\n";
+        codigoAssemblerFinal+="\n";
     	codigoAssemblerFinal+=(".data");
+        codigoAssemblerFinal+="\n";
     }
     
     public static void arbolFunciones(Nodo arbol, Registro r[]) {
@@ -219,7 +228,7 @@ public class AnalizadorSintactico {
 	    		codigoAssemblerFinal+=(arbol.getLeft().getRef()+":");
 	        	arbol.getLeft().generarCodigo(r);
 	    		codigoAssembler+=("ret");
-	    		codigoAssembler+="\n";
+                codigoAssembler+="\n";
 	    		codigoAssembler+="\n";
 	    	}
 	    	if (arbol.getRight()!=null) {
@@ -230,11 +239,9 @@ public class AnalizadorSintactico {
     
     public static void memoriaPrograma() {
     	 codigoAssemblerFinal+="msj_division_cero db \" ERROR, el divisor es igual a cero. No se puede proceder con la operacion \",0\n";
-         codigoAssemblerFinal+="msj_overflow_producto\"ERROR, se detecto overflow. No se puede proceder con la operacion\",0\n";
-         codigoAssemblerFinal+="msj_recursion\"ERROR, se detecto una recursion. No se puede proceder con la operacion\",0\n";	 
-         codigoAssemblerFinal+="_aux_ambito_actual\n";
-         codigoAssemblerFinal+="_aux_ambito_anterior\n";
-         
+         codigoAssemblerFinal+="msj_overflow_producto db \"ERROR, se detecto overflow. No se puede proceder con la operacion\",0\n";
+         codigoAssemblerFinal+="msj_recursion db \"ERROR, se detecto una recursion. No se puede proceder con la operacion\",0\n";
+         codigoAssemblerFinal+="aux_mem_2bytes dw ?\n";
          
          AnalizadorLexico.tablaDeSimbolos.entrySet().forEach(entry->{
  			if (entry.getValue().getTipoVariable()=="CADENA") {
@@ -278,21 +285,21 @@ public class AnalizadorSintactico {
 	}
     
     public static void labels () {
-    	codigoAssemblerFinal+="@LABEL_OVF";
+    	codigoAssemblerFinal+="@LABEL_OVF:";
         codigoAssemblerFinal+="\n";
-        codigoAssemblerFinal+="invoke MessageBox, NULL, addr mensaje_overflow_producto, addr mensaje_overflow_producto, MB_OK";
-        codigoAssemblerFinal+="\n";
-        codigoAssemblerFinal+="JMP @LABEL_END";
-        codigoAssemblerFinal+="\n";
-        codigoAssemblerFinal+="@LABEL_RECURSION";
-        codigoAssemblerFinal+="\n";
-        codigoAssemblerFinal+="invoke MessageBox, NULL, addr mensaje_recursion, addr mensaje_recursion, MB_OK";
+        codigoAssemblerFinal+="invoke MessageBox, NULL, addr msj_overflow_producto, addr msj_overflow_producto, MB_OK";
         codigoAssemblerFinal+="\n";
         codigoAssemblerFinal+="JMP @LABEL_END";
         codigoAssemblerFinal+="\n";
-        codigoAssemblerFinal+="@LABEL_DIVCERO";                   
+        codigoAssemblerFinal+="@LABEL_RECURSION:";
         codigoAssemblerFinal+="\n";
-        codigoAssemblerFinal+="invoke MessageBox, NULL, addr mensaje_division_cero, addr mensaje_division_cero, MB_OK";
+        codigoAssemblerFinal+="invoke MessageBox, NULL, addr msj_recursion, addr msj_recursion, MB_OK";
+        codigoAssemblerFinal+="\n";
+        codigoAssemblerFinal+="JMP @LABEL_END";
+        codigoAssemblerFinal+="\n";
+        codigoAssemblerFinal+="@LABEL_DIVCERO:";
+        codigoAssemblerFinal+="\n";
+        codigoAssemblerFinal+="invoke MessageBox, NULL, addr msj_division_cero, addr msj_division_cero, MB_OK";
         codigoAssemblerFinal+="\n";
         codigoAssemblerFinal+="@LABEL_END:";
         codigoAssemblerFinal+="\n";	
