@@ -526,15 +526,46 @@ sentenciaPRINT: PRINT '(' CADENA ')' ';' {AnalizadorSintactico.agregarAnalisis("
 	      | PRINT '(' CADENA ';' {AnalizadorSintactico.agregarError("error falta ')' (Linea " + AnalizadorLexico.numLinea + ")");}
 	      | PRINT '(' CADENA ')' error {AnalizadorSintactico.agregarError("error falta ';' (Linea " + (AnalizadorLexico.numLinea-1) + ")");}
 	      | PRINT '(' ID ')' ';' {
-	           AnalizadorSintactico.agregarAnalisis("sentencia print (Linea " + AnalizadorLexico.numLinea + ")");
-               ParserVal aux = new ParserVal(new Nodo($3.sval));
-               $$= new ParserVal(new Nodo("PRINT", (Nodo)aux.obj, null));
+	       	           AnalizadorSintactico.agregarAnalisis("sentencia print (Linea " + AnalizadorLexico.numLinea + ")");
+	                           String lexema = AnalizadorSintactico.getReferenciaPorAmbito($3.sval);
+                               if(lexema != null){
+                                  AnalizadorLexico.tablaDeSimbolos.remove($3.sval);
+                                  ParserVal aux = new ParserVal(new Nodo(lexema));
+                                  $$= new ParserVal(new Nodo("PRINT", (Nodo)aux.obj, null));
+                               }else{
+                                   AnalizadorSintactico.agregarError("ID no definido (Linea " + AnalizadorLexico.numLinea + ")");
+                                   AnalizadorLexico.tablaDeSimbolos.remove($3.sval);
+                                   //stop generacion de arbol
 
+                               }
 	      }
 	      | PRINT '(' CTE ')' ';'{
                 	           AnalizadorSintactico.agregarAnalisis("sentencia print (Linea " + AnalizadorLexico.numLinea + ")");
-                               ParserVal aux = new ParserVal(new Nodo($3.sval));
-                               $$= new ParserVal(new Nodo("PRINT", (Nodo)aux.obj, null));
+                               	                           String lexema = AnalizadorSintactico.getReferenciaPorAmbito($3.sval);
+
+                               if(lexema != null){
+                                  AnalizadorLexico.tablaDeSimbolos.remove($3.sval);
+                                  ParserVal aux = new ParserVal(new Nodo(lexema));
+                                  $$= new ParserVal(new Nodo("PRINT", (Nodo)aux.obj, null));
+                               }else{
+                                  AnalizadorSintactico.agregarError("ID no definido (Linea " + AnalizadorLexico.numLinea + ")");
+                                  AnalizadorLexico.tablaDeSimbolos.remove($3.sval);
+                                  //stop generacion de arbol
+                               }
+                               }
+          	      | PRINT '(' '-' CTE ')' ';'{
+                          	           AnalizadorSintactico.agregarAnalisis("sentencia print (Linea " + AnalizadorLexico.numLinea + ")");
+                                        String lexema = AnalizadorSintactico.getReferenciaPorAmbito("-"+$4.sval);
+
+                                         if(lexema != null){
+                                            AnalizadorLexico.tablaDeSimbolos.remove("-"+$4.sval);
+                                            ParserVal aux = new ParserVal(new Nodo(lexema));
+                                            $$= new ParserVal(new Nodo("PRINT", (Nodo)aux.obj, null));
+                                         }else{
+                                            AnalizadorSintactico.agregarError("ID no definido (Linea " + AnalizadorLexico.numLinea + ")");
+                                            AnalizadorLexico.tablaDeSimbolos.remove("-"+$4.sval);
+                                            //stop generacion de arbol
+                                         }
 	      }
 	      ;
 

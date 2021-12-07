@@ -135,6 +135,10 @@ public class Nodo {
 
 
         } else if (this.right == null) {
+            if (this.getRef()=="PRINT") {
+                String aux = left.getRef().replace(" ", "");
+                AnalizadorSintactico.codigoAssembler += ("invoke MessageBox, NULL, addr _" + aux + ", addr _" + aux + ", MB_OK\n");
+            }
             if (this.getRef() == "Else") {
                 AnalizadorSintactico.contadorLabel++;
                 String aux = "Label" + AnalizadorSintactico.contadorLabel;

@@ -6,14 +6,8 @@ LONG aa,bb;
 
 BEGIN
 
-aa:=2;
-bb:=3;
-
-IF(aa > bb) THEN
-BEGIN
-	aa:=2;
-END
-ENDIF;
+aa:=1;
+PRINT(aa);
  
 
 END
