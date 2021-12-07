@@ -247,7 +247,7 @@ public class AnalizadorSintactico {
  			if (entry.getValue().getTipoVariable()=="CADENA") {
  				String aux = entry.getKey().replace(" ", "_");
  				aux = aux.replace("	", "_");
- 	 			codigoAssemblerFinal+=(aux+" DB "+"\""+entry.getKey()+"\""+"\n");
+ 	 			codigoAssemblerFinal+=(aux+" DB "+"\""+entry.getKey()+"\",0"+"\n");
 				}
  			else {
  			String auxValor=entry.getKey();

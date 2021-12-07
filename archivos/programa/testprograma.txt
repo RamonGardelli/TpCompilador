@@ -6,16 +6,14 @@ LONG aa,bb;
 
 BEGIN
 
-bb:=0;
-aa:=0;
+aa:=2;
+bb:=3;
 
-WHILE ( bb < 2) DO
+IF(aa > bb) THEN
 BEGIN
-	aa:=aa+1;
-	bb:=bb+1;
+	aa:=2;
 END
-
-
+ENDIF;
  
 
 END

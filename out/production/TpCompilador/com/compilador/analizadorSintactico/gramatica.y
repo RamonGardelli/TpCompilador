@@ -525,8 +525,17 @@ sentenciaPRINT: PRINT '(' CADENA ')' ';' {AnalizadorSintactico.agregarAnalisis("
 	      | PRINT '('')' ';' {AnalizadorSintactico.agregarError("Warning print vacio' (Linea " + AnalizadorLexico.numLinea + ")");}
 	      | PRINT '(' CADENA ';' {AnalizadorSintactico.agregarError("error falta ')' (Linea " + AnalizadorLexico.numLinea + ")");}
 	      | PRINT '(' CADENA ')' error {AnalizadorSintactico.agregarError("error falta ';' (Linea " + (AnalizadorLexico.numLinea-1) + ")");}
-	      | PRINT '(' ID ')' ';'  //(util para Debug, errores innecesarios)
-	      | PRINT '(' CTE ')' ';'
+	      | PRINT '(' ID ')' ';' {
+	           AnalizadorSintactico.agregarAnalisis("sentencia print (Linea " + AnalizadorLexico.numLinea + ")");
+               ParserVal aux = new ParserVal(new Nodo($3.sval));
+               $$= new ParserVal(new Nodo("PRINT", (Nodo)aux.obj, null));
+
+	      }
+	      | PRINT '(' CTE ')' ';'{
+                	           AnalizadorSintactico.agregarAnalisis("sentencia print (Linea " + AnalizadorLexico.numLinea + ")");
+                               ParserVal aux = new ParserVal(new Nodo($3.sval));
+                               $$= new ParserVal(new Nodo("PRINT", (Nodo)aux.obj, null));
+	      }
 	      ;
 
 sentenciaWHILE: WHILE condicion DO bloqueEjecutable {AnalizadorSintactico.agregarAnalisis("sentencia 'WHILE' (Linea " + AnalizadorLexico.numLinea + ")");
