@@ -252,6 +252,7 @@ public class AnalizadorSintactico {
  			else {
  			String auxValor=entry.getKey();
  			auxValor=auxValor.replace(".", "_");
+             auxValor=auxValor.replace("-", "_");
  			codigoAssemblerFinal+=("_"+auxValor);  
 	 			if (entry.getValue().getTipoVariable()=="ID") {
 	 				if(entry.getValue().getTipoContenido()=="LONG") {

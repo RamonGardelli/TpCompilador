@@ -228,10 +228,15 @@ public class Nodo {
             derecha = "_" + derecha;
         }
 
+
+
         if (derecha == "LF") {
             derecha = this.right.getRight().getRef();
             AnalizadorSintactico.codigoAssembler += ("CALL " + this.left.ref);
         }
+
+        izquierda=izquierda.replace("-", "_");
+        derecha=derecha.replace("-", "_");
 
         if (r == ":=") {
             AnalizadorSintactico.codigoAssembler += ("MOV " + reg[i].getNombre() + ", " + derecha);
@@ -253,13 +258,13 @@ public class Nodo {
             AnalizadorSintactico.codigoAssembler += ("\n");
             AnalizadorSintactico.codigoAssembler += ("SUB " + reg[i].getNombre() + ", " + derecha);
         } else if (r == "/") {
-            AnalizadorSintactico.codigoAssembler += ("CMP " + " 0, " + derecha);
+            AnalizadorSintactico.codigoAssembler += ("CMP " + derecha +  ", 0 ");
             AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("JE _CERO");
+            AnalizadorSintactico.codigoAssembler += ("JE @LABEL_DIVCERO");
             AnalizadorSintactico.codigoAssembler += ("\n");
             AnalizadorSintactico.codigoAssembler += ("MOV " + reg[i].getNombre() + ", " + izquierda);
             AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("DIV " + reg[i].getNombre() + ", " + derecha);
+            AnalizadorSintactico.codigoAssembler += ("IDIV " + derecha);
         } else if ((r == "==") || (r == ">=") || (r == "<=") || (r == "<>")) {
             AnalizadorSintactico.codigoAssembler += ("CMP " + izquierda + ", " + derecha);
 
@@ -379,6 +384,9 @@ public class Nodo {
         
         izquierda=izquierda.replace(".", "_");
         derecha=derecha.replace(".", "_");
+
+        izquierda=izquierda.replace("-", "_");
+        derecha=derecha.replace("-", "_");
 
 
         if (r == ":=") {
