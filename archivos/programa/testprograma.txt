@@ -15,7 +15,6 @@ BEGIN
 	bb:=bb+1;
 END
 
-aa := bb/aa;
 
  
 

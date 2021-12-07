@@ -265,7 +265,7 @@ public class Nodo {
             AnalizadorSintactico.codigoAssembler += ("MOV " + reg[i].getNombre() + ", " + izquierda);
             AnalizadorSintactico.codigoAssembler += ("\n");
             AnalizadorSintactico.codigoAssembler += ("IDIV " + derecha);
-        } else if ((r == "==") || (r == ">=") || (r == "<=") || (r == "<>")) {
+        } else if ((r == "==") || (r == ">=") || (r == "<=") || (r == "<>") || (r == ">") || (r == "<")) {
             AnalizadorSintactico.codigoAssembler += ("CMP " + izquierda + ", " + derecha);
 
             if (r == "==") {
@@ -399,7 +399,7 @@ public class Nodo {
             this.imprimirResta(derecha, izquierda);
         } else if (r == "/") {
             this.imprimirDivision(derecha, izquierda);
-        } else if ((r == "==") || (r == ">=") || (r == "<=") || (r == "<>")) {
+        } else if ((r == "==") || (r == ">=") || (r == "<=") || (r == "<>") || (r == ">") || (r == "<")) {
             AnalizadorSintactico.codigoAssembler += ("FCOM ");
             AnalizadorSintactico.codigoAssembler += ("\n");
 
