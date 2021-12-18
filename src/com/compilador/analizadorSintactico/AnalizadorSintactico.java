@@ -30,6 +30,8 @@ public class AnalizadorSintactico {
 
     public static int contadorLabel=0;
 
+    public static int contadorAux=0;
+    
     public static Parser p = new Parser();
 
     public static Nodo arbol;
@@ -83,8 +85,8 @@ public class AnalizadorSintactico {
             if (args.length != 0 || true) {
 
                 //File filex = new File(args[0]);
-            	//File filex = new File("C:\\Users\\Admin\\Desktop\\prueba\\prueba.txt");
-                File filex = new File("C:\\Users\\ramon\\IdeaProjects\\TpCompilador\\archivos\\programa\\testprograma.txt");
+            	File filex = new File("C:\\Users\\Admin\\Desktop\\prueba\\prueba.txt");
+                //File filex = new File("C:\\Users\\ramon\\IdeaProjects\\TpCompilador\\archivos\\programa\\testprograma.txt");
 
 
                 String originalPath = filex.getAbsoluteFile().getParent() + File.separator;
