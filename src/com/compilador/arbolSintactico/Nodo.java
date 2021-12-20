@@ -198,8 +198,7 @@ public class Nodo {
     private void creacionCodigoLong(String r, int i, Registro reg[]) {
         String derecha = this.right.getRef();
         String izquierda = this.left.getRef();
-       
-        
+
         if (this.ref == "LF") {
             AnalizadorSintactico.codigoAssembler += ("CALL " + this.getLeft().getRef());
             AnalizadorSintactico.codigoAssembler += "\n";
@@ -459,13 +458,13 @@ public class Nodo {
             AnalizadorSintactico.codigoAssembler += ("invoke MessageBox, NULL, addr msj_" + aux + ", addr msj_" + aux + ", MB_OK");
             AnalizadorSintactico.variablesCodigoAssembler += ("msj_" + aux);
         }
-        AnalizadorSintactico.codigoAssembler += ("\n");
+
+        
+        this.ref = "@aux"+AnalizadorSintactico.contadorAux;
         this.esRegistro = true;
         this.tipo = this.left.getTipo();
         this.left = null;
         this.right = null;
-        
-        
     }
 
     private int registroLibre(Registro[] r) {
@@ -479,119 +478,63 @@ public class Nodo {
     }
 
     private void imprimirAsignacion(String derecha, String izquierda) {
-        if (!(this.right.esRegistro)) {
             AnalizadorSintactico.codigoAssembler += ("FLD " + derecha);
             AnalizadorSintactico.codigoAssembler += ("\n");
             AnalizadorSintactico.codigoAssembler += ("FSTP " + izquierda);
-
-        } else if (this.right.esRegistro) {
-            AnalizadorSintactico.codigoAssembler += ("FSTP " + izquierda);
-        }
     }
 
     private void imprimirSuma(String derecha, String izquierda) {
-        if (!(this.right.esRegistro) && (!(this.left.esRegistro))) {
-            AnalizadorSintactico.codigoAssembler += ("FLD " + izquierda);
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("FLD " + derecha);
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("FADD");
-        } else if (!(this.right.esRegistro) && (this.left.esRegistro)) {
-            AnalizadorSintactico.codigoAssembler += ("FLD " + derecha);
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("FADD");
-        } else if ((this.right.esRegistro) && (!this.left.esRegistro)) {
-            AnalizadorSintactico.codigoAssembler += ("FLD " + izquierda);
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("FADD");
-        } else if ((this.right.esRegistro) && (this.left.esRegistro)) {
-            AnalizadorSintactico.codigoAssembler += ("FADD");
-        }
+    	AnalizadorSintactico.contadorAux++;
+    	int i=AnalizadorSintactico.contadorAux;
+        AnalizadorSintactico.codigoAssembler += ("FLD " + izquierda);
+        AnalizadorSintactico.codigoAssembler += ("\n");
+        AnalizadorSintactico.codigoAssembler += ("FLD " + derecha);
+        AnalizadorSintactico.codigoAssembler += ("\n");
+        AnalizadorSintactico.codigoAssembler += ("FADD");
+        AnalizadorSintactico.codigoAssembler += ("\n");
+        AnalizadorSintactico.codigoAssembler += ("FSTP aux"+i);
     }
 
     private void imprimirResta(String derecha, String izquierda) {
-        if (!(this.right.esRegistro) && (!(this.left.esRegistro))) {
-            AnalizadorSintactico.codigoAssembler += ("FLD  " + izquierda);
-            AnalizadorSintactico.codigoAssembler += ("FLD " + derecha);
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("FSUB");
-        } else if (!(this.right.esRegistro) && (this.left.esRegistro)) {
-            AnalizadorSintactico.codigoAssembler += ("FLD " + derecha);
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("FSUB");
-        } else if ((this.right.esRegistro) && (!this.left.esRegistro)) {
-            AnalizadorSintactico.codigoAssembler += ("FLD " + izquierda);
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("FSUB");
-        } else if ((this.right.esRegistro) && (this.left.esRegistro)) {
-            AnalizadorSintactico.codigoAssembler += ("FSUB");
-        }
+    	AnalizadorSintactico.contadorAux++;
+    	int i=AnalizadorSintactico.contadorAux;  
+        AnalizadorSintactico.codigoAssembler += ("FLD  " + izquierda);
+        AnalizadorSintactico.codigoAssembler += ("FLD " + derecha);
+        AnalizadorSintactico.codigoAssembler += ("\n");
+        AnalizadorSintactico.codigoAssembler += ("FSUB"); 
+        AnalizadorSintactico.codigoAssembler += ("FSTP aux"+i);
     }
 
     private void imprimirMultiplicacion(String derecha, String izquierda) {
-        if (!(this.right.esRegistro) && (!(this.left.esRegistro))) {
-            AnalizadorSintactico.codigoAssembler += ("FLD " + izquierda);
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("FLD " + derecha);
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("FMUL");
-
-        } else if (!(this.right.esRegistro) && (this.left.esRegistro)) {
-            AnalizadorSintactico.codigoAssembler += ("FLD " + derecha);
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("FMUL");
-
-        } else if ((this.right.esRegistro) && (!this.left.esRegistro)) {
-            AnalizadorSintactico.codigoAssembler += ("FLD " + izquierda);
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("FMUL");
-        } else if ((this.right.esRegistro) && (this.left.esRegistro)) {
-            AnalizadorSintactico.codigoAssembler += ("FMUL");
-        }
-
+    	AnalizadorSintactico.contadorAux++;
+    	int i=AnalizadorSintactico.contadorAux;  
+        AnalizadorSintactico.codigoAssembler += ("FLD " + izquierda);
+        AnalizadorSintactico.codigoAssembler += ("\n");
+        AnalizadorSintactico.codigoAssembler += ("FLD " + derecha);
+        AnalizadorSintactico.codigoAssembler += ("\n");
+        AnalizadorSintactico.codigoAssembler += ("FMUL");
+        AnalizadorSintactico.codigoAssembler += ("FSTP aux"+i);
     }
 
     private void imprimirDivision(String derecha, String izquierda) {
-        if (!(this.right.esRegistro) && (!(this.left.esRegistro))) {
-            AnalizadorSintactico.codigoAssembler += ("FLD " + izquierda);
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("FLD " + derecha);
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("FTST");
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("FSTSW aux_mem_2bytes");
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("MOV AX , aux_mem_2bytes");
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("SAHF");
-            AnalizadorSintactico.codigoAssembler += ("\n");
-
-            AnalizadorSintactico.codigoAssembler += ("JE @LABEL_DIVCERO");
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("FDIV");
-
-        } else if (!(this.right.esRegistro) && (this.left.esRegistro)) {
-            AnalizadorSintactico.codigoAssembler += ("FLD " + derecha);
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("FTST");
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("JE @LABEL_DIVCERO");
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("FDIV");
-        } else if ((this.right.esRegistro) && (!this.left.esRegistro)) {
-            AnalizadorSintactico.codigoAssembler += ("FTST");
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("JE @LABEL_DIVCERO");
-            AnalizadorSintactico.codigoAssembler += ("FLD " + izquierda);
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("FDIV");
-        } else if ((this.right.esRegistro) && (this.left.esRegistro)) {
-            AnalizadorSintactico.codigoAssembler += ("FTST");
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("JE @LABEL_DIVCERO");
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("FDIV");
-        }
+    	AnalizadorSintactico.contadorAux++;
+    	int i=AnalizadorSintactico.contadorAux;
+        AnalizadorSintactico.codigoAssembler += ("FLD " + izquierda);
+        AnalizadorSintactico.codigoAssembler += ("\n");
+        AnalizadorSintactico.codigoAssembler += ("FLD " + derecha);
+        AnalizadorSintactico.codigoAssembler += ("\n");
+        AnalizadorSintactico.codigoAssembler += ("FTST");
+        AnalizadorSintactico.codigoAssembler += ("\n");
+        AnalizadorSintactico.codigoAssembler += ("FSTSW aux_mem_2bytes");
+        AnalizadorSintactico.codigoAssembler += ("\n");
+        AnalizadorSintactico.codigoAssembler += ("MOV AX , aux_mem_2bytes");
+        AnalizadorSintactico.codigoAssembler += ("\n");
+        AnalizadorSintactico.codigoAssembler += ("SAHF");
+        AnalizadorSintactico.codigoAssembler += ("\n");
+        AnalizadorSintactico.codigoAssembler += ("JE @LABEL_DIVCERO");
+        AnalizadorSintactico.codigoAssembler += ("\n");
+        AnalizadorSintactico.codigoAssembler += ("FDIV");    
+        AnalizadorSintactico.codigoAssembler += ("FSTP aux"+i);
     }
 
 
