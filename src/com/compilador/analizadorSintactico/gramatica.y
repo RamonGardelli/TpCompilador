@@ -44,28 +44,18 @@ bloqueDeclarativo:bloqueDeclarativo sentenciasDeclarativas
 
 
 
-bloqueEjecutable :bloqueTRYCATCH {$$=$1;}
-				 |bloqueEjecutableNormal {$$=$1;}
+bloqueEjecutable : bloqueEjecutableNormal {$$=$1;}
 				 ;
 
-bloqueTRYCATCH: TRY sentEjecutables CATCH BEGIN sentSoloEjecutables END {$$= new ParserVal (new Nodo("TC", (Nodo)$2.obj, (Nodo)$5.obj));}
-	      | sentEjecutables CATCH BEGIN sentSoloEjecutables END {AnalizadorSintactico.agregarError("error: falta TRY en (Linea " + AnalizadorLexico.numLinea + ")");}
-	      | TRY CATCH BEGIN sentSoloEjecutables END {AnalizadorSintactico.agregarError("error TRY-CATCH vacio (Linea " + AnalizadorLexico.numLinea + ")");}
-	      | TRY sentEjecutables BEGIN sentSoloEjecutables END {AnalizadorSintactico.agregarError("error falta CATCH (Linea " + AnalizadorLexico.numLinea + ")");}
-	      | TRY sentEjecutables CATCH sentSoloEjecutables END {AnalizadorSintactico.agregarError("error falta BEGIN (Linea " + AnalizadorLexico.numLinea + ")");}
-	      | TRY sentEjecutables CATCH BEGIN sentSoloEjecutables error {AnalizadorSintactico.agregarError("error falta END (Linea " + AnalizadorLexico.numLinea + ")");}
+bloqueTRYCATCH: TRY sentenciaCONTRACT CATCH BEGIN sentSoloEjecutables END {$$= new ParserVal (new Nodo("TC", (Nodo)$2.obj, (Nodo)$5.obj));}
+	      | sentenciaCONTRACT CATCH BEGIN sentSoloEjecutables END {AnalizadorSintactico.agregarError("error: falta TRY en (Linea " + AnalizadorLexico.numLinea + ")");}
+	      | TRY CATCH BEGIN sentSoloEjecutables END {AnalizadorSintactico.agregarError("error TRY vacio (Linea " + AnalizadorLexico.numLinea + ")");}
+	      | TRY sentenciaCONTRACT BEGIN sentSoloEjecutables END {AnalizadorSintactico.agregarError("error falta CATCH (Linea " + AnalizadorLexico.numLinea + ")");}
+	      | TRY sentenciaCONTRACT CATCH sentSoloEjecutables END {AnalizadorSintactico.agregarError("error falta BEGIN (Linea " + AnalizadorLexico.numLinea + ")");}
+	      | TRY sentenciaCONTRACT CATCH BEGIN sentSoloEjecutables error {AnalizadorSintactico.agregarError("error falta END (Linea " + AnalizadorLexico.numLinea + ")");}
 	      ;
 		  
-TRYCATCHFunc: BEGIN bloqueTRYCATCH RETURN '(' retorno ')' ';' END {ParserVal aux= new ParserVal (new Nodo("S", (Nodo)$2.obj, null));
-																	$$= new ParserVal(new Nodo("BF", (Nodo)aux.obj, (Nodo)$5.obj));}
-			| BEGIN sentEjecutableFunc bloqueTRYCATCH RETURN '(' retorno ')' ';' END {ParserVal aux= new ParserVal (new Nodo("S", (Nodo)$2.obj, (Nodo)$3.obj));
-																					  $$= new ParserVal(new Nodo("BF", (Nodo)aux.obj, (Nodo)$6.obj));}
-			| BEGIN sentEjecutableFunc bloqueTRYCATCH sentEjecutableFunc RETURN '(' retorno ')' ';' END {ParserVal aux= new ParserVal (new Nodo("S", (Nodo)$2.obj, (Nodo)$3.obj));
-																										 ParserVal aux2= new ParserVal (new Nodo("S", (Nodo)aux.obj, (Nodo)$4.obj));
-																										 $$= new ParserVal(new Nodo("BF", (Nodo)aux.obj, (Nodo)$7.obj));}
-			| BEGIN bloqueTRYCATCH sentEjecutableFunc RETURN '(' retorno ')' ';' END {ParserVal aux= new ParserVal (new Nodo("S", (Nodo)$2.obj, (Nodo)$3.obj));
-																					  $$= new ParserVal(new Nodo("BF", (Nodo)aux.obj, (Nodo)$6.obj));}
-			;
+
 			
 bloqueEjecutableNormal: BEGIN sentSoloEjecutables END 
 			{
@@ -83,7 +73,6 @@ bloqueEjecutableFunc: BEGIN sentEjecutableFunc RETURN '(' retorno ')' ';' END
             |BEGIN RETURN '(' retorno ')' ';' END {
                 $$ = new ParserVal(new Nodo("BF",null,(Nodo)$4.obj));
             }
-			|TRYCATCHFunc {$$=$1;}
 		    | sentEjecutableFunc RETURN '(' retorno ')' END {AnalizadorSintactico.agregarError("error falta BEGIN (Linea " + AnalizadorLexico.numLinea + ")");}
 		    | BEGIN sentEjecutableFunc '(' retorno ')' END {AnalizadorSintactico.agregarError("error falta RETURN (Linea " + AnalizadorLexico.numLinea + ")");}
 		    | BEGIN sentEjecutableFunc RETURN  retorno ')' END {AnalizadorSintactico.agregarError("error falta '(' (Linea " + AnalizadorLexico.numLinea + ")");}
@@ -110,7 +99,7 @@ sentEjecutableFunc: sentEjecutableFunc sentEjecutablesFunc
           ;
 
 sentEjecutablesFunc: sentEjecutables { $$ = $1; }
-          | sentenciaCONTRACT { $$ = $1; }
+          | bloqueTRYCATCH { $$ = $1; }
           ;
 
 sentenciaCONTRACT: CONTRACT ':' condicion  ';' {
@@ -434,9 +423,10 @@ asignacion: ID ASIGN expAritmetica ';' {
 					
 	  | '(' tipo ')' ID ASIGN expAritmetica ';' 
 					{
-						if ($2.sval != 'SINGLE') 
+						if ($2.sval != "SINGLE") 
 						{
-							AnalizadorSintactico.agregarError("Variable no definida (Linea " + AnalizadorLexico.numLinea + ")");
+							AnalizadorSintactico.agregarError("No se puede castear a este tipo (Linea " + AnalizadorLexico.numLinea + ")");
+							AnalizadorLexico.tablaDeSimbolos.remove($4.sval);
 						}
 						else 
 							{
@@ -454,10 +444,10 @@ asignacion: ID ASIGN expAritmetica ';' {
 									((Nodo)aux.obj).setTipo("SINGLE"); //Mirarlo 
 									TDSObject value = AnalizadorLexico.getLexemaObject(variable);
 									$$= new ParserVal(new Nodo(":=", (Nodo)aux.obj, (Nodo)$6.obj));
-									if(value.getTipoContenido().equals( ((Nodo)$6.obj).getTipo())){
+									if( (((Nodo)$6.obj).getTipo()).equals("SINGLE")){
 										((Nodo)$$.obj).setTipo(((Nodo)aux.obj).getTipo());
 									}else{
-										AnalizadorSintactico.agregarError("Tipo Incompatible (" + value.getTipoContenido() + "," +  ((Nodo)$6.obj).getTipo()  + ") (Linea " + AnalizadorLexico.numLinea + ")");
+										AnalizadorSintactico.agregarError("Tipo Incompatible (SINGLE, " + ((Nodo)$6.obj).getTipo()  + ") (Linea " + AnalizadorLexico.numLinea + ")");
 									}
 								}
                      
@@ -491,8 +481,7 @@ asignacion: ID ASIGN expAritmetica ';' {
 	  | ID expAritmetica ';' {AnalizadorSintactico.agregarError("Error falta ASIGN (Linea " + AnalizadorLexico.numLinea + ")");}
 	  | ID ASIGN expAritmetica error {AnalizadorSintactico.agregarError("Error falta ';' (Linea " + (AnalizadorLexico.numLinea-1) + ")");}
 	  | ID ASIGN error {AnalizadorSintactico.agregarError("Error falta ';' (Linea " + (AnalizadorLexico.numLinea-1) + ")");}
-	  | ID '=' expAritmetica error {AnalizadorSintactico.agregarError("Error falta ';' y falta :  (Linea " + (AnalizadorLexico.numLinea -1) + ")");}
-	  | ID '='  error {AnalizadorSintactico.agregarError("Error falta ';' y falta :  (Linea " + (AnalizadorLexico.numLinea -1) + ")");}
+	  | ID '='  error {AnalizadorSintactico.agregarError("Error falta ':'(Linea " + (AnalizadorLexico.numLinea -1) + ")");}
 	  | ID ASIGN comparacion ';'  {AnalizadorSintactico.agregarError("Error, no puede asignarse un comparador(Linea " + AnalizadorLexico.numLinea + ")");}
 	  ;
 
