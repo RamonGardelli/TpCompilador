@@ -434,7 +434,7 @@ asignacion: ID ASIGN expAritmetica ';' {
 					
 	  | '(' tipo ')' ID ASIGN expAritmetica ';' 
 					{
-						if ($2.sval != 'SINGLE') 
+						if ($2.sval != "SINGLE") 
 						{
 							AnalizadorSintactico.agregarError("Variable no definida (Linea " + AnalizadorLexico.numLinea + ")");
 						}
@@ -491,8 +491,7 @@ asignacion: ID ASIGN expAritmetica ';' {
 	  | ID expAritmetica ';' {AnalizadorSintactico.agregarError("Error falta ASIGN (Linea " + AnalizadorLexico.numLinea + ")");}
 	  | ID ASIGN expAritmetica error {AnalizadorSintactico.agregarError("Error falta ';' (Linea " + (AnalizadorLexico.numLinea-1) + ")");}
 	  | ID ASIGN error {AnalizadorSintactico.agregarError("Error falta ';' (Linea " + (AnalizadorLexico.numLinea-1) + ")");}
-	  | ID '=' expAritmetica error {AnalizadorSintactico.agregarError("Error falta ';' y falta :  (Linea " + (AnalizadorLexico.numLinea -1) + ")");}
-	  | ID '='  error {AnalizadorSintactico.agregarError("Error falta ';' y falta :  (Linea " + (AnalizadorLexico.numLinea -1) + ")");}
+	  | ID '='  error {AnalizadorSintactico.agregarError("Error falta ':' (Linea " + (AnalizadorLexico.numLinea -1) + ")");}
 	  | ID ASIGN comparacion ';'  {AnalizadorSintactico.agregarError("Error, no puede asignarse un comparador(Linea " + AnalizadorLexico.numLinea + ")");}
 	  ;
 

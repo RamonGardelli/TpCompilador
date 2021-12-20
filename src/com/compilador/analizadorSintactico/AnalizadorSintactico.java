@@ -30,7 +30,7 @@ public class AnalizadorSintactico {
 
     public static int contadorLabel=0;
 
-    public static int contadorAux=0;
+    public static int contadorAux=1;
     
     public static Parser p = new Parser();
 
@@ -82,7 +82,7 @@ public class AnalizadorSintactico {
     public static void main(String[] args) {
 
         try {
-            if (args.length != 0 ) {
+            if (args.length != 0 || true) {
 
                 //File filex = new File(args[0]);
             	File filex = new File("C:\\Users\\Admin\\Desktop\\prueba\\prueba.txt");
@@ -154,8 +154,8 @@ public class AnalizadorSintactico {
 
                 if (!errorPrograma) {        	
                 	obtenerFunciones();
-                    //imprimirArbol(arbol);
-                	imprimirArbol(arbolFunc);
+                    imprimirArbol(arbol);
+                	//imprimirArbol(arbolFunc);
                     System.out.println(" ");
                     Registro r1 = new Registro("EAX");
                     Registro r2 = new Registro("EBX");
@@ -177,6 +177,8 @@ public class AnalizadorSintactico {
                     codigoAssemblerFinal+="\n";
                     arbol.generarCodigo(r);
                     codigoAssemblerFinal+=codigoAssembler;
+                    codigoAssemblerFinal+="\n";
+
                     codigoAssemblerFinal+="JMP @LABEL_END";
                     codigoAssemblerFinal+="\n";
                     labels();
@@ -236,9 +238,16 @@ public class AnalizadorSintactico {
     	if(arbol!=null) {
 	    	if (arbol.getLeft()!=null) {
 	    		codigoAssemblerFinal+=(arbol.getLeft().getRef()+":");
+	    		int aux = AnalizadorSintactico.flagsFunc.get(arbol.getLeft().getRef());
+	    		AnalizadorSintactico.codigoAssembler += ("CMP _funcFlag_" + aux + ", 1");
+	    		AnalizadorSintactico.codigoAssembler += ("\n");
+	    		AnalizadorSintactico.codigoAssembler += ("JE @LABEL_RECURSION");
+	    		AnalizadorSintactico.codigoAssembler += ("\n");
+	    		AnalizadorSintactico.codigoAssembler += ("MOV _funcFlag_" + aux + ", 1");
+	    		AnalizadorSintactico.codigoAssembler += ("\n");
 	        	arbol.getLeft().generarCodigo(r);
+	    		AnalizadorSintactico.codigoAssembler += ("MOV _funcFlag_" + aux + ", 0\n");
 	    		codigoAssembler+=("ret");
-                codigoAssembler+="\n";
 	    		codigoAssembler+="\n";
 	    	}
 	    	if (arbol.getRight()!=null) {
