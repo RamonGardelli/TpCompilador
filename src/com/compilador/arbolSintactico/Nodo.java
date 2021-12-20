@@ -275,7 +275,8 @@ public class Nodo {
             AnalizadorSintactico.codigoAssembler += ("\n");
             AnalizadorSintactico.codigoAssembler += ("IDIV " + derecha);
         } else if ((r == "==") || (r == ">=") || (r == "<=") || (r == "<>") || (r == ">") || (r == "<")) {
-            AnalizadorSintactico.codigoAssembler += ("CMP " + izquierda + ", " + derecha);
+            AnalizadorSintactico.codigoAssembler += ("MOV " + reg[j].getNombre() + ", " + izquierda);
+            AnalizadorSintactico.codigoAssembler += ("CMP " + reg[j].getNombre() + ", " + derecha);
 
             if (r == "==") {
                 AnalizadorSintactico.contadorLabel++;
