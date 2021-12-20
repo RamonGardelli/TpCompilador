@@ -82,10 +82,12 @@ public class AnalizadorSintactico {
     public static void main(String[] args) {
 
         try {
-            if (args.length != 0 || true) {
+            if (args.length != 0 ) {
 
                 //File filex = new File(args[0]);
             	File filex = new File("C:\\Users\\Admin\\Desktop\\prueba\\prueba.txt");
+                //File filex = new File(args[0]);
+            	//File filex = new File("C:\\Users\\Admin\\Desktop\\prueba\\prueba.txt");
                 //File filex = new File("C:\\Users\\ramon\\IdeaProjects\\TpCompilador\\archivos\\programa\\testprograma.txt");
 
 
@@ -136,7 +138,7 @@ public class AnalizadorSintactico {
                 }else{
                     errorPrograma = true;
                 }
-                String archivoASerror = originalPath + fileName + "ErroresSintacticos.txt";
+                String archivoASerror = originalPath + fileName + "_ErroresSintacticos.txt";
                 Path fileErrorSint = Paths.get(archivoASerror);
                 Files.write(fileErrorSint, listaErroresSintacticos, StandardCharsets.UTF_8);
 
@@ -182,6 +184,12 @@ public class AnalizadorSintactico {
                     codigoAssemblerFinal+="\n";
                     codigoAssemblerFinal+="end start";
                     System.out.println(codigoAssemblerFinal);
+
+                    String archivoasm = originalPath + fileName + "_assembly.asm";
+                    Path fileasm = Paths.get(archivoasm);
+                    ArrayList<String> auxasm = new ArrayList<>();
+                    auxasm.add(codigoAssemblerFinal);
+                    Files.write(fileasm, auxasm, StandardCharsets.UTF_8);
                 }else{
                     System.out.println("Error de tipo lexico/sintactico detectado, abortando generacion de codigo.");
                 }
@@ -249,7 +257,10 @@ public class AnalizadorSintactico {
  			if (entry.getValue().getTipoVariable()=="CADENA") {
  				String aux = entry.getKey().replace(" ", "_");
  				aux = aux.replace("	", "_");
- 	 			codigoAssemblerFinal+=(aux+" DB "+"\""+entry.getKey()+"\""+"\n");
+                 if(aux.charAt(0) != '_'){
+                     aux = "_"+ aux;
+                 }
+ 	 			codigoAssemblerFinal+=(aux+" DB "+"\""+entry.getKey()+"\",0"+"\n");
 				}
  			else {
  			String auxValor=entry.getKey();

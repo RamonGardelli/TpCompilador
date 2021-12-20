@@ -1,21 +1,16 @@
-progComent
+prog
 
-LONG aa,bb;
+SINGLE a, b,c,d;
 
- 
-
+SINGLE FUNC X ()
 BEGIN
-
-bb:=0;
-aa:=0;
-
-WHILE ( bb < 2) DO
-BEGIN
-	aa:=aa+1;
-	bb:=bb+1;
+b:= X();
+RETURN (4.0);
 END
 
-
- 
-
+BEGIN
+	d:=1.0;
+	a:=X();
+	c:=a+d;
+	b:=c/a;
 END

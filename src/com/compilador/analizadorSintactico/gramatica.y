@@ -363,19 +363,7 @@ llamadoFunc: ID '(' ID ')'
              //error
 		  }
 		  }
-	   | ID '(' ')' {
-	   		  String variable = AnalizadorSintactico.getReferenciaPorAmbito($1.sval);
-       		  if(variable != null){
-       		    AnalizadorLexico.tablaDeSimbolos.remove($1.sval);
-       		    TDSObject value = AnalizadorLexico.getLexemaObject(variable);
-       		    ParserVal aux= new ParserVal(new Nodo(variable, null, null ));
-       		    $$= new ParserVal(new Nodo("LF",(Nodo)aux.obj, null ));
-       		    ((Nodo)$$.obj).setTipo(value.getTipoContenido());
-       		  }else{
-                    AnalizadorSintactico.agregarError("ID de Funcion no declarada (Linea " + AnalizadorLexico.numLinea + ")");
-                    //error
-       		  }
-	   }
+
 	   ;
 
 
@@ -395,18 +383,6 @@ declaracionFunc : tipo FUNC ID '(' parametro ')' {AnalizadorSintactico.agregarAn
             AnalizadorSintactico.ambitoActual += "@"+ $3.sval;
             AnalizadorLexico.tablaDeSimbolos.put(((Object[])($5.obj))[0] + AnalizadorSintactico.ambitoActual,(TDSObject)((Object[])($5.obj))[1]);
 			}
-		|tipo FUNC ID '(' ')' {AnalizadorSintactico.agregarAnalisis("Declaracion de funcion en (Linea " + AnalizadorLexico.numLinea + ")");
-		     if( AnalizadorSintactico.esVariableRedeclarada($3.sval + AnalizadorSintactico.ambitoActual)){
-                   AnalizadorSintactico.agregarError("ERROR: ID ya fue utilizado (Linea " + AnalizadorLexico.numLinea + ")");
-             }else{
-                TDSObject aux = AnalizadorLexico.tablaDeSimbolos.remove($3.sval);
-                aux.setTipoContenido(AnalizadorSintactico.tipoActual);
-                aux.setEsFuncion(true);
-                AnalizadorLexico.tablaDeSimbolos.put($3.sval + AnalizadorSintactico.ambitoActual,aux);
-                $$=$3;
-             }
-             AnalizadorSintactico.ambitoActual += "@"+ $3.sval;
-            }
 		|FUNC ID '(' parametro ')' {AnalizadorSintactico.agregarError("error falta tipo (Linea " + AnalizadorLexico.numLinea + ")");}
 		|tipo ID '(' parametro ')' {AnalizadorSintactico.agregarError("error falta FUNC (Linea " + AnalizadorLexico.numLinea + ")");}
 		|tipo FUNC ID parametro ')' {AnalizadorSintactico.agregarError("error falta '(' (Linea " + AnalizadorLexico.numLinea + ")");}
@@ -454,6 +430,38 @@ asignacion: ID ASIGN expAritmetica ';' {
                         	 AnalizadorSintactico.agregarError("Tipo Incompatible (" + value.getTipoContenido() + "," +  ((Nodo)$3.obj).getTipo()  + ") (Linea " + AnalizadorLexico.numLinea + ")");
                         }
                      }
+					}
+					
+	  | '(' tipo ')' ID ASIGN expAritmetica ';' 
+					{
+						if ($2.sval != 'SINGLE') 
+						{
+							AnalizadorSintactico.agregarError("Variable no definida (Linea " + AnalizadorLexico.numLinea + ")");
+						}
+						else 
+							{
+								String variable = AnalizadorSintactico.getReferenciaPorAmbito($4.sval);
+								if(variable == null){
+									AnalizadorSintactico.agregarError("Variable no definida (Linea " + AnalizadorLexico.numLinea + ")");
+									AnalizadorLexico.tablaDeSimbolos.remove($4.sval);
+									//corta arbol
+								}else{
+									AnalizadorLexico.tablaDeSimbolos.remove($4.sval);
+									AnalizadorSintactico.agregarAnalisis("Sentencia ejecutable asignacion (Linea " + AnalizadorLexico.numLinea + ")");
+									if (AnalizadorSintactico.listaErroresSintacticos.size() != 0 || AnalizadorLexico.listaDeErrores.size() != 0)
+										break;
+									ParserVal aux = new ParserVal(new Nodo(variable));
+									((Nodo)aux.obj).setTipo("SINGLE"); //Mirarlo 
+									TDSObject value = AnalizadorLexico.getLexemaObject(variable);
+									$$= new ParserVal(new Nodo(":=", (Nodo)aux.obj, (Nodo)$6.obj));
+									if(value.getTipoContenido().equals( ((Nodo)$6.obj).getTipo())){
+										((Nodo)$$.obj).setTipo(((Nodo)aux.obj).getTipo());
+									}else{
+										AnalizadorSintactico.agregarError("Tipo Incompatible (" + value.getTipoContenido() + "," +  ((Nodo)$6.obj).getTipo()  + ") (Linea " + AnalizadorLexico.numLinea + ")");
+									}
+								}
+                     
+							}
 					}
 	  | ID '=' expAritmetica ';' {
 
@@ -525,8 +533,48 @@ sentenciaPRINT: PRINT '(' CADENA ')' ';' {AnalizadorSintactico.agregarAnalisis("
 	      | PRINT '('')' ';' {AnalizadorSintactico.agregarError("Warning print vacio' (Linea " + AnalizadorLexico.numLinea + ")");}
 	      | PRINT '(' CADENA ';' {AnalizadorSintactico.agregarError("error falta ')' (Linea " + AnalizadorLexico.numLinea + ")");}
 	      | PRINT '(' CADENA ')' error {AnalizadorSintactico.agregarError("error falta ';' (Linea " + (AnalizadorLexico.numLinea-1) + ")");}
-	      | PRINT '(' ID ')' ';'  //(util para Debug, errores innecesarios)
-	      | PRINT '(' CTE ')' ';'
+	      | PRINT '(' ID ')' ';' {
+	       	           AnalizadorSintactico.agregarAnalisis("sentencia print (Linea " + AnalizadorLexico.numLinea + ")");
+	                           String lexema = AnalizadorSintactico.getReferenciaPorAmbito($3.sval);
+                               if(lexema != null){
+                                  AnalizadorLexico.tablaDeSimbolos.remove($3.sval);
+                                  ParserVal aux = new ParserVal(new Nodo(lexema));
+                                  $$= new ParserVal(new Nodo("PRINT", (Nodo)aux.obj, null));
+                               }else{
+                                   AnalizadorSintactico.agregarError("ID no definido (Linea " + AnalizadorLexico.numLinea + ")");
+                                   AnalizadorLexico.tablaDeSimbolos.remove($3.sval);
+                                   //stop generacion de arbol
+
+                               }
+	      }
+	      | PRINT '(' CTE ')' ';'{
+                	           AnalizadorSintactico.agregarAnalisis("sentencia print (Linea " + AnalizadorLexico.numLinea + ")");
+                               	                           String lexema = AnalizadorSintactico.getReferenciaPorAmbito($3.sval);
+
+                               if(lexema != null){
+                                  AnalizadorLexico.tablaDeSimbolos.remove($3.sval);
+                                  ParserVal aux = new ParserVal(new Nodo(lexema));
+                                  $$= new ParserVal(new Nodo("PRINT", (Nodo)aux.obj, null));
+                               }else{
+                                  AnalizadorSintactico.agregarError("ID no definido (Linea " + AnalizadorLexico.numLinea + ")");
+                                  AnalizadorLexico.tablaDeSimbolos.remove($3.sval);
+                                  //stop generacion de arbol
+                               }
+                               }
+          | PRINT '(' '-' CTE ')' ';'{
+                          	           AnalizadorSintactico.agregarAnalisis("sentencia print (Linea " + AnalizadorLexico.numLinea + ")");
+                                        String lexema = AnalizadorSintactico.getReferenciaPorAmbito("-"+$4.sval);
+
+                                         if(lexema != null){
+                                            AnalizadorLexico.tablaDeSimbolos.remove("-"+$4.sval);
+                                            ParserVal aux = new ParserVal(new Nodo(lexema));
+                                            $$= new ParserVal(new Nodo("PRINT", (Nodo)aux.obj, null));
+                                         }else{
+                                            AnalizadorSintactico.agregarError("ID no definido (Linea " + AnalizadorLexico.numLinea + ")");
+                                            AnalizadorLexico.tablaDeSimbolos.remove("-"+$4.sval);
+                                            //stop generacion de arbol
+                                         }
+	      }
 	      ;
 
 sentenciaWHILE: WHILE condicion DO bloqueEjecutable {AnalizadorSintactico.agregarAnalisis("sentencia 'WHILE' (Linea " + AnalizadorLexico.numLinea + ")");

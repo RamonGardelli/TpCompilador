@@ -525,8 +525,48 @@ sentenciaPRINT: PRINT '(' CADENA ')' ';' {AnalizadorSintactico.agregarAnalisis("
 	      | PRINT '('')' ';' {AnalizadorSintactico.agregarError("Warning print vacio' (Linea " + AnalizadorLexico.numLinea + ")");}
 	      | PRINT '(' CADENA ';' {AnalizadorSintactico.agregarError("error falta ')' (Linea " + AnalizadorLexico.numLinea + ")");}
 	      | PRINT '(' CADENA ')' error {AnalizadorSintactico.agregarError("error falta ';' (Linea " + (AnalizadorLexico.numLinea-1) + ")");}
-	      | PRINT '(' ID ')' ';'  //(util para Debug, errores innecesarios)
-	      | PRINT '(' CTE ')' ';'
+	      | PRINT '(' ID ')' ';' {
+	       	           AnalizadorSintactico.agregarAnalisis("sentencia print (Linea " + AnalizadorLexico.numLinea + ")");
+	                           String lexema = AnalizadorSintactico.getReferenciaPorAmbito($3.sval);
+                               if(lexema != null){
+                                  AnalizadorLexico.tablaDeSimbolos.remove($3.sval);
+                                  ParserVal aux = new ParserVal(new Nodo(lexema));
+                                  $$= new ParserVal(new Nodo("PRINT", (Nodo)aux.obj, null));
+                               }else{
+                                   AnalizadorSintactico.agregarError("ID no definido (Linea " + AnalizadorLexico.numLinea + ")");
+                                   AnalizadorLexico.tablaDeSimbolos.remove($3.sval);
+                                   //stop generacion de arbol
+
+                               }
+	      }
+	      | PRINT '(' CTE ')' ';'{
+                	           AnalizadorSintactico.agregarAnalisis("sentencia print (Linea " + AnalizadorLexico.numLinea + ")");
+                               	                           String lexema = AnalizadorSintactico.getReferenciaPorAmbito($3.sval);
+
+                               if(lexema != null){
+                                  AnalizadorLexico.tablaDeSimbolos.remove($3.sval);
+                                  ParserVal aux = new ParserVal(new Nodo(lexema));
+                                  $$= new ParserVal(new Nodo("PRINT", (Nodo)aux.obj, null));
+                               }else{
+                                  AnalizadorSintactico.agregarError("ID no definido (Linea " + AnalizadorLexico.numLinea + ")");
+                                  AnalizadorLexico.tablaDeSimbolos.remove($3.sval);
+                                  //stop generacion de arbol
+                               }
+                               }
+          	      | PRINT '(' '-' CTE ')' ';'{
+                          	           AnalizadorSintactico.agregarAnalisis("sentencia print (Linea " + AnalizadorLexico.numLinea + ")");
+                                        String lexema = AnalizadorSintactico.getReferenciaPorAmbito("-"+$4.sval);
+
+                                         if(lexema != null){
+                                            AnalizadorLexico.tablaDeSimbolos.remove("-"+$4.sval);
+                                            ParserVal aux = new ParserVal(new Nodo(lexema));
+                                            $$= new ParserVal(new Nodo("PRINT", (Nodo)aux.obj, null));
+                                         }else{
+                                            AnalizadorSintactico.agregarError("ID no definido (Linea " + AnalizadorLexico.numLinea + ")");
+                                            AnalizadorLexico.tablaDeSimbolos.remove("-"+$4.sval);
+                                            //stop generacion de arbol
+                                         }
+	      }
 	      ;
 
 sentenciaWHILE: WHILE condicion DO bloqueEjecutable {AnalizadorSintactico.agregarAnalisis("sentencia 'WHILE' (Linea " + AnalizadorLexico.numLinea + ")");

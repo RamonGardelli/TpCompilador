@@ -335,12 +335,11 @@ public class Nodo {
             
         } 
         AnalizadorSintactico.codigoAssembler += ("\n");
-        this.ref = reg[i].getNombre();
+        this.ref = "@aux"+i;
         this.esRegistro = true;
         this.tipo = this.left.getTipo();
-        this.left.setRegistro(false, reg);
+        reg[j].setLibre(true);
         this.left = null;
-        this.right.setRegistro(false, reg);
         this.right = null;
     }
 

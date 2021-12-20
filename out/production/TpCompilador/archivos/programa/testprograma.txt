@@ -6,16 +6,8 @@ LONG aa,bb;
 
 BEGIN
 
-bb:=0;
-aa:=0;
-
-WHILE ( bb < 2) DO
-BEGIN
-	aa:=aa+1;
-	bb:=bb+1;
-END
-
-
+aa:=1;
+PRINT(aa);
  
 
 END
