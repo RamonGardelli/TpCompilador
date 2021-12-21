@@ -556,6 +556,8 @@ public class Nodo {
         AnalizadorSintactico.codigoAssembler += ("FDIV");    
         AnalizadorSintactico.codigoAssembler += ("\n");
         AnalizadorSintactico.codigoAssembler += ("FSTP @auxSingle"+i);
+        AnalizadorSintactico.codigoAssembler += ("\n");
+
         
     }
 
