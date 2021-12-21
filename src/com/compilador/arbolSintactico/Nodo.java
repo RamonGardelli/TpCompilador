@@ -492,7 +492,7 @@ public class Nodo {
         AnalizadorSintactico.codigoAssembler += ("\n");
         AnalizadorSintactico.codigoAssembler += ("FADD");
         AnalizadorSintactico.codigoAssembler += ("\n");
-        AnalizadorSintactico.codigoAssembler += ("FSTP aux"+i);
+        AnalizadorSintactico.codigoAssembler += ("FSTP @aux"+i);
     }
 
     private void imprimirResta(String derecha, String izquierda) {
@@ -502,7 +502,7 @@ public class Nodo {
         AnalizadorSintactico.codigoAssembler += ("FLD " + derecha);
         AnalizadorSintactico.codigoAssembler += ("\n");
         AnalizadorSintactico.codigoAssembler += ("FSUB"); 
-        AnalizadorSintactico.codigoAssembler += ("FSTP aux"+i);
+        AnalizadorSintactico.codigoAssembler += ("FSTP @aux"+i);
     }
 
     private void imprimirMultiplicacion(String derecha, String izquierda) {
@@ -513,7 +513,7 @@ public class Nodo {
         AnalizadorSintactico.codigoAssembler += ("FLD " + derecha);
         AnalizadorSintactico.codigoAssembler += ("\n");
         AnalizadorSintactico.codigoAssembler += ("FMUL");
-        AnalizadorSintactico.codigoAssembler += ("FSTP aux"+i);
+        AnalizadorSintactico.codigoAssembler += ("FSTP @aux"+i);
     }
 
     private void imprimirDivision(String derecha, String izquierda) {
@@ -534,7 +534,7 @@ public class Nodo {
         AnalizadorSintactico.codigoAssembler += ("JE @LABEL_DIVCERO");
         AnalizadorSintactico.codigoAssembler += ("\n");
         AnalizadorSintactico.codigoAssembler += ("FDIV");    
-        AnalizadorSintactico.codigoAssembler += ("FSTP aux"+i);
+        AnalizadorSintactico.codigoAssembler += ("FSTP @aux"+i);
     }
 
 
