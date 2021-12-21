@@ -93,7 +93,7 @@ public class Nodo {
         if (!(this.right == null)) {
             if (this.ref == "WHILE") {
                 AnalizadorSintactico.contadorLabel++;
-                String aux = "Label " + AnalizadorSintactico.contadorLabel;
+                String aux = "@Label_" + AnalizadorSintactico.contadorLabel;
                 AnalizadorSintactico.pilaLabels.push(aux);
                 AnalizadorSintactico.codigoAssembler += (aux);
                 AnalizadorSintactico.codigoAssembler += ("\n");
@@ -149,7 +149,7 @@ public class Nodo {
         	
             if (this.getRef() == "Else") {
                 AnalizadorSintactico.contadorLabel++;
-                String aux = "Label " + AnalizadorSintactico.contadorLabel;
+                String aux = "@Label_" + AnalizadorSintactico.contadorLabel+":";
                 AnalizadorSintactico.codigoAssembler += ("JMP " + aux);
                 AnalizadorSintactico.codigoAssembler += ("\n");
                 AnalizadorSintactico.codigoAssembler += (AnalizadorSintactico.pilaLabels.pop());
@@ -272,6 +272,12 @@ public class Nodo {
             i = AnalizadorSintactico.contadorAuxLong;
         	AnalizadorSintactico.codigoAssembler += ("MOV EAX" + ", " + izquierda);
             AnalizadorSintactico.codigoAssembler += ("\n");
+            AnalizadorSintactico.codigoAssembler += ("CMP " + derecha + ", 0");
+            AnalizadorSintactico.codigoAssembler += ("\n");
+            AnalizadorSintactico.codigoAssembler += ("JE @LABEL_DIVCERO");
+            AnalizadorSintactico.codigoAssembler += ("\n");
+            AnalizadorSintactico.codigoAssembler += ("CDQ");
+            AnalizadorSintactico.codigoAssembler += ("\n");
             AnalizadorSintactico.codigoAssembler += ("IDIV " + derecha);
             AnalizadorSintactico.codigoAssembler += ("\n");
             AnalizadorSintactico.codigoAssembler += ("MOV " + "@auxLong" + i + ", EAX");
@@ -287,7 +293,7 @@ public class Nodo {
             if (r == "==") {
                	AnalizadorSintactico.contadorAuxLong++;
                 i = AnalizadorSintactico.contadorAuxLong;
-                String aux = "Label " + AnalizadorSintactico.contadorLabel;
+                String aux = "@Label_" + AnalizadorSintactico.contadorLabel+":";
                 AnalizadorSintactico.pilaLabels.push(aux);
                 AnalizadorSintactico.codigoAssembler += ("\n");
                 AnalizadorSintactico.codigoAssembler += ("JNE " + aux);
@@ -297,7 +303,7 @@ public class Nodo {
             if (r == ">=") {
                	AnalizadorSintactico.contadorAuxLong++;
                 i = AnalizadorSintactico.contadorAuxLong;
-                String aux = "Label " + AnalizadorSintactico.contadorLabel;
+                String aux = "@Label_" + AnalizadorSintactico.contadorLabel+":";
                 AnalizadorSintactico.pilaLabels.push(aux);
                 AnalizadorSintactico.codigoAssembler += ("\n");
                 AnalizadorSintactico.codigoAssembler += ("JL " + aux);
@@ -308,7 +314,7 @@ public class Nodo {
             if (r == "<=") {
                	AnalizadorSintactico.contadorAuxLong++;
                 i = AnalizadorSintactico.contadorAuxLong;
-                String aux = "Label " + AnalizadorSintactico.contadorLabel;
+                String aux = "@Label_" + AnalizadorSintactico.contadorLabel+":";
                 AnalizadorSintactico.pilaLabels.push(aux);
                 AnalizadorSintactico.codigoAssembler += ("\n");
                 AnalizadorSintactico.codigoAssembler += ("JG " + aux);
@@ -318,7 +324,7 @@ public class Nodo {
             if (r == "<>") {
                	AnalizadorSintactico.contadorAuxLong++;
                 i = AnalizadorSintactico.contadorAuxLong;
-                String aux = "Label " + AnalizadorSintactico.contadorLabel;
+                String aux = "@Label_" + AnalizadorSintactico.contadorLabel+":";
                 AnalizadorSintactico.pilaLabels.push(aux);
                 AnalizadorSintactico.codigoAssembler += ("\n");
                 AnalizadorSintactico.codigoAssembler += ("JE " + aux);
@@ -329,7 +335,7 @@ public class Nodo {
             if (r == ">") {
                	AnalizadorSintactico.contadorAuxLong++;
                 i = AnalizadorSintactico.contadorAuxLong;
-                String aux = "Label " + AnalizadorSintactico.contadorLabel;
+                String aux = "@Label_" + AnalizadorSintactico.contadorLabel+":";
                 AnalizadorSintactico.pilaLabels.push(aux);
                 AnalizadorSintactico.codigoAssembler += ("\n");
                 AnalizadorSintactico.codigoAssembler += ("JBE " + aux);
@@ -340,7 +346,7 @@ public class Nodo {
             if (r == "<") {
                	AnalizadorSintactico.contadorAuxLong++;
                 i = AnalizadorSintactico.contadorAuxLong;
-                String aux = "Label " + AnalizadorSintactico.contadorLabel;
+                String aux = "@Label_" + AnalizadorSintactico.contadorLabel+":";
                 AnalizadorSintactico.pilaLabels.push(aux);
                 AnalizadorSintactico.codigoAssembler += ("\n");
                 AnalizadorSintactico.codigoAssembler += ("JGE " + aux);
@@ -418,26 +424,26 @@ public class Nodo {
 
             if (r == "==") {
                 AnalizadorSintactico.contadorLabel++;
-                String aux = "@Label " + AnalizadorSintactico.contadorLabel;
+                String aux = "@Label_" + AnalizadorSintactico.contadorLabel+":";
                 AnalizadorSintactico.pilaLabels.push(aux);
                 AnalizadorSintactico.codigoAssembler += ("JNE " + aux);
             }
             if (r == ">=") {
                 AnalizadorSintactico.contadorLabel++;
-                String aux = "@Label " + AnalizadorSintactico.contadorLabel;
+                String aux = "@Label_" + AnalizadorSintactico.contadorLabel+":";
                 AnalizadorSintactico.pilaLabels.push(aux);
                 AnalizadorSintactico.codigoAssembler += ("JL " + aux);
             }
 
             if (r == "<=") {
                 AnalizadorSintactico.contadorLabel++;
-                String aux = "@Label " + AnalizadorSintactico.contadorLabel;
+                String aux = "@Label_" + AnalizadorSintactico.contadorLabel+":";
                 AnalizadorSintactico.pilaLabels.push(aux);
                 AnalizadorSintactico.codigoAssembler += ("JG " + aux);
             }
             if (r == "<>") {
                 AnalizadorSintactico.contadorLabel++;
-                String aux = "@Label " + AnalizadorSintactico.contadorLabel;
+                String aux = "@Label_" + AnalizadorSintactico.contadorLabel+":";
                 AnalizadorSintactico.pilaLabels.push(aux);
                 AnalizadorSintactico.codigoAssembler += ("\n");
                 AnalizadorSintactico.codigoAssembler += ("JE " + aux);
@@ -445,7 +451,7 @@ public class Nodo {
 
             if (r == ">") {
                 AnalizadorSintactico.contadorLabel++;
-                String aux = "@Label " + AnalizadorSintactico.contadorLabel;
+                String aux = "@Label_" + AnalizadorSintactico.contadorLabel+":";
                 AnalizadorSintactico.pilaLabels.push(aux);
                 AnalizadorSintactico.codigoAssembler += ("\n");
                 AnalizadorSintactico.codigoAssembler += ("JBE " + aux);
@@ -453,7 +459,7 @@ public class Nodo {
 
             if (r == "<") {
                 AnalizadorSintactico.contadorLabel++;
-                String aux = "@Label " + AnalizadorSintactico.contadorLabel;
+                String aux = "@Label_" + AnalizadorSintactico.contadorLabel+":";
                 AnalizadorSintactico.pilaLabels.push(aux);
                 AnalizadorSintactico.codigoAssembler += ("\n");
                 AnalizadorSintactico.codigoAssembler += ("JGE " + aux);
