@@ -703,7 +703,7 @@ final static String yyrule[] = {
 "tipo : SINGLE",
 };
 
-//#line 636 "gramatica.y"
+//#line 641 "gramatica.y"
 
 
 public int yylex() {
@@ -1566,36 +1566,38 @@ case 102:
 //#line 517 "gramatica.y"
 {AnalizadorSintactico.agregarAnalisis("sentencia print (Linea " + AnalizadorLexico.numLinea + ")");
 		ParserVal aux = new ParserVal(new Nodo(val_peek(2).sval));
+		((Nodo)aux.obj).setTipo("CADENA");
 		yyval= new ParserVal(new Nodo("PRINT", (Nodo)aux.obj, null));}
 break;
 case 103:
-//#line 520 "gramatica.y"
+//#line 521 "gramatica.y"
 {AnalizadorSintactico.agregarError("error falta PRINT (Linea " + AnalizadorLexico.numLinea + ")");}
 break;
 case 104:
-//#line 521 "gramatica.y"
+//#line 522 "gramatica.y"
 {AnalizadorSintactico.agregarError("error falta '(' (Linea " + AnalizadorLexico.numLinea + ")");}
 break;
 case 105:
-//#line 522 "gramatica.y"
+//#line 523 "gramatica.y"
 {AnalizadorSintactico.agregarError("Warning print vacio' (Linea " + AnalizadorLexico.numLinea + ")");}
 break;
 case 106:
-//#line 523 "gramatica.y"
+//#line 524 "gramatica.y"
 {AnalizadorSintactico.agregarError("error falta ')' (Linea " + AnalizadorLexico.numLinea + ")");}
 break;
 case 107:
-//#line 524 "gramatica.y"
+//#line 525 "gramatica.y"
 {AnalizadorSintactico.agregarError("error falta ';' (Linea " + (AnalizadorLexico.numLinea-1) + ")");}
 break;
 case 108:
-//#line 525 "gramatica.y"
+//#line 526 "gramatica.y"
 {
 	       	           AnalizadorSintactico.agregarAnalisis("sentencia print (Linea " + AnalizadorLexico.numLinea + ")");
 	                           String lexema = AnalizadorSintactico.getReferenciaPorAmbito(val_peek(2).sval);
                                if(lexema != null){
                                   AnalizadorLexico.tablaDeSimbolos.remove(val_peek(2).sval);
                                   ParserVal aux = new ParserVal(new Nodo(lexema));
+                                  ((Nodo)aux.obj).setTipo("ID");
                                   yyval= new ParserVal(new Nodo("PRINT", (Nodo)aux.obj, null));
                                }else{
                                    AnalizadorSintactico.agregarError("ID no definido (Linea " + AnalizadorLexico.numLinea + ")");
@@ -1606,7 +1608,7 @@ case 108:
 	      }
 break;
 case 109:
-//#line 539 "gramatica.y"
+//#line 541 "gramatica.y"
 {
                 	           AnalizadorSintactico.agregarAnalisis("sentencia print (Linea " + AnalizadorLexico.numLinea + ")");
                                	                           String lexema = AnalizadorSintactico.getReferenciaPorAmbito(val_peek(2).sval);
@@ -1614,6 +1616,8 @@ case 109:
                                if(lexema != null){
                                   AnalizadorLexico.tablaDeSimbolos.remove(val_peek(2).sval);
                                   ParserVal aux = new ParserVal(new Nodo(lexema));
+                                  ((Nodo)aux.obj).setTipo("CTE");
+                                  
                                   yyval= new ParserVal(new Nodo("PRINT", (Nodo)aux.obj, null));
                                }else{
                                   AnalizadorSintactico.agregarError("ID no definido (Linea " + AnalizadorLexico.numLinea + ")");
@@ -1623,14 +1627,15 @@ case 109:
                                }
 break;
 case 110:
-//#line 553 "gramatica.y"
+//#line 557 "gramatica.y"
 {
                           	           AnalizadorSintactico.agregarAnalisis("sentencia print (Linea " + AnalizadorLexico.numLinea + ")");
                                         String lexema = AnalizadorSintactico.getReferenciaPorAmbito("-"+val_peek(2).sval);
 
                                          if(lexema != null){
-                                            AnalizadorLexico.tablaDeSimbolos.remove("-"+val_peek(2).sval);
+                                            AnalizadorLexico.tablaDeSimbolos.remove("-"+val_peek(2).sval);                                          
                                             ParserVal aux = new ParserVal(new Nodo(lexema));
+                                            ((Nodo)aux.obj).setTipo("CTE");
                                             yyval= new ParserVal(new Nodo("PRINT", (Nodo)aux.obj, null));
                                          }else{
                                             AnalizadorSintactico.agregarError("ID no definido (Linea " + AnalizadorLexico.numLinea + ")");
@@ -1640,45 +1645,45 @@ case 110:
 	      }
 break;
 case 111:
-//#line 569 "gramatica.y"
+//#line 574 "gramatica.y"
 {AnalizadorSintactico.agregarAnalisis("sentencia 'WHILE' (Linea " + AnalizadorLexico.numLinea + ")");
 		 if(val_peek(2).obj == null)
              break;
 		yyval= new ParserVal(new Nodo("WHILE", (Nodo)val_peek(2).obj, (Nodo)val_peek(0).obj));}
 break;
 case 112:
-//#line 573 "gramatica.y"
+//#line 578 "gramatica.y"
 {AnalizadorSintactico.agregarError("error falta WHILE (Linea " + AnalizadorLexico.numLinea + ")");}
 break;
 case 113:
-//#line 574 "gramatica.y"
+//#line 579 "gramatica.y"
 {AnalizadorSintactico.agregarError("error falta condicion (Linea " + AnalizadorLexico.numLinea + ")");}
 break;
 case 114:
-//#line 575 "gramatica.y"
+//#line 580 "gramatica.y"
 {AnalizadorSintactico.agregarError("error falta DO (Linea " + AnalizadorLexico.numLinea + ")");}
 break;
 case 115:
-//#line 576 "gramatica.y"
+//#line 581 "gramatica.y"
 {AnalizadorSintactico.agregarError("error WHILE vacio (Linea " + AnalizadorLexico.numLinea + ")");}
 break;
 case 116:
-//#line 580 "gramatica.y"
+//#line 585 "gramatica.y"
 {yyval=val_peek(1);}
 break;
 case 118:
-//#line 584 "gramatica.y"
+//#line 589 "gramatica.y"
 {
 	     if(val_peek(0).obj == null)
              break;
 	     yyval = new ParserVal(new Nodo("Cond", (Nodo)val_peek(0).obj, null));}
 break;
 case 119:
-//#line 588 "gramatica.y"
+//#line 593 "gramatica.y"
 {AnalizadorSintactico.agregarError("opLogico de mas (Linea " + AnalizadorLexico.numLinea + ")");}
 break;
 case 120:
-//#line 592 "gramatica.y"
+//#line 597 "gramatica.y"
 {
 		  if(val_peek(2).obj == null || val_peek(0).obj == null){
              break;
@@ -1688,65 +1693,65 @@ case 120:
 		}
 break;
 case 124:
-//#line 602 "gramatica.y"
+//#line 607 "gramatica.y"
 {AnalizadorSintactico.agregarError("falta expresion (Linea " + AnalizadorLexico.numLinea + ")");}
 break;
 case 125:
-//#line 603 "gramatica.y"
+//#line 608 "gramatica.y"
 {AnalizadorSintactico.agregarError("falta expresion (Linea " + AnalizadorLexico.numLinea + ")");}
 break;
 case 126:
-//#line 606 "gramatica.y"
+//#line 611 "gramatica.y"
 {yyval = new ParserVal(">");}
 break;
 case 127:
-//#line 607 "gramatica.y"
+//#line 612 "gramatica.y"
 {yyval = new ParserVal("<");}
 break;
 case 128:
-//#line 608 "gramatica.y"
+//#line 613 "gramatica.y"
 {yyval = new ParserVal("==");}
 break;
 case 129:
-//#line 609 "gramatica.y"
+//#line 614 "gramatica.y"
 {yyval = new ParserVal("<>");}
 break;
 case 130:
-//#line 610 "gramatica.y"
+//#line 615 "gramatica.y"
 {yyval = new ParserVal(">=");}
 break;
 case 131:
-//#line 611 "gramatica.y"
+//#line 616 "gramatica.y"
 {yyval = new ParserVal("<=");}
 break;
 case 132:
-//#line 612 "gramatica.y"
+//#line 617 "gramatica.y"
 {
 	           AnalizadorLexico.listaDeWarnings.add("WARNING Linea " + AnalizadorLexico.numLinea +": se esperaba comparacion ==.");
 	           yyval = new ParserVal("==");
 	        }
 break;
 case 133:
-//#line 618 "gramatica.y"
+//#line 623 "gramatica.y"
 {yyval= new ParserVal("&&");}
 break;
 case 134:
-//#line 619 "gramatica.y"
+//#line 624 "gramatica.y"
 {yyval= new ParserVal("||");}
 break;
 case 135:
-//#line 623 "gramatica.y"
+//#line 628 "gramatica.y"
 {AnalizadorSintactico.tipoActual = "LONG";
              yyval = new ParserVal("LONG");
             }
 break;
 case 136:
-//#line 626 "gramatica.y"
+//#line 631 "gramatica.y"
 {AnalizadorSintactico.tipoActual = "SINGLE";
              yyval = new ParserVal("SINGLE");
              }
 break;
-//#line 1673 "Parser.java"
+//#line 1678 "Parser.java"
 //########## END OF USER-SUPPLIED ACTIONS ##########
     }//switch
     //#### Now let's reduce... ####

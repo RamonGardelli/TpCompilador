@@ -30,7 +30,9 @@ public class AnalizadorSintactico {
 
     public static int contadorLabel=0;
 
-    public static int contadorAux=1;
+    public static int contadorAuxLong=0;
+    
+    public static int contadorAuxSingle=0;
     
     public static Parser p = new Parser();
 
@@ -153,45 +155,49 @@ public class AnalizadorSintactico {
                 Files.write(file3, tdsData, StandardCharsets.UTF_8);
 
                 if (!errorPrograma) {        	
-                	obtenerFunciones();
-                    imprimirArbol(arbol);
-                	//imprimirArbol(arbolFunc);
-                    System.out.println(" ");
-                    Registro r1 = new Registro("EAX");
-                    Registro r2 = new Registro("EBX");
-                    Registro r3 = new Registro("ECX");
-                    Registro r4 = new Registro("EDX");
-
-                    Registro[] r = {r1, r2, r3, r4};
-                    codigoAssembler+="\n";
-                    creacionAssembler();
-                    memoriaPrograma();
-                    codigoAssemblerFinal+=variablesCodigoAssembler;
-                    codigoAssemblerFinal+="\n";
-                    codigoAssemblerFinal+=(".code");
-                    codigoAssemblerFinal+="\n";
-                    arbolFunciones(arbolFunc, r);
-                    codigoAssemblerFinal+=codigoAssembler;
-                    codigoAssembler="";
-                    codigoAssemblerFinal+=("start:");
-                    codigoAssemblerFinal+="\n";
-                    arbol.generarCodigo(r);
-                    codigoAssemblerFinal+=codigoAssembler;
-                    codigoAssemblerFinal+="\n";
-
-                    codigoAssemblerFinal+="JMP @LABEL_END";
-                    codigoAssemblerFinal+="\n";
-                    labels();
-                    codigoAssemblerFinal+="invoke ExitProcess, 0";
-                    codigoAssemblerFinal+="\n";
-                    codigoAssemblerFinal+="end start";
-                    System.out.println(codigoAssemblerFinal);
-
-                    String archivoasm = originalPath + fileName + "_assembly.asm";
-                    Path fileasm = Paths.get(archivoasm);
-                    ArrayList<String> auxasm = new ArrayList<>();
-                    auxasm.add(codigoAssemblerFinal);
-                    Files.write(fileasm, auxasm, StandardCharsets.UTF_8);
+                	try {
+                		obtenerFunciones();
+                        imprimirArbol(arbol);
+                    	//imprimirArbol(arbolFunc);
+                        System.out.println(" ");
+                        Registro r1 = new Registro("EAX");
+                        Registro r2 = new Registro("EBX");
+                        Registro r3 = new Registro("ECX");
+                        Registro r4 = new Registro("EDX");
+                        Registro[] r = {r1, r2, r3, r4};
+                        codigoAssembler+="\n";
+                        creacionAssembler();
+                        arbol.generarCodigo(r);
+                        String codigoprograma = codigoAssembler;
+                        codigoAssembler="";
+                        memoriaPrograma();
+                        codigoAssemblerFinal+=variablesCodigoAssembler;
+                        codigoAssemblerFinal+="\n";
+                        codigoAssemblerFinal+=(".code");
+                        codigoAssemblerFinal+="\n";
+                        arbolFunciones(arbolFunc, r);
+                        codigoAssemblerFinal+=codigoAssembler;
+                        codigoAssembler="";
+                        codigoAssemblerFinal+=("start:");
+                        codigoAssemblerFinal+="\n";
+                        codigoAssemblerFinal+=codigoprograma;
+                        codigoAssemblerFinal+="\n";
+                        codigoAssemblerFinal+="JMP @LABEL_END";
+                        codigoAssemblerFinal+="\n";
+                        labels();
+                        codigoAssemblerFinal+="invoke ExitProcess, 0";
+                        codigoAssemblerFinal+="\n";
+                        codigoAssemblerFinal+="end start";
+                        System.out.println(codigoAssemblerFinal);
+                        String archivoasm = originalPath + fileName + "_assembly.asm";
+                        Path fileasm = Paths.get(archivoasm);
+                        ArrayList<String> auxasm = new ArrayList<>();
+                        auxasm.add(codigoAssemblerFinal);
+                        Files.write(fileasm, auxasm, StandardCharsets.UTF_8);
+                	}
+                	catch(IOException e) {
+                        System.out.println("Error al generar el codigo assembler.");
+                	}          	
                 }else{
                     System.out.println("Error de tipo lexico/sintactico detectado, abortando generacion de codigo.");
                 }
@@ -269,12 +275,12 @@ public class AnalizadorSintactico {
                  if(aux.charAt(0) != '_'){
                      aux = "_"+ aux;
                  }
- 	 			codigoAssemblerFinal+=(aux+" DB "+"\""+entry.getKey()+"\",0"+"\n");
+ 	 			codigoAssemblerFinal+=("cad"+aux+" DB "+"\""+entry.getKey()+"\",0"+"\n");
 				}
  			else {
  			String auxValor=entry.getKey();
  			auxValor=auxValor.replace(".", "_");
-             auxValor=auxValor.replace("-", "_");
+            auxValor=auxValor.replace("-", "_");
  			codigoAssemblerFinal+=("_"+auxValor);  
 	 			if (entry.getValue().getTipoVariable()=="ID") {
 	 				if(entry.getValue().getTipoContenido()=="LONG") {
@@ -307,6 +313,12 @@ public class AnalizadorSintactico {
      			else
      				codigoAssemblerFinal+=" DQ ? \n";
  	 		}); 
+        	for (int k=1; k<=AnalizadorSintactico.contadorAuxLong;k++) {
+        		codigoAssemblerFinal+="@auxLong"+k+ " DD ? \n";
+        	}
+        	for (int k=1; k<=AnalizadorSintactico.contadorAuxSingle;k++) {
+        		codigoAssemblerFinal+="@auxSingle"+k+ " DQ ? \n";
+        	}
 	}
     
     public static void labels () {
