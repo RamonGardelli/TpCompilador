@@ -613,14 +613,21 @@ sentenciaWHILE: WHILE condicion DO bloqueEjecutable {AnalizadorSintactico.agrega
 	      ;
 
 
-condicion: '(' comparaciones ')' {$$=$2;}
+condicion: '(' comparaciones ')' {
+				if($2.obj == null)
+					break;
+				$$ = new ParserVal(new Nodo("Cond", (Nodo)$1.obj, null));}
 	 ;
 
-comparaciones: comparaciones opLogico comparacion 		
-	     | comparacion {
-	     if($1.obj == null)
-             break;
-	     $$ = new ParserVal(new Nodo("Cond", (Nodo)$1.obj, null));}
+comparaciones: comparaciones opLogico comparacion {
+				if ($1.obj == null || $3.obj == null){
+					$$ = new ParserVal (new Nodo($2.sval,(Nodo)$3.obj, (Nodo)$1.obj ));}
+					
+				else if ($1.obj == null){
+					$$ = new ParserVal (new Nodo($2.sval,(Nodo)$3.obj, null));}
+				
+			}		
+	     | comparacion {$$=$1;}
 	     | comparaciones opLogico error {AnalizadorSintactico.agregarError("opLogico de mas (Linea " + AnalizadorLexico.numLinea + ")");}
 	     ;
 
@@ -632,9 +639,6 @@ comparacion: expAritmetica comparador expAritmetica
 		  $$ = new ParserVal(new Nodo($2.sval,(Nodo) $1.obj,(Nodo)$3.obj));
 		  }
 		}
-	   | tipo '(' expAritmetica ')' comparador expAritmetica
-	   | expAritmetica comparador tipo '(' expAritmetica ')'
-	   | tipo '(' expAritmetica ')' comparador tipo '(' expAritmetica ')'
 	   | expAritmetica comparador error {AnalizadorSintactico.agregarError("falta expresion (Linea " + AnalizadorLexico.numLinea + ")");}
 	   |comparador expAritmetica {AnalizadorSintactico.agregarError("falta expresion (Linea " + AnalizadorLexico.numLinea + ")");}
 	   ;
