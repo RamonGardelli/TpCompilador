@@ -140,11 +140,14 @@ public class Nodo {
         			if(aux.charAt(0) != '_'){
                         aux = "_"+ aux;
                     }
-                    AnalizadorSintactico.codigoAssembler.append("invoke MessageBox, NULL, addr ").append("cad").append(aux).append(", addr ").append("cad").append(aux).append(", MB_OK\n");
+                    int id = AnalizadorSintactico.idCadenas.get(aux);
+                    AnalizadorSintactico.codigoAssembler.append("invoke MessageBox, NULL, addr ").append("cad_").append(id).append(", addr ").append("cad_").append(id).append(", MB_OK\n");
         		}
-        		else {
-                     AnalizadorSintactico.codigoAssembler.append("invoke MessageBox, NULL, addr _").append(aux).append(", addr _").append(aux).append(", MB_OK\n");
-        		}
+        		else if (this.left.getTipo().equals("ID-SINGLE")  || this.left.getTipo().equals("CTE-SINGLE") ){
+                     AnalizadorSintactico.codigoAssembler.append("invoke printf, cfm$(\"%.20Lf\\n\"), _").append(aux).append("\n");
+        		}else{
+                    AnalizadorSintactico.codigoAssembler.append("invoke printf, cfm$(\"%d\\n\"), _").append(aux).append("\n");
+                }
             } 
         	
             if (this.getRef() == "Else") {

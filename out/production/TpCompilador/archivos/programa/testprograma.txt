@@ -1,48 +1,16 @@
+prog
 
-progComent
+LONG mipito, b,c,d;
 
- 
-
-SINGLE aa,bb;
-
- 
-
+LONG FUNC X (LONG c)
 BEGIN
-
- 
-
-aa:=2.0;
-
-bb:=3.0;
-
- 
-
-PRINT(aa);
-
-PRINT(bb);
-
- 
-
-IF(aa < bb) THEN
-
-BEGIN
-
-       PRINT(%then%);
-
-       END
-
-ELSE
-
-BEGIN
-
-PRINT(%else%);
-
+b:= X(c);
+RETURN (4);
 END
 
-ENDIF;
-
- 
-
- 
-
+BEGIN
+	d:=1;
+	mipito:=X(c);
+	c:=mipito+d;
+	b:=c/mipito;
 END

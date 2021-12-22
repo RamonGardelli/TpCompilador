@@ -18,7 +18,6 @@ public class AnalizadorSintactico {
     
     public static StringBuilder codigoAssemblerFinal = new StringBuilder();
 
-    public static StringBuilder variablesCodigoAssembler = new StringBuilder();
 
     public static ArrayList<String> listaAnalisis = new ArrayList<>();
 
@@ -47,7 +46,11 @@ public class AnalizadorSintactico {
     public static boolean errorPrograma = false;
         
     public static HashMap<String, Integer> flagsFunc = new HashMap<String, Integer>();
-    
+
+    public static HashMap<String, Integer> idCadenas = new HashMap<String, Integer>();
+
+    public static int contadorCadenas=1;
+
     public static int contadorFunc=1;
     
     public static void agregarAnalisis(String analisis) {
@@ -167,11 +170,11 @@ public class AnalizadorSintactico {
                         Registro[] r = {r1, r2, r3, r4};
                         codigoAssembler.append("\n");
                         creacionAssembler();
+                        memoriaPrograma();
                         arbol.generarCodigo(r);
+                        imprimirVariablesAuxiliares();
                         StringBuilder codigoprograma = new StringBuilder(codigoAssembler);
                         codigoAssembler.setLength(0);
-                        memoriaPrograma();
-                        codigoAssemblerFinal.append(variablesCodigoAssembler);
                         codigoAssemblerFinal.append("\n");
                         codigoAssemblerFinal.append(".code");
                         codigoAssemblerFinal.append("\n");
@@ -290,7 +293,10 @@ public class AnalizadorSintactico {
                  if(aux.charAt(0) != '_'){
                      aux = "_"+ aux;
                  }
- 	 			codigoAssemblerFinal.append("cad").append(aux).append(" DB ").append("\"").append(entry.getKey()).append("\",0\n");
+                 idCadenas.put(aux,contadorCadenas);
+
+ 	 			codigoAssemblerFinal.append("cad_").append(contadorCadenas).append(" DB ").append("\"").append(entry.getKey()).append("\",0\n");
+                  contadorCadenas++;
 				}
  			else {
  			String auxValor=entry.getKey();
@@ -328,13 +334,17 @@ public class AnalizadorSintactico {
      			else
      				codigoAssemblerFinal.append(" DQ ? \n");
  	 		}); 
-        	for (int k=1; k<=AnalizadorSintactico.contadorAuxLong;k++) {
-        		codigoAssemblerFinal.append("@auxLong").append(k).append(" DD ? \n");
-        	}
-        	for (int k=1; k<=AnalizadorSintactico.contadorAuxSingle;k++) {
-        		codigoAssemblerFinal.append("@auxSingle").append(k).append(" DQ ? \n");
-        	}
+
 	}
+
+    public static void imprimirVariablesAuxiliares(){
+        for (int k=1; k<=AnalizadorSintactico.contadorAuxLong;k++) {
+            codigoAssemblerFinal.append("@auxLong").append(k).append(" DD ? \n");
+        }
+        for (int k=1; k<=AnalizadorSintactico.contadorAuxSingle;k++) {
+            codigoAssemblerFinal.append("@auxSingle").append(k).append(" DQ ? \n");
+        }
+    }
     
     public static void labels () {
     	codigoAssemblerFinal.append("@LABEL_OVF:");

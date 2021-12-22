@@ -567,7 +567,8 @@ sentenciaPRINT: PRINT '(' CADENA ')' ';' {AnalizadorSintactico.agregarAnalisis("
                                if(lexema != null){
                                   AnalizadorLexico.tablaDeSimbolos.remove($3.sval);
                                   ParserVal aux = new ParserVal(new Nodo(lexema));
-                                  ((Nodo)aux.obj).setTipo("ID");
+                                  TDSObject value = AnalizadorLexico.getLexemaObject(lexema);
+                                  ((Nodo)aux.obj).setTipo("ID-"+value.getTipoContenido());
                                   $$= new ParserVal(new Nodo("PRINT", (Nodo)aux.obj, null));
                                }else{
                                    AnalizadorSintactico.agregarError("ID no definido (Linea " + AnalizadorLexico.numLinea + ")");
@@ -583,7 +584,8 @@ sentenciaPRINT: PRINT '(' CADENA ')' ';' {AnalizadorSintactico.agregarAnalisis("
                                if(lexema != null){
                                   AnalizadorLexico.tablaDeSimbolos.remove($3.sval);
                                   ParserVal aux = new ParserVal(new Nodo(lexema));
-                                  ((Nodo)aux.obj).setTipo("CTE");
+                                  TDSObject value = AnalizadorLexico.getLexemaObject(lexema);
+                                  ((Nodo)aux.obj).setTipo("CTE-"+value.getTipoVariable());
                                   
                                   $$= new ParserVal(new Nodo("PRINT", (Nodo)aux.obj, null));
                                }else{
@@ -599,7 +601,8 @@ sentenciaPRINT: PRINT '(' CADENA ')' ';' {AnalizadorSintactico.agregarAnalisis("
                                          if(lexema != null){
                                             AnalizadorLexico.tablaDeSimbolos.remove("-"+$4.sval);                                          
                                             ParserVal aux = new ParserVal(new Nodo(lexema));
-                                            ((Nodo)aux.obj).setTipo("CTE");
+                                            TDSObject value = AnalizadorLexico.getLexemaObject(lexema);
+                                            ((Nodo)aux.obj).setTipo("CTE-"+value.getTipoVariable());
                                             $$= new ParserVal(new Nodo("PRINT", (Nodo)aux.obj, null));
                                          }else{
                                             AnalizadorSintactico.agregarError("ID no definido (Linea " + AnalizadorLexico.numLinea + ")");
