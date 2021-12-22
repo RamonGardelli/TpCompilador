@@ -616,7 +616,7 @@ sentenciaWHILE: WHILE condicion DO bloqueEjecutable {AnalizadorSintactico.agrega
 condicion: '(' comparaciones ')' {
 				if($2.obj == null)
 					break;
-				$$ = new ParserVal(new Nodo("Cond", (Nodo)$1.obj, null));}
+				$$ = new ParserVal(new Nodo("Cond", (Nodo)$2.obj, null));}
 	 ;
 
 comparaciones: comparaciones opLogico comparacion {

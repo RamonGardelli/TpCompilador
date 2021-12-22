@@ -1719,7 +1719,7 @@ case 120:
 {
 				if(val_peek(1).obj == null)
 					break;
-				yyval = new ParserVal(new Nodo("Cond", (Nodo)val_peek(2).obj, null));}
+				yyval = new ParserVal(new Nodo("Cond", (Nodo)val_peek(1).obj, null));}
 break;
 case 121:
 //#line 622 "gramatica.y"
