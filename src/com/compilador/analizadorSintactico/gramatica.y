@@ -620,12 +620,8 @@ condicion: '(' comparaciones ')' {
 	 ;
 
 comparaciones: comparaciones opLogico comparacion {
-				if ($1.obj == null || $3.obj == null){
+				if ($1.obj != null || $3.obj != null){
 					$$ = new ParserVal (new Nodo($2.sval,(Nodo)$3.obj, (Nodo)$1.obj ));}
-					
-				else if ($1.obj == null){
-					$$ = new ParserVal (new Nodo($2.sval,(Nodo)$3.obj, null));}
-				
 			}		
 	     | comparacion {$$=$1;}
 	     | comparaciones opLogico error {AnalizadorSintactico.agregarError("opLogico de mas (Linea " + AnalizadorLexico.numLinea + ")");}
