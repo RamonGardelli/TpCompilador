@@ -338,7 +338,7 @@ public class Nodo {
                 String aux = "@Label_" + AnalizadorSintactico.contadorLabel;
                 AnalizadorSintactico.pilaLabels.push(aux);
                 AnalizadorSintactico.codigoAssembler.append("\n");
-                AnalizadorSintactico.codigoAssembler.append("JBE ").append(aux);
+                AnalizadorSintactico.codigoAssembler.append("JLE ").append(aux);
                 AnalizadorSintactico.codigoAssembler.append("\n");
 
             }
@@ -419,9 +419,9 @@ public class Nodo {
         } else if (r == "/") {
             this.imprimirDivision(derecha, izquierda);
         } else if ((r == "==") || (r == ">=") || (r == "<=") || (r == "<>") || (r == ">") || (r == "<")) {
-            AnalizadorSintactico.codigoAssembler.append("FLD ").append(izquierda);
-            AnalizadorSintactico.codigoAssembler.append("\n");
             AnalizadorSintactico.codigoAssembler.append("FLD ").append(derecha);
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            AnalizadorSintactico.codigoAssembler.append("FLD ").append(izquierda);
             AnalizadorSintactico.codigoAssembler.append("\n");
             AnalizadorSintactico.codigoAssembler.append("FCOM ");
             AnalizadorSintactico.codigoAssembler.append("\n");

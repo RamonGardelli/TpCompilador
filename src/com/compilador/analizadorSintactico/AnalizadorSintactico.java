@@ -244,6 +244,12 @@ public class AnalizadorSintactico {
         codigoAssemblerFinal.append("\n");
         codigoAssemblerFinal.append("includelib \\masm32\\lib\\user32.lib");
         codigoAssemblerFinal.append("\n");
+        codigoAssemblerFinal.append("include \\masm32\\include\\masm32rt.inc");
+        codigoAssemblerFinal.append("\n");
+        codigoAssemblerFinal.append("dll_dllcrt0 PROTO C");
+        codigoAssemblerFinal.append("\n");
+        codigoAssemblerFinal.append("printf PROTO C :VARARG");
+        codigoAssemblerFinal.append("\n");
         codigoAssemblerFinal.append("\n");
     	codigoAssemblerFinal.append(".data");
         codigoAssemblerFinal.append("\n");

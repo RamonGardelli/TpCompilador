@@ -1,16 +1,48 @@
-prog
 
-SINGLE a, b,c,d;
+progComent
 
-SINGLE FUNC X (SINGLE b)
+ 
+
+SINGLE aa,bb;
+
+ 
+
 BEGIN
-b:= X(b);
-RETURN (4.0);
+
+ 
+
+aa:=2.0;
+
+bb:=3.0;
+
+ 
+
+PRINT(aa);
+
+PRINT(bb);
+
+ 
+
+IF(aa < bb) THEN
+
+BEGIN
+
+       PRINT(%then%);
+
+       END
+
+ELSE
+
+BEGIN
+
+PRINT(%else%);
+
 END
 
-BEGIN
-	d:=1.0;
-	a:=X(b);
-	c:=a+d;
-	b:=c/a;
+ENDIF;
+
+ 
+
+ 
+
 END
