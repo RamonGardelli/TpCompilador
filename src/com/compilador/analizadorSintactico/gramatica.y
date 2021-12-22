@@ -500,6 +500,36 @@ sentenciaIF: IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF ';' 
                                                         ParserVal auxThen= new ParserVal(new Nodo("Then", (Nodo)$4.obj, null));
                                                         ParserVal auxCuerpo= new ParserVal(new Nodo("Cuerpo",(Nodo)auxThen.obj ,null));
                                                         $$= new ParserVal(new Nodo("IF", (Nodo)$2.obj, (Nodo)auxCuerpo.obj));}
+	   |IF condicion THEN sentEjecutables ELSE bloqueEjecutable ENDIF ';' {AnalizadorSintactico.agregarAnalisis("sentencia 'IF' (Linea " + 				AnalizadorLexico.numLinea + ")");
+        if($2.obj == null)
+            break;
+		ParserVal auxThen= new ParserVal(new Nodo("Then", (Nodo)$4.obj, null));
+		ParserVal auxElse= new ParserVal(new Nodo("Else", (Nodo)$6.obj, null));
+		ParserVal auxCuerpo= new ParserVal(new Nodo("Cuerpo",(Nodo)auxThen.obj ,(Nodo)auxElse.obj ));
+		$$= new ParserVal(new Nodo("IF", (Nodo)$2.obj, (Nodo)auxCuerpo.obj));
+		}
+	   |IF condicion THEN bloqueEjecutable ELSE sentEjecutables ENDIF ';' {AnalizadorSintactico.agregarAnalisis("sentencia 'IF' (Linea " + 				AnalizadorLexico.numLinea + ")");
+        if($2.obj == null)
+            break;
+		ParserVal auxThen= new ParserVal(new Nodo("Then", (Nodo)$4.obj, null));
+		ParserVal auxElse= new ParserVal(new Nodo("Else", (Nodo)$6.obj, null));
+		ParserVal auxCuerpo= new ParserVal(new Nodo("Cuerpo",(Nodo)auxThen.obj ,(Nodo)auxElse.obj ));
+		$$= new ParserVal(new Nodo("IF", (Nodo)$2.obj, (Nodo)auxCuerpo.obj));
+		}
+	   |IF condicion THEN sentEjecutables ELSE sentEjecutables ENDIF ';' {AnalizadorSintactico.agregarAnalisis("sentencia 'IF' (Linea " + 				AnalizadorLexico.numLinea + ")");
+        if($2.obj == null)
+            break;
+		ParserVal auxThen= new ParserVal(new Nodo("Then", (Nodo)$4.obj, null));
+		ParserVal auxElse= new ParserVal(new Nodo("Else", (Nodo)$6.obj, null));
+		ParserVal auxCuerpo= new ParserVal(new Nodo("Cuerpo",(Nodo)auxThen.obj ,(Nodo)auxElse.obj ));
+		$$= new ParserVal(new Nodo("IF", (Nodo)$2.obj, (Nodo)auxCuerpo.obj));
+		}
+	   |IF condicion  THEN sentEjecutables ENDIF ';'{AnalizadorSintactico.agregarAnalisis("sentencia 'IF' sin 'ELSE' (Linea " + AnalizadorLexico.numLinea + ")");
+	                                                    if($2.obj == null)
+                                                           break;
+                                                        ParserVal auxThen= new ParserVal(new Nodo("Then", (Nodo)$4.obj, null));
+                                                        ParserVal auxCuerpo= new ParserVal(new Nodo("Cuerpo",(Nodo)auxThen.obj ,null));
+                                                        $$= new ParserVal(new Nodo("IF", (Nodo)$2.obj, (Nodo)auxCuerpo.obj));}
 	   | condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF ';' {AnalizadorSintactico.agregarError("Error falta IF (Linea " + AnalizadorLexico.numLinea + ")");}
 	   | IF THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF ';'{AnalizadorSintactico.agregarError("Error falta condicion (Linea " + AnalizadorLexico.numLinea + ")");}
 	   |IF condicion bloqueEjecutable ELSE bloqueEjecutable ENDIF ';'{AnalizadorSintactico.agregarError("Error falta THEN (Linea " + AnalizadorLexico.numLinea + ")");}
@@ -512,6 +542,7 @@ sentenciaIF: IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF ';' 
 	   | IF condicion THEN ENDIF ';' {AnalizadorSintactico.agregarError("warning if vacio (Linea " + AnalizadorLexico.numLinea + ")");}
 	   | IF condicion THEN bloqueEjecutable ';' {AnalizadorSintactico.agregarError("error falta ENDIF (Linea " + AnalizadorLexico.numLinea + ")");}
 	   | IF condicion THEN bloqueEjecutable ENDIF error {AnalizadorSintactico.agregarError("error falta ';' (Linea " + (AnalizadorLexico.numLinea-1) + ")");}
+	   
 	   ;
 
 sentenciaPRINT: PRINT '(' CADENA ')' ';' {AnalizadorSintactico.agregarAnalisis("sentencia print (Linea " + AnalizadorLexico.numLinea + ")");
