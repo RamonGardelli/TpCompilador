@@ -425,6 +425,12 @@ public class Nodo {
             AnalizadorSintactico.codigoAssembler.append("\n");
             AnalizadorSintactico.codigoAssembler.append("FCOM ");
             AnalizadorSintactico.codigoAssembler.append("\n");
+            AnalizadorSintactico.codigoAssembler.append("FSTSW aux_mem_2bytes");
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            AnalizadorSintactico.codigoAssembler.append("MOV AX , aux_mem_2bytes");
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            AnalizadorSintactico.codigoAssembler.append("SAHF");
+            AnalizadorSintactico.codigoAssembler.append("\n");
 
             if (r == "==") {
                 AnalizadorSintactico.contadorLabel++;
@@ -438,7 +444,7 @@ public class Nodo {
                 AnalizadorSintactico.contadorLabel++;
                 String aux = "@Label_" + AnalizadorSintactico.contadorLabel;
                 AnalizadorSintactico.pilaLabels.push(aux);
-                AnalizadorSintactico.codigoAssembler.append("JL ").append(aux);
+                AnalizadorSintactico.codigoAssembler.append("JB ").append(aux);
                 AnalizadorSintactico.codigoAssembler.append("\n");
 
             }
@@ -447,7 +453,7 @@ public class Nodo {
                 AnalizadorSintactico.contadorLabel++;
                 String aux = "@Label_" + AnalizadorSintactico.contadorLabel;
                 AnalizadorSintactico.pilaLabels.push(aux);
-                AnalizadorSintactico.codigoAssembler.append("JG ").append(aux);
+                AnalizadorSintactico.codigoAssembler.append("JA ").append(aux);
                 AnalizadorSintactico.codigoAssembler.append("\n");
 
             }
@@ -476,7 +482,7 @@ public class Nodo {
                 String aux = "@Label_" + AnalizadorSintactico.contadorLabel;
                 AnalizadorSintactico.pilaLabels.push(aux);
                 AnalizadorSintactico.codigoAssembler.append("\n");
-                AnalizadorSintactico.codigoAssembler.append("JGE ").append(aux);
+                AnalizadorSintactico.codigoAssembler.append("JAE ").append(aux);
                 AnalizadorSintactico.codigoAssembler.append("\n");
 
             }
