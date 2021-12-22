@@ -214,7 +214,15 @@ public class AnalizadorSintactico {
     public static void toString(Nodo n) {
         if (n != null) {
             toString(n.getLeft());
-            System.out.printf(n.getRef());
+            if(n.EsHoja()){
+                System.out.println("        "+n.getRef());
+            }else {
+                if(n.getRef() == "/" || n.getRef() == "*" || n.getRef() == "+" || n.getRef() == "-" || n.getRef().contains(">")  || n.getRef().contains("<")  ||
+                        n.getRef().contains("=") || n.getRef().contains("|") || n.getRef().contains("&") || n.getRef().contains("LF") || n.getRef().contains("PRINT"))
+                    System.out.println("    "+n.getRef());
+                else
+                    System.out.println(n.getRef());
+            }
             toString(n.getRight());
         }
     }

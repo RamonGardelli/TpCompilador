@@ -2,15 +2,15 @@ prog
 
 SINGLE a, b,c,d;
 
-SINGLE FUNC X ()
+SINGLE FUNC X (SINGLE b)
 BEGIN
-b:= X();
+b:= X(b);
 RETURN (4.0);
 END
 
 BEGIN
 	d:=1.0;
-	a:=X();
+	a:=X(b);
 	c:=a+d;
 	b:=c/a;
 END
