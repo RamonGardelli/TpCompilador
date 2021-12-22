@@ -352,7 +352,10 @@ llamadoFunc: ID '(' ID ')'
              //error
 		  }
 		  }
-
+       | ID '(' ')' {
+            AnalizadorSintactico.agregarError("La funcion debe tener un parametro (Linea " + AnalizadorLexico.numLinea + ")");
+            AnalizadorLexico.tablaDeSimbolos.remove($1.sval);
+       }
 	   ;
 
 
@@ -372,6 +375,10 @@ declaracionFunc : tipo FUNC ID '(' parametro ')' {AnalizadorSintactico.agregarAn
             AnalizadorSintactico.ambitoActual += "@"+ $3.sval;
             AnalizadorLexico.tablaDeSimbolos.put(((Object[])($5.obj))[0] + AnalizadorSintactico.ambitoActual,(TDSObject)((Object[])($5.obj))[1]);
 			}
+		|tipo FUNC ID '(' ')' {AnalizadorSintactico.agregarError("Error falta parametro (Linea " + AnalizadorLexico.numLinea + ")");
+		AnalizadorSintactico.ambitoActual += "@"+ $3.sval;
+		    AnalizadorLexico.tablaDeSimbolos.remove($3.sval);
+		}
 		|FUNC ID '(' parametro ')' {AnalizadorSintactico.agregarError("error falta tipo (Linea " + AnalizadorLexico.numLinea + ")");}
 		|tipo ID '(' parametro ')' {AnalizadorSintactico.agregarError("error falta FUNC (Linea " + AnalizadorLexico.numLinea + ")");}
 		|tipo FUNC ID parametro ')' {AnalizadorSintactico.agregarError("error falta '(' (Linea " + AnalizadorLexico.numLinea + ")");}

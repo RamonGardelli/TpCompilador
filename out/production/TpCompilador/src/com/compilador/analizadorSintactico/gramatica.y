@@ -44,28 +44,18 @@ bloqueDeclarativo:bloqueDeclarativo sentenciasDeclarativas
 
 
 
-bloqueEjecutable :bloqueTRYCATCH {$$=$1;}
-				 |bloqueEjecutableNormal {$$=$1;}
+bloqueEjecutable : bloqueEjecutableNormal {$$=$1;}
 				 ;
 
-bloqueTRYCATCH: TRY sentEjecutables CATCH BEGIN sentSoloEjecutables END {$$= new ParserVal (new Nodo("TC", (Nodo)$2.obj, (Nodo)$5.obj));}
-	      | sentEjecutables CATCH BEGIN sentSoloEjecutables END {AnalizadorSintactico.agregarError("error: falta TRY en (Linea " + AnalizadorLexico.numLinea + ")");}
-	      | TRY CATCH BEGIN sentSoloEjecutables END {AnalizadorSintactico.agregarError("error TRY-CATCH vacio (Linea " + AnalizadorLexico.numLinea + ")");}
-	      | TRY sentEjecutables BEGIN sentSoloEjecutables END {AnalizadorSintactico.agregarError("error falta CATCH (Linea " + AnalizadorLexico.numLinea + ")");}
-	      | TRY sentEjecutables CATCH sentSoloEjecutables END {AnalizadorSintactico.agregarError("error falta BEGIN (Linea " + AnalizadorLexico.numLinea + ")");}
-	      | TRY sentEjecutables CATCH BEGIN sentSoloEjecutables error {AnalizadorSintactico.agregarError("error falta END (Linea " + AnalizadorLexico.numLinea + ")");}
+bloqueTRYCATCH: TRY sentenciaCONTRACT CATCH BEGIN sentSoloEjecutables END {$$= new ParserVal (new Nodo("TC", (Nodo)$2.obj, (Nodo)$5.obj));}
+	      | sentenciaCONTRACT CATCH BEGIN sentSoloEjecutables END {AnalizadorSintactico.agregarError("error: falta TRY en (Linea " + AnalizadorLexico.numLinea + ")");}
+	      | TRY CATCH BEGIN sentSoloEjecutables END {AnalizadorSintactico.agregarError("error TRY vacio (Linea " + AnalizadorLexico.numLinea + ")");}
+	      | TRY sentenciaCONTRACT BEGIN sentSoloEjecutables END {AnalizadorSintactico.agregarError("error falta CATCH (Linea " + AnalizadorLexico.numLinea + ")");}
+	      | TRY sentenciaCONTRACT CATCH sentSoloEjecutables END {AnalizadorSintactico.agregarError("error falta BEGIN (Linea " + AnalizadorLexico.numLinea + ")");}
+	      | TRY sentenciaCONTRACT CATCH BEGIN sentSoloEjecutables error {AnalizadorSintactico.agregarError("error falta END (Linea " + AnalizadorLexico.numLinea + ")");}
 	      ;
 		  
-TRYCATCHFunc: BEGIN bloqueTRYCATCH RETURN '(' retorno ')' ';' END {ParserVal aux= new ParserVal (new Nodo("S", (Nodo)$2.obj, null));
-																	$$= new ParserVal(new Nodo("BF", (Nodo)aux.obj, (Nodo)$5.obj));}
-			| BEGIN sentEjecutableFunc bloqueTRYCATCH RETURN '(' retorno ')' ';' END {ParserVal aux= new ParserVal (new Nodo("S", (Nodo)$2.obj, (Nodo)$3.obj));
-																					  $$= new ParserVal(new Nodo("BF", (Nodo)aux.obj, (Nodo)$6.obj));}
-			| BEGIN sentEjecutableFunc bloqueTRYCATCH sentEjecutableFunc RETURN '(' retorno ')' ';' END {ParserVal aux= new ParserVal (new Nodo("S", (Nodo)$2.obj, (Nodo)$3.obj));
-																										 ParserVal aux2= new ParserVal (new Nodo("S", (Nodo)aux.obj, (Nodo)$4.obj));
-																										 $$= new ParserVal(new Nodo("BF", (Nodo)aux.obj, (Nodo)$7.obj));}
-			| BEGIN bloqueTRYCATCH sentEjecutableFunc RETURN '(' retorno ')' ';' END {ParserVal aux= new ParserVal (new Nodo("S", (Nodo)$2.obj, (Nodo)$3.obj));
-																					  $$= new ParserVal(new Nodo("BF", (Nodo)aux.obj, (Nodo)$6.obj));}
-			;
+
 			
 bloqueEjecutableNormal: BEGIN sentSoloEjecutables END 
 			{
@@ -83,7 +73,6 @@ bloqueEjecutableFunc: BEGIN sentEjecutableFunc RETURN '(' retorno ')' ';' END
             |BEGIN RETURN '(' retorno ')' ';' END {
                 $$ = new ParserVal(new Nodo("BF",null,(Nodo)$4.obj));
             }
-			|TRYCATCHFunc {$$=$1;}
 		    | sentEjecutableFunc RETURN '(' retorno ')' END {AnalizadorSintactico.agregarError("error falta BEGIN (Linea " + AnalizadorLexico.numLinea + ")");}
 		    | BEGIN sentEjecutableFunc '(' retorno ')' END {AnalizadorSintactico.agregarError("error falta RETURN (Linea " + AnalizadorLexico.numLinea + ")");}
 		    | BEGIN sentEjecutableFunc RETURN  retorno ')' END {AnalizadorSintactico.agregarError("error falta '(' (Linea " + AnalizadorLexico.numLinea + ")");}
@@ -110,7 +99,7 @@ sentEjecutableFunc: sentEjecutableFunc sentEjecutablesFunc
           ;
 
 sentEjecutablesFunc: sentEjecutables { $$ = $1; }
-          | sentenciaCONTRACT { $$ = $1; }
+          | bloqueTRYCATCH { $$ = $1; }
           ;
 
 sentenciaCONTRACT: CONTRACT ':' condicion  ';' {
@@ -363,19 +352,10 @@ llamadoFunc: ID '(' ID ')'
              //error
 		  }
 		  }
-	   | ID '(' ')' {
-	   		  String variable = AnalizadorSintactico.getReferenciaPorAmbito($1.sval);
-       		  if(variable != null){
-       		    AnalizadorLexico.tablaDeSimbolos.remove($1.sval);
-       		    TDSObject value = AnalizadorLexico.getLexemaObject(variable);
-       		    ParserVal aux= new ParserVal(new Nodo(variable, null, null ));
-       		    $$= new ParserVal(new Nodo("LF",(Nodo)aux.obj, null ));
-       		    ((Nodo)$$.obj).setTipo(value.getTipoContenido());
-       		  }else{
-                    AnalizadorSintactico.agregarError("ID de Funcion no declarada (Linea " + AnalizadorLexico.numLinea + ")");
-                    //error
-       		  }
-	   }
+       | ID '(' ')' {
+            AnalizadorSintactico.agregarError("La funcion debe tener un parametro (Linea " + AnalizadorLexico.numLinea + ")");
+            AnalizadorLexico.tablaDeSimbolos.remove($1.sval);
+       }
 	   ;
 
 
@@ -395,18 +375,10 @@ declaracionFunc : tipo FUNC ID '(' parametro ')' {AnalizadorSintactico.agregarAn
             AnalizadorSintactico.ambitoActual += "@"+ $3.sval;
             AnalizadorLexico.tablaDeSimbolos.put(((Object[])($5.obj))[0] + AnalizadorSintactico.ambitoActual,(TDSObject)((Object[])($5.obj))[1]);
 			}
-		|tipo FUNC ID '(' ')' {AnalizadorSintactico.agregarAnalisis("Declaracion de funcion en (Linea " + AnalizadorLexico.numLinea + ")");
-		     if( AnalizadorSintactico.esVariableRedeclarada($3.sval + AnalizadorSintactico.ambitoActual)){
-                   AnalizadorSintactico.agregarError("ERROR: ID ya fue utilizado (Linea " + AnalizadorLexico.numLinea + ")");
-             }else{
-                TDSObject aux = AnalizadorLexico.tablaDeSimbolos.remove($3.sval);
-                aux.setTipoContenido(AnalizadorSintactico.tipoActual);
-                aux.setEsFuncion(true);
-                AnalizadorLexico.tablaDeSimbolos.put($3.sval + AnalizadorSintactico.ambitoActual,aux);
-                $$=$3;
-             }
-             AnalizadorSintactico.ambitoActual += "@"+ $3.sval;
-            }
+		|tipo FUNC ID '(' ')' {AnalizadorSintactico.agregarError("Error falta parametro (Linea " + AnalizadorLexico.numLinea + ")");
+		AnalizadorSintactico.ambitoActual += "@"+ $3.sval;
+		    AnalizadorLexico.tablaDeSimbolos.remove($3.sval);
+		}
 		|FUNC ID '(' parametro ')' {AnalizadorSintactico.agregarError("error falta tipo (Linea " + AnalizadorLexico.numLinea + ")");}
 		|tipo ID '(' parametro ')' {AnalizadorSintactico.agregarError("error falta FUNC (Linea " + AnalizadorLexico.numLinea + ")");}
 		|tipo FUNC ID parametro ')' {AnalizadorSintactico.agregarError("error falta '(' (Linea " + AnalizadorLexico.numLinea + ")");}
@@ -455,6 +427,39 @@ asignacion: ID ASIGN expAritmetica ';' {
                         }
                      }
 					}
+					
+	  | '(' tipo ')' ID ASIGN expAritmetica ';' 
+					{
+						if ($2.sval != "SINGLE") 
+						{
+							AnalizadorSintactico.agregarError("No se puede castear a este tipo (Linea " + AnalizadorLexico.numLinea + ")");
+							AnalizadorLexico.tablaDeSimbolos.remove($4.sval);
+						}
+						else 
+							{
+								String variable = AnalizadorSintactico.getReferenciaPorAmbito($4.sval);
+								if(variable == null){
+									AnalizadorSintactico.agregarError("Variable no definida (Linea " + AnalizadorLexico.numLinea + ")");
+									AnalizadorLexico.tablaDeSimbolos.remove($4.sval);
+									//corta arbol
+								}else{
+									AnalizadorLexico.tablaDeSimbolos.remove($4.sval);
+									AnalizadorSintactico.agregarAnalisis("Sentencia ejecutable asignacion (Linea " + AnalizadorLexico.numLinea + ")");
+									if (AnalizadorSintactico.listaErroresSintacticos.size() != 0 || AnalizadorLexico.listaDeErrores.size() != 0)
+										break;
+									ParserVal aux = new ParserVal(new Nodo(variable));
+									((Nodo)aux.obj).setTipo("SINGLE"); //Mirarlo 
+									TDSObject value = AnalizadorLexico.getLexemaObject(variable);
+									$$= new ParserVal(new Nodo(":=", (Nodo)aux.obj, (Nodo)$6.obj));
+									if( (((Nodo)$6.obj).getTipo()).equals("SINGLE")){
+										((Nodo)$$.obj).setTipo(((Nodo)aux.obj).getTipo());
+									}else{
+										AnalizadorSintactico.agregarError("Tipo Incompatible (SINGLE, " + ((Nodo)$6.obj).getTipo()  + ") (Linea " + AnalizadorLexico.numLinea + ")");
+									}
+								}
+                     
+							}
+					}
 	  | ID '=' expAritmetica ';' {
 
 	                        AnalizadorLexico.listaDeWarnings.add("WARNING Linea " + AnalizadorLexico.numLinea +": falta el simbolo : de la asignacion.");
@@ -483,8 +488,7 @@ asignacion: ID ASIGN expAritmetica ';' {
 	  | ID expAritmetica ';' {AnalizadorSintactico.agregarError("Error falta ASIGN (Linea " + AnalizadorLexico.numLinea + ")");}
 	  | ID ASIGN expAritmetica error {AnalizadorSintactico.agregarError("Error falta ';' (Linea " + (AnalizadorLexico.numLinea-1) + ")");}
 	  | ID ASIGN error {AnalizadorSintactico.agregarError("Error falta ';' (Linea " + (AnalizadorLexico.numLinea-1) + ")");}
-	  | ID '=' expAritmetica error {AnalizadorSintactico.agregarError("Error falta ';' y falta :  (Linea " + (AnalizadorLexico.numLinea -1) + ")");}
-	  | ID '='  error {AnalizadorSintactico.agregarError("Error falta ';' y falta :  (Linea " + (AnalizadorLexico.numLinea -1) + ")");}
+	  | ID '='  error {AnalizadorSintactico.agregarError("Error falta ':'(Linea " + (AnalizadorLexico.numLinea -1) + ")");}
 	  | ID ASIGN comparacion ';'  {AnalizadorSintactico.agregarError("Error, no puede asignarse un comparador(Linea " + AnalizadorLexico.numLinea + ")");}
 	  ;
 
@@ -503,6 +507,36 @@ sentenciaIF: IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF ';' 
                                                         ParserVal auxThen= new ParserVal(new Nodo("Then", (Nodo)$4.obj, null));
                                                         ParserVal auxCuerpo= new ParserVal(new Nodo("Cuerpo",(Nodo)auxThen.obj ,null));
                                                         $$= new ParserVal(new Nodo("IF", (Nodo)$2.obj, (Nodo)auxCuerpo.obj));}
+	   |IF condicion THEN sentEjecutables ELSE bloqueEjecutable ENDIF ';' {AnalizadorSintactico.agregarAnalisis("sentencia 'IF' (Linea " + 				AnalizadorLexico.numLinea + ")");
+        if($2.obj == null)
+            break;
+		ParserVal auxThen= new ParserVal(new Nodo("Then", (Nodo)$4.obj, null));
+		ParserVal auxElse= new ParserVal(new Nodo("Else", (Nodo)$6.obj, null));
+		ParserVal auxCuerpo= new ParserVal(new Nodo("Cuerpo",(Nodo)auxThen.obj ,(Nodo)auxElse.obj ));
+		$$= new ParserVal(new Nodo("IF", (Nodo)$2.obj, (Nodo)auxCuerpo.obj));
+		}
+	   |IF condicion THEN bloqueEjecutable ELSE sentEjecutables ENDIF ';' {AnalizadorSintactico.agregarAnalisis("sentencia 'IF' (Linea " + 				AnalizadorLexico.numLinea + ")");
+        if($2.obj == null)
+            break;
+		ParserVal auxThen= new ParserVal(new Nodo("Then", (Nodo)$4.obj, null));
+		ParserVal auxElse= new ParserVal(new Nodo("Else", (Nodo)$6.obj, null));
+		ParserVal auxCuerpo= new ParserVal(new Nodo("Cuerpo",(Nodo)auxThen.obj ,(Nodo)auxElse.obj ));
+		$$= new ParserVal(new Nodo("IF", (Nodo)$2.obj, (Nodo)auxCuerpo.obj));
+		}
+	   |IF condicion THEN sentEjecutables ELSE sentEjecutables ENDIF ';' {AnalizadorSintactico.agregarAnalisis("sentencia 'IF' (Linea " + 				AnalizadorLexico.numLinea + ")");
+        if($2.obj == null)
+            break;
+		ParserVal auxThen= new ParserVal(new Nodo("Then", (Nodo)$4.obj, null));
+		ParserVal auxElse= new ParserVal(new Nodo("Else", (Nodo)$6.obj, null));
+		ParserVal auxCuerpo= new ParserVal(new Nodo("Cuerpo",(Nodo)auxThen.obj ,(Nodo)auxElse.obj ));
+		$$= new ParserVal(new Nodo("IF", (Nodo)$2.obj, (Nodo)auxCuerpo.obj));
+		}
+	   |IF condicion  THEN sentEjecutables ENDIF ';'{AnalizadorSintactico.agregarAnalisis("sentencia 'IF' sin 'ELSE' (Linea " + AnalizadorLexico.numLinea + ")");
+	                                                    if($2.obj == null)
+                                                           break;
+                                                        ParserVal auxThen= new ParserVal(new Nodo("Then", (Nodo)$4.obj, null));
+                                                        ParserVal auxCuerpo= new ParserVal(new Nodo("Cuerpo",(Nodo)auxThen.obj ,null));
+                                                        $$= new ParserVal(new Nodo("IF", (Nodo)$2.obj, (Nodo)auxCuerpo.obj));}
 	   | condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF ';' {AnalizadorSintactico.agregarError("Error falta IF (Linea " + AnalizadorLexico.numLinea + ")");}
 	   | IF THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF ';'{AnalizadorSintactico.agregarError("Error falta condicion (Linea " + AnalizadorLexico.numLinea + ")");}
 	   |IF condicion bloqueEjecutable ELSE bloqueEjecutable ENDIF ';'{AnalizadorSintactico.agregarError("Error falta THEN (Linea " + AnalizadorLexico.numLinea + ")");}
@@ -515,10 +549,12 @@ sentenciaIF: IF condicion THEN bloqueEjecutable ELSE bloqueEjecutable ENDIF ';' 
 	   | IF condicion THEN ENDIF ';' {AnalizadorSintactico.agregarError("warning if vacio (Linea " + AnalizadorLexico.numLinea + ")");}
 	   | IF condicion THEN bloqueEjecutable ';' {AnalizadorSintactico.agregarError("error falta ENDIF (Linea " + AnalizadorLexico.numLinea + ")");}
 	   | IF condicion THEN bloqueEjecutable ENDIF error {AnalizadorSintactico.agregarError("error falta ';' (Linea " + (AnalizadorLexico.numLinea-1) + ")");}
+	   
 	   ;
 
 sentenciaPRINT: PRINT '(' CADENA ')' ';' {AnalizadorSintactico.agregarAnalisis("sentencia print (Linea " + AnalizadorLexico.numLinea + ")");
 		ParserVal aux = new ParserVal(new Nodo($3.sval));
+		((Nodo)aux.obj).setTipo("CADENA");
 		$$= new ParserVal(new Nodo("PRINT", (Nodo)aux.obj, null));}
 	      | '(' CADENA ')' ';' {AnalizadorSintactico.agregarError("error falta PRINT (Linea " + AnalizadorLexico.numLinea + ")");}
 	      | PRINT CADENA ')' ';' {AnalizadorSintactico.agregarError("error falta '(' (Linea " + AnalizadorLexico.numLinea + ")");}
@@ -531,6 +567,7 @@ sentenciaPRINT: PRINT '(' CADENA ')' ';' {AnalizadorSintactico.agregarAnalisis("
                                if(lexema != null){
                                   AnalizadorLexico.tablaDeSimbolos.remove($3.sval);
                                   ParserVal aux = new ParserVal(new Nodo(lexema));
+                                  ((Nodo)aux.obj).setTipo("ID");
                                   $$= new ParserVal(new Nodo("PRINT", (Nodo)aux.obj, null));
                                }else{
                                    AnalizadorSintactico.agregarError("ID no definido (Linea " + AnalizadorLexico.numLinea + ")");
@@ -546,6 +583,8 @@ sentenciaPRINT: PRINT '(' CADENA ')' ';' {AnalizadorSintactico.agregarAnalisis("
                                if(lexema != null){
                                   AnalizadorLexico.tablaDeSimbolos.remove($3.sval);
                                   ParserVal aux = new ParserVal(new Nodo(lexema));
+                                  ((Nodo)aux.obj).setTipo("CTE");
+                                  
                                   $$= new ParserVal(new Nodo("PRINT", (Nodo)aux.obj, null));
                                }else{
                                   AnalizadorSintactico.agregarError("ID no definido (Linea " + AnalizadorLexico.numLinea + ")");
@@ -553,13 +592,14 @@ sentenciaPRINT: PRINT '(' CADENA ')' ';' {AnalizadorSintactico.agregarAnalisis("
                                   //stop generacion de arbol
                                }
                                }
-          	      | PRINT '(' '-' CTE ')' ';'{
+          | PRINT '(' '-' CTE ')' ';'{
                           	           AnalizadorSintactico.agregarAnalisis("sentencia print (Linea " + AnalizadorLexico.numLinea + ")");
                                         String lexema = AnalizadorSintactico.getReferenciaPorAmbito("-"+$4.sval);
 
                                          if(lexema != null){
-                                            AnalizadorLexico.tablaDeSimbolos.remove("-"+$4.sval);
+                                            AnalizadorLexico.tablaDeSimbolos.remove("-"+$4.sval);                                          
                                             ParserVal aux = new ParserVal(new Nodo(lexema));
+                                            ((Nodo)aux.obj).setTipo("CTE");
                                             $$= new ParserVal(new Nodo("PRINT", (Nodo)aux.obj, null));
                                          }else{
                                             AnalizadorSintactico.agregarError("ID no definido (Linea " + AnalizadorLexico.numLinea + ")");
@@ -580,14 +620,17 @@ sentenciaWHILE: WHILE condicion DO bloqueEjecutable {AnalizadorSintactico.agrega
 	      ;
 
 
-condicion: '(' comparaciones ')' {$$=$2;}
+condicion: '(' comparaciones ')' {
+				if($2.obj == null)
+					break;
+				$$ = new ParserVal(new Nodo("Cond", (Nodo)$2.obj, null));}
 	 ;
 
-comparaciones: comparaciones opLogico comparacion 		
-	     | comparacion {
-	     if($1.obj == null)
-             break;
-	     $$ = new ParserVal(new Nodo("Cond", (Nodo)$1.obj, null));}
+comparaciones: comparaciones opLogico comparacion {
+				if ($1.obj != null || $3.obj != null){
+					$$ = new ParserVal (new Nodo($2.sval,(Nodo)$3.obj, (Nodo)$1.obj ));}
+			}		
+	     | comparacion {$$=$1;}
 	     | comparaciones opLogico error {AnalizadorSintactico.agregarError("opLogico de mas (Linea " + AnalizadorLexico.numLinea + ")");}
 	     ;
 
@@ -599,9 +642,6 @@ comparacion: expAritmetica comparador expAritmetica
 		  $$ = new ParserVal(new Nodo($2.sval,(Nodo) $1.obj,(Nodo)$3.obj));
 		  }
 		}
-	   | tipo '(' expAritmetica ')' comparador expAritmetica
-	   | expAritmetica comparador tipo '(' expAritmetica ')'
-	   | tipo '(' expAritmetica ')' comparador tipo '(' expAritmetica ')'
 	   | expAritmetica comparador error {AnalizadorSintactico.agregarError("falta expresion (Linea " + AnalizadorLexico.numLinea + ")");}
 	   |comparador expAritmetica {AnalizadorSintactico.agregarError("falta expresion (Linea " + AnalizadorLexico.numLinea + ")");}
 	   ;

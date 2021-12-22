@@ -1,13 +1,16 @@
-progComent
+prog
 
-LONG aa,bb;
+SINGLE a, b,c,d;
 
- 
+SINGLE FUNC X ()
+BEGIN
+b:= X();
+RETURN (4.0);
+END
 
 BEGIN
-
-aa:=1;
-PRINT(aa);
- 
-
+	d:=1.0;
+	a:=X();
+	c:=a+d;
+	b:=c/a;
 END
