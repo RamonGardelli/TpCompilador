@@ -90,9 +90,9 @@ public class AnalizadorSintactico {
             if (args.length != 0 || true) {
 
                 //File filex = new File(args[0]);
-            	File filex = new File("C:\\Users\\Admin\\Desktop\\prueba\\prueba.txt");
+            	//File filex = new File("C:\\Users\\Admin\\Desktop\\prueba\\prueba.txt");
                 //File filex = new File(args[0]);
-            	//File filex = new File("C:\\Users\\ramon\\IdeaProjects\\TpCompilador\\archivos\\programa\\testprograma.txt");
+            	File filex = new File("C:\\Users\\ramon\\IdeaProjects\\TpCompilador\\archivos\\programa\\testprograma.txt");
 
 
                 String originalPath = filex.getAbsoluteFile().getParent() + File.separator;
@@ -169,15 +169,15 @@ public class AnalizadorSintactico {
                         Registro[] r = {r1, r2, r3, r4};
                         codigoAssembler.append("\n");
                         creacionAssembler();
-                        memoriaPrograma();
                         arbol.generarCodigo(r);
-                        imprimirVariablesAuxiliares();
                         StringBuilder codigoprograma = new StringBuilder(codigoAssembler);
                         codigoAssembler.setLength(0);
                         codigoAssemblerFinal.append("\n");
                         codigoAssemblerFinal.append(".code");
                         codigoAssemblerFinal.append("\n");
                         arbolFunciones(arbolFunc, r);
+                        int posData = codigoAssemblerFinal.lastIndexOf(".code");
+                        codigoAssemblerFinal.insert(posData-1,memoriaPrograma().append(imprimirVariablesAuxiliares()));
                         codigoAssemblerFinal.append(codigoAssembler);
                         codigoAssembler.setLength(0);
                         codigoAssemblerFinal.append("\n");
@@ -279,11 +279,12 @@ public class AnalizadorSintactico {
     	}	
     }
     
-    public static void memoriaPrograma() {
-    	 codigoAssemblerFinal.append("msj_division_cero db \" ERROR, el divisor es igual a cero. No se puede proceder con la operacion \",0\n");
-         codigoAssemblerFinal.append("msj_overflow_producto db \"ERROR, se detecto overflow. No se puede proceder con la operacion\",0\n");
-         codigoAssemblerFinal.append("msj_recursion db \"ERROR, se detecto una recursion. No se puede proceder con la operacion\",0\n");
-         codigoAssemblerFinal.append("aux_mem_2bytes dw ?\n");
+    public static StringBuilder memoriaPrograma() {
+        StringBuilder auxRet = new StringBuilder();
+        auxRet.append("msj_division_cero db \" ERROR, el divisor es igual a cero. No se puede proceder con la operacion \",0\n");
+        auxRet.append("msj_overflow_producto db \"ERROR, se detecto overflow. No se puede proceder con la operacion\",0\n");
+        auxRet.append("msj_recursion db \"ERROR, se detecto una recursion. No se puede proceder con la operacion\",0\n");
+        auxRet.append("aux_mem_2bytes dw ?\n");
          
          AnalizadorLexico.tablaDeSimbolos.entrySet().forEach(entry->{
  			if (entry.getValue().getTipoVariable()=="CADENA") {
@@ -294,55 +295,57 @@ public class AnalizadorSintactico {
                  }
                  idCadenas.put(aux,contadorCadenas);
 
- 	 			codigoAssemblerFinal.append("cad_").append(contadorCadenas).append(" DB ").append("\"").append(entry.getKey()).append("\",0\n");
+                auxRet.append("cad_").append(contadorCadenas).append(" DB ").append("\"").append(entry.getKey()).append("\",0\n");
                   contadorCadenas++;
 				}
  			else {
  			String auxValor=entry.getKey();
  			auxValor=auxValor.replace(".", "_");
             auxValor=auxValor.replace("-", "_");
- 			codigoAssemblerFinal.append("_").append(auxValor);
+                auxRet.append("_").append(auxValor);
 	 			if (entry.getValue().getTipoVariable()=="ID") {
 	 				if(entry.getValue().getTipoContenido()=="LONG") {
-	 					codigoAssemblerFinal.append(" DD ? \n");
+                        auxRet.append(" DD ? \n");
 	 				}
 	 				else {
-	 					codigoAssemblerFinal.append(" DQ ? \n");
+                        auxRet.append(" DQ ? \n");
 	 				}
 	 			}
 	 			else if (entry.getValue().getTipoVariable()=="SINGLE") {
 	 				String aux = entry.getKey();
 	 				if (entry.getKey().charAt(0) == '_')
 	                    aux = "0" + aux;
-	 				codigoAssemblerFinal.append(" DQ ").append(aux).append("\n");
+                    auxRet.append(" DQ ").append(aux).append("\n");
 	 			}
 		 			else if (entry.getValue().getTipoVariable()=="LONG") {
-		 				codigoAssemblerFinal.append(" DD ").append(entry.getKey()).append("\n");
+                    auxRet.append(" DD ").append(entry.getKey()).append("\n");
 		 			}
  			}
 	 		}); 
          	flagsFunc.entrySet().forEach(entry->{
-     			codigoAssemblerFinal.append("_funcFlag_").append(entry.getValue());
-				codigoAssemblerFinal.append(" DB 0 \n");
+                auxRet.append("_funcFlag_").append(entry.getValue());
+                auxRet.append(" DB 0 \n");
  	 		}); 
          	
         	flagsFunc.entrySet().forEach(entry->{
-     			codigoAssemblerFinal.append("_retFunc_").append(entry.getValue());
+                auxRet.append("_retFunc_").append(entry.getValue());
      			if (AnalizadorLexico.tablaDeSimbolos.get(entry.getKey()).getTipoContenido()=="LONG")
-     				codigoAssemblerFinal.append(" DD ? \n");
+                    auxRet.append(" DD ? \n");
      			else
-     				codigoAssemblerFinal.append(" DQ ? \n");
+                    auxRet.append(" DQ ? \n");
  	 		}); 
-
+            return auxRet;
 	}
 
-    public static void imprimirVariablesAuxiliares(){
+    public static StringBuilder imprimirVariablesAuxiliares(){
+        StringBuilder auxRet = new StringBuilder();
         for (int k=1; k<=AnalizadorSintactico.contadorAuxLong;k++) {
-            codigoAssemblerFinal.append("@auxLong").append(k).append(" DD ? \n");
+            auxRet.append("@auxLong").append(k).append(" DD ? \n");
         }
         for (int k=1; k<=AnalizadorSintactico.contadorAuxSingle;k++) {
-            codigoAssemblerFinal.append("@auxSingle").append(k).append(" DQ ? \n");
+            auxRet.append("@auxSingle").append(k).append(" DQ ? \n");
         }
+        return auxRet;
     }
     
     public static void labels () {

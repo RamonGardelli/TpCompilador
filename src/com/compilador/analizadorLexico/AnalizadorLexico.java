@@ -606,7 +606,9 @@ public class AnalizadorLexico {
                     break;
 
                 default:
-                    listaDeErrores.add("ERROR Linea " + numLinea + ": caracter invalido \"" + archivo.charAt(indexArchivo) + "\"");
+                    if (estado != 4 ){
+                        listaDeErrores.add("ERROR Linea " + numLinea + ": caracter invalido \"" + archivo.charAt(indexArchivo) + "\"");
+                    }
                     //System.out.println("CHAR NO DETECTADO : " + archivo.charAt(indexArchivo) );
                     indexArchivo++;
                     break;

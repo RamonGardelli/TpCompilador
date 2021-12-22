@@ -1,16 +1,31 @@
-prog
+ejemplo
 
-LONG mipito, b,c,d;
+LONG x;
 
-LONG FUNC X (LONG c)
+LONG FUNC funcion ( LONG x )
+
+       LONG z;
+
+       BEGIN
+
+             z:= 2 + x ;
+
+              RETURN ( z );
+
+       END
+
+ 
+
 BEGIN
-b:= X(c);
-RETURN (4);
-END
 
-BEGIN
-	d:=1;
-	mipito:=X(c);
-	c:=mipito+d;
-	b:=c/mipito;
+      
+
+       x := 3;
+
+       PRINT(x);
+
+       x := funcion(x);
+
+       PRINT(x);
+
 END

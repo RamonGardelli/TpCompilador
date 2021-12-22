@@ -1,16 +1,31 @@
-prog
+ejemplo
 
-LONG a, b,c,d;
+LONG x;
 
-LONG FUNC X (LONG c)
+LONG FUNC funcion ( LONG x )
+
+       LONG z;
+
+       BEGIN
+
+             z:= 2 + x ;
+
+              RETURN ( z );
+
+       END
+
+ 
+
 BEGIN
-b:= X(c);
-RETURN (4);
-END
 
-BEGIN
-	d:=1;
-	a:=X(c);
-	c:=a+d;
-	b:=c/a;
+      
+
+       x := 3;
+
+       PRINT(x);
+
+       x := funcion(x);
+
+       PRINT(x);
+
 END

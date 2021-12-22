@@ -70,9 +70,7 @@ bloqueEjecutableFunc: BEGIN sentEjecutableFunc RETURN '(' retorno ')' ';' END
             {
                 $$ = new ParserVal(new Nodo("BF",(Nodo)$2.obj,(Nodo)$5.obj));
             }
-            |BEGIN RETURN '(' retorno ')' ';' END {
-                $$ = new ParserVal(new Nodo("BF",null,(Nodo)$4.obj));
-            }
+		    | BEGIN RETURN '(' retorno ')'  ';' END {AnalizadorSintactico.agregarError("error falta bloque ejecutable (Linea " + AnalizadorLexico.numLinea + ")");}
 		    | sentEjecutableFunc RETURN '(' retorno ')' END {AnalizadorSintactico.agregarError("error falta BEGIN (Linea " + AnalizadorLexico.numLinea + ")");}
 		    | BEGIN sentEjecutableFunc '(' retorno ')' END {AnalizadorSintactico.agregarError("error falta RETURN (Linea " + AnalizadorLexico.numLinea + ")");}
 		    | BEGIN sentEjecutableFunc RETURN  retorno ')' END {AnalizadorSintactico.agregarError("error falta '(' (Linea " + AnalizadorLexico.numLinea + ")");}
@@ -187,6 +185,7 @@ declaraFunc: declaracionFunc bloqueDeclarativo bloqueEjecutableFunc {
 	         
 	        $$=new ParserVal (new Nodo($1.sval+AnalizadorSintactico.ambitoActual, (Nodo)$2.obj, null));
 	   }
+	   
 	   ;
 
 declaraVarFunc:  encabezadoFunc listaVariables ';' {AnalizadorSintactico.agregarAnalisis("Declaracion de variable. (Linea " + AnalizadorLexico.numLinea + ")");
@@ -382,7 +381,7 @@ declaracionFunc : tipo FUNC ID '(' parametro ')' {AnalizadorSintactico.agregarAn
 		|FUNC ID '(' parametro ')' {AnalizadorSintactico.agregarError("error falta tipo (Linea " + AnalizadorLexico.numLinea + ")");}
 		|tipo ID '(' parametro ')' {AnalizadorSintactico.agregarError("error falta FUNC (Linea " + AnalizadorLexico.numLinea + ")");}
 		|tipo FUNC ID parametro ')' {AnalizadorSintactico.agregarError("error falta '(' (Linea " + AnalizadorLexico.numLinea + ")");}
-		|tipo FUNC ID '(' parametro error {AnalizadorSintactico.agregarError("error falta ')' (Linea " + AnalizadorLexico.numLinea + ")");}
+		|tipo FUNC ID '(' parametro error {AnalizadorSintactico.agregarError("error falta ')' (Linea " + AnalizadorLexico.numLinea + ")");} 
 		;
 
 
