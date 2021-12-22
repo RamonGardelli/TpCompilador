@@ -60,7 +60,7 @@ public class TDSObject {
         this.tipoVariable = tipoVariable;
     }
 
-    public String imprimir(){
+    public String toString(){
         return  " Tipo Variable: "+ tipoVariable + "|| TIPO Contenido: " + tipoContenido + "|| CONT REF: " + contRef;
     }
 

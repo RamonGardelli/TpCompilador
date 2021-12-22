@@ -14,11 +14,11 @@ import java.util.*;
 
 public class AnalizadorSintactico {
 
-    public static String codigoAssembler = "";
+    public static StringBuilder codigoAssembler = new StringBuilder();
     
-    public static String codigoAssemblerFinal = "";
-    
-    public static String variablesCodigoAssembler = " ";
+    public static StringBuilder codigoAssemblerFinal = new StringBuilder();
+
+    public static StringBuilder variablesCodigoAssembler = new StringBuilder();
 
     public static ArrayList<String> listaAnalisis = new ArrayList<>();
 
@@ -87,10 +87,10 @@ public class AnalizadorSintactico {
             if (args.length != 0 || true) {
 
                 //File filex = new File(args[0]);
-            	File filex = new File("C:\\Users\\Admin\\Desktop\\prueba\\prueba.txt");
+            	//File filex = new File("C:\\Users\\Admin\\Desktop\\prueba\\prueba.txt");
                 //File filex = new File(args[0]);
             	//File filex = new File("C:\\Users\\Admin\\Desktop\\prueba\\prueba.txt");
-                //File filex = new File("C:\\Users\\ramon\\IdeaProjects\\TpCompilador\\archivos\\programa\\testprograma.txt");
+                File filex = new File("C:\\Users\\ramon\\IdeaProjects\\TpCompilador\\archivos\\programa\\testprograma.txt");
 
 
                 String originalPath = filex.getAbsoluteFile().getParent() + File.separator;
@@ -150,49 +150,50 @@ public class AnalizadorSintactico {
                 ArrayList<String> tdsData = new ArrayList<>();
                 HashMap<String, TDSObject> data = AnalizadorLexico.tablaDeSimbolos;
                 data.forEach((k, v) -> {
-                    tdsData.add("Lexema: " + k + " | " + v.imprimir());
+                    tdsData.add("Lexema: " + k + " | " + v.toString());
                 });
                 Files.write(file3, tdsData, StandardCharsets.UTF_8);
 
                 if (!errorPrograma) {        	
                 	try {
                 		obtenerFunciones();
-                        imprimirArbol(arbol);
-                    	//imprimirArbol(arbolFunc);
+                        toString(arbol);
+                    	//toString(arbolFunc);
                         System.out.println(" ");
                         Registro r1 = new Registro("EAX");
                         Registro r2 = new Registro("EBX");
                         Registro r3 = new Registro("ECX");
                         Registro r4 = new Registro("EDX");
                         Registro[] r = {r1, r2, r3, r4};
-                        codigoAssembler+="\n";
+                        codigoAssembler.append("\n");
                         creacionAssembler();
                         arbol.generarCodigo(r);
-                        String codigoprograma = codigoAssembler;
-                        codigoAssembler="";
+                        StringBuilder codigoprograma = new StringBuilder(codigoAssembler);
+                        codigoAssembler.setLength(0);
                         memoriaPrograma();
-                        codigoAssemblerFinal+=variablesCodigoAssembler;
-                        codigoAssemblerFinal+="\n";
-                        codigoAssemblerFinal+=(".code");
-                        codigoAssemblerFinal+="\n";
+                        codigoAssemblerFinal.append(variablesCodigoAssembler);
+                        codigoAssemblerFinal.append("\n");
+                        codigoAssemblerFinal.append(".code");
+                        codigoAssemblerFinal.append("\n");
                         arbolFunciones(arbolFunc, r);
-                        codigoAssemblerFinal+=codigoAssembler;
-                        codigoAssembler="";
-                        codigoAssemblerFinal+=("start:");
-                        codigoAssemblerFinal+="\n";
-                        codigoAssemblerFinal+=codigoprograma;
-                        codigoAssemblerFinal+="\n";
-                        codigoAssemblerFinal+="JMP @LABEL_END";
-                        codigoAssemblerFinal+="\n";
+                        codigoAssemblerFinal.append(codigoAssembler);
+                        codigoAssembler.setLength(0);
+                        codigoAssemblerFinal.append("\n");
+                        codigoAssemblerFinal.append("start:");
+                        codigoAssemblerFinal.append("\n");
+                        codigoAssemblerFinal.append(codigoprograma);
+                        codigoAssemblerFinal.append("\n");
+                        codigoAssemblerFinal.append("JMP @LABEL_END");
+                        codigoAssemblerFinal.append("\n");
                         labels();
-                        codigoAssemblerFinal+="invoke ExitProcess, 0";
-                        codigoAssemblerFinal+="\n";
-                        codigoAssemblerFinal+="end start";
+                        codigoAssemblerFinal.append("invoke ExitProcess, 0");
+                        codigoAssemblerFinal.append("\n");
+                        codigoAssemblerFinal.append("end start");
                         System.out.println(codigoAssemblerFinal);
                         String archivoasm = originalPath + fileName + "_assembly.asm";
                         Path fileasm = Paths.get(archivoasm);
                         ArrayList<String> auxasm = new ArrayList<>();
-                        auxasm.add(codigoAssemblerFinal);
+                        auxasm.add(codigoAssemblerFinal.toString());
                         Files.write(fileasm, auxasm, StandardCharsets.UTF_8);
                 	}
                 	catch(IOException e) {
@@ -210,51 +211,51 @@ public class AnalizadorSintactico {
 
     }
 
-    public static void imprimirArbol(Nodo n) {
+    public static void toString(Nodo n) {
         if (n != null) {
-            imprimirArbol(n.getLeft());
+            toString(n.getLeft());
             System.out.printf(n.getRef());
-            imprimirArbol(n.getRight());
+            toString(n.getRight());
         }
     }
 
     public static void creacionAssembler() {
-    	codigoAssemblerFinal+=(".386");
-    	codigoAssemblerFinal+="\n";
-    	codigoAssemblerFinal+=(".model flat, stdcall");
-    	codigoAssemblerFinal+="\n";
-    	codigoAssemblerFinal+=("option casemap :none");
-    	codigoAssemblerFinal+="\n";
-        codigoAssemblerFinal+=("include \\masm32\\include\\windows.inc");
-        codigoAssemblerFinal+="\n";
-        codigoAssemblerFinal+=("include \\masm32\\include\\kernel32.inc");
-        codigoAssemblerFinal+="\n";
-        codigoAssemblerFinal+=("include \\masm32\\include\\user32.inc");
-        codigoAssemblerFinal+="\n";
-        codigoAssemblerFinal+=("includelib \\masm32\\lib\\kernel32.lib");
-        codigoAssemblerFinal+="\n";
-        codigoAssemblerFinal+=("includelib \\masm32\\lib\\user32.lib");
-        codigoAssemblerFinal+="\n";
-        codigoAssemblerFinal+="\n";
-    	codigoAssemblerFinal+=(".data");
-        codigoAssemblerFinal+="\n";
+    	codigoAssemblerFinal.append(".386");
+    	codigoAssemblerFinal.append("\n");
+    	codigoAssemblerFinal.append(".model flat, stdcall");
+        codigoAssemblerFinal.append("\n");
+    	codigoAssemblerFinal.append("option casemap :none");
+        codigoAssemblerFinal.append("\n");
+        codigoAssemblerFinal.append("include \\masm32\\include\\windows.inc");
+        codigoAssemblerFinal.append("\n");
+        codigoAssemblerFinal.append("include \\masm32\\include\\kernel32.inc");
+        codigoAssemblerFinal.append("\n");
+        codigoAssemblerFinal.append("include \\masm32\\include\\user32.inc");
+        codigoAssemblerFinal.append("\n");
+        codigoAssemblerFinal.append("includelib \\masm32\\lib\\kernel32.lib");
+        codigoAssemblerFinal.append("\n");
+        codigoAssemblerFinal.append("includelib \\masm32\\lib\\user32.lib");
+        codigoAssemblerFinal.append("\n");
+        codigoAssemblerFinal.append("\n");
+    	codigoAssemblerFinal.append(".data");
+        codigoAssemblerFinal.append("\n");
     }
     
     public static void arbolFunciones(Nodo arbol, Registro r[]) {
     	if(arbol!=null) {
 	    	if (arbol.getLeft()!=null) {
-	    		codigoAssemblerFinal+=(arbol.getLeft().getRef()+":");
+	    		codigoAssemblerFinal.append(arbol.getLeft().getRef()).append(":\n");
 	    		int aux = AnalizadorSintactico.flagsFunc.get(arbol.getLeft().getRef());
-	    		AnalizadorSintactico.codigoAssembler += ("CMP _funcFlag_" + aux + ", 1");
-	    		AnalizadorSintactico.codigoAssembler += ("\n");
-	    		AnalizadorSintactico.codigoAssembler += ("JE @LABEL_RECURSION");
-	    		AnalizadorSintactico.codigoAssembler += ("\n");
-	    		AnalizadorSintactico.codigoAssembler += ("MOV _funcFlag_" + aux + ", 1");
-	    		AnalizadorSintactico.codigoAssembler += ("\n");
+	    		AnalizadorSintactico.codigoAssembler.append("CMP _funcFlag_").append(aux).append(", 1");
+	    		AnalizadorSintactico.codigoAssembler.append("\n");
+	    		AnalizadorSintactico.codigoAssembler.append("JE @LABEL_RECURSION");
+	    		AnalizadorSintactico.codigoAssembler.append("\n");
+	    		AnalizadorSintactico.codigoAssembler.append("MOV _funcFlag_").append(aux).append(", 1");
+	    		AnalizadorSintactico.codigoAssembler.append("\n");
 	        	arbol.getLeft().generarCodigo(r);
-	    		AnalizadorSintactico.codigoAssembler += ("MOV _funcFlag_" + aux + ", 0\n");
-	    		codigoAssembler+=("ret");
-	    		codigoAssembler+="\n";
+	    		AnalizadorSintactico.codigoAssembler.append("MOV _funcFlag_").append(aux).append(", 0\n");
+	    		codigoAssembler.append("ret");
+	    		codigoAssembler.append("\n");
 	    	}
 	    	if (arbol.getRight()!=null) {
 	        	arbolFunciones(arbol.getRight(), r);
@@ -263,10 +264,10 @@ public class AnalizadorSintactico {
     }
     
     public static void memoriaPrograma() {
-    	 codigoAssemblerFinal+="msj_division_cero db \" ERROR, el divisor es igual a cero. No se puede proceder con la operacion \",0\n";
-         codigoAssemblerFinal+="msj_overflow_producto db \"ERROR, se detecto overflow. No se puede proceder con la operacion\",0\n";
-         codigoAssemblerFinal+="msj_recursion db \"ERROR, se detecto una recursion. No se puede proceder con la operacion\",0\n";
-         codigoAssemblerFinal+="aux_mem_2bytes dw ?\n";
+    	 codigoAssemblerFinal.append("msj_division_cero db \" ERROR, el divisor es igual a cero. No se puede proceder con la operacion \",0\n");
+         codigoAssemblerFinal.append("msj_overflow_producto db \"ERROR, se detecto overflow. No se puede proceder con la operacion\",0\n");
+         codigoAssemblerFinal.append("msj_recursion db \"ERROR, se detecto una recursion. No se puede proceder con la operacion\",0\n");
+         codigoAssemblerFinal.append("aux_mem_2bytes dw ?\n");
          
          AnalizadorLexico.tablaDeSimbolos.entrySet().forEach(entry->{
  			if (entry.getValue().getTipoVariable()=="CADENA") {
@@ -275,71 +276,71 @@ public class AnalizadorSintactico {
                  if(aux.charAt(0) != '_'){
                      aux = "_"+ aux;
                  }
- 	 			codigoAssemblerFinal+=("cad"+aux+" DB "+"\""+entry.getKey()+"\",0"+"\n");
+ 	 			codigoAssemblerFinal.append("cad").append(aux).append(" DB ").append("\"").append(entry.getKey()).append("\",0\n");
 				}
  			else {
  			String auxValor=entry.getKey();
  			auxValor=auxValor.replace(".", "_");
             auxValor=auxValor.replace("-", "_");
- 			codigoAssemblerFinal+=("_"+auxValor);  
+ 			codigoAssemblerFinal.append("_").append(auxValor);
 	 			if (entry.getValue().getTipoVariable()=="ID") {
 	 				if(entry.getValue().getTipoContenido()=="LONG") {
-	 					codigoAssemblerFinal+=" DD ? \n";
+	 					codigoAssemblerFinal.append(" DD ? \n");
 	 				}
 	 				else {
-	 					codigoAssemblerFinal+=" DQ ? \n";
+	 					codigoAssemblerFinal.append(" DQ ? \n");
 	 				}
 	 			}
 	 			else if (entry.getValue().getTipoVariable()=="SINGLE") {
 	 				String aux = entry.getKey();
 	 				if (entry.getKey().charAt(0) == '_')
 	                    aux = "0" + aux;
-	 				codigoAssemblerFinal+=" DQ "+aux+"\n";
+	 				codigoAssemblerFinal.append(" DQ ").append(aux).append("\n");
 	 			}
 		 			else if (entry.getValue().getTipoVariable()=="LONG") {
-		 				codigoAssemblerFinal+=" DD "+entry.getKey()+"\n";
+		 				codigoAssemblerFinal.append(" DD ").append(entry.getKey()).append("\n");
 		 			}
  			}
 	 		}); 
          	flagsFunc.entrySet().forEach(entry->{
-     			codigoAssemblerFinal+=("_funcFlag_"+entry.getValue());  
-				codigoAssemblerFinal+=" DB 0 \n";
+     			codigoAssemblerFinal.append("_funcFlag_").append(entry.getValue());
+				codigoAssemblerFinal.append(" DB 0 \n");
  	 		}); 
          	
         	flagsFunc.entrySet().forEach(entry->{
-     			codigoAssemblerFinal+=("_retFunc_"+entry.getValue());  
+     			codigoAssemblerFinal.append("_retFunc_").append(entry.getValue());
      			if (AnalizadorLexico.tablaDeSimbolos.get(entry.getKey()).getTipoContenido()=="LONG")
-     				codigoAssemblerFinal+=" DD ? \n";
+     				codigoAssemblerFinal.append(" DD ? \n");
      			else
-     				codigoAssemblerFinal+=" DQ ? \n";
+     				codigoAssemblerFinal.append(" DQ ? \n");
  	 		}); 
         	for (int k=1; k<=AnalizadorSintactico.contadorAuxLong;k++) {
-        		codigoAssemblerFinal+="@auxLong"+k+ " DD ? \n";
+        		codigoAssemblerFinal.append("@auxLong").append(k).append(" DD ? \n");
         	}
         	for (int k=1; k<=AnalizadorSintactico.contadorAuxSingle;k++) {
-        		codigoAssemblerFinal+="@auxSingle"+k+ " DQ ? \n";
+        		codigoAssemblerFinal.append("@auxSingle").append(k).append(" DQ ? \n");
         	}
 	}
     
     public static void labels () {
-    	codigoAssemblerFinal+="@LABEL_OVF:";
-        codigoAssemblerFinal+="\n";
-        codigoAssemblerFinal+="invoke MessageBox, NULL, addr msj_overflow_producto, addr msj_overflow_producto, MB_OK";
-        codigoAssemblerFinal+="\n";
-        codigoAssemblerFinal+="JMP @LABEL_END";
-        codigoAssemblerFinal+="\n";
-        codigoAssemblerFinal+="@LABEL_RECURSION:";
-        codigoAssemblerFinal+="\n";
-        codigoAssemblerFinal+="invoke MessageBox, NULL, addr msj_recursion, addr msj_recursion, MB_OK";
-        codigoAssemblerFinal+="\n";
-        codigoAssemblerFinal+="JMP @LABEL_END";
-        codigoAssemblerFinal+="\n";
-        codigoAssemblerFinal+="@LABEL_DIVCERO:";
-        codigoAssemblerFinal+="\n";
-        codigoAssemblerFinal+="invoke MessageBox, NULL, addr msj_division_cero, addr msj_division_cero, MB_OK";
-        codigoAssemblerFinal+="\n";
-        codigoAssemblerFinal+="@LABEL_END:";
-        codigoAssemblerFinal+="\n";	
+    	codigoAssemblerFinal.append("@LABEL_OVF:");
+        codigoAssemblerFinal.append("\n");
+        codigoAssemblerFinal.append("invoke MessageBox, NULL, addr msj_overflow_producto, addr msj_overflow_producto, MB_OK");
+        codigoAssemblerFinal.append("\n");
+        codigoAssemblerFinal.append("JMP @LABEL_END");
+        codigoAssemblerFinal.append("\n");
+        codigoAssemblerFinal.append("@LABEL_RECURSION:");
+        codigoAssemblerFinal.append("\n");
+        codigoAssemblerFinal.append("invoke MessageBox, NULL, addr msj_recursion, addr msj_recursion, MB_OK");
+        codigoAssemblerFinal.append("\n");
+        codigoAssemblerFinal.append("JMP @LABEL_END");
+        codigoAssemblerFinal.append("\n");
+        codigoAssemblerFinal.append("@LABEL_DIVCERO:");
+        codigoAssemblerFinal.append("\n");
+        codigoAssemblerFinal.append("invoke MessageBox, NULL, addr msj_division_cero, addr msj_division_cero, MB_OK");
+        codigoAssemblerFinal.append("\n");
+        codigoAssemblerFinal.append("@LABEL_END:");
+        codigoAssemblerFinal.append("\n");
     }
     
     public static void obtenerFunciones() {

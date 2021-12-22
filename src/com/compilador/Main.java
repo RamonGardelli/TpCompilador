@@ -34,7 +34,7 @@ public class Main {
                 System.out.println("No hay entradas en la tabla de simbolos.");
             }
             data.forEach((k,v)->{
-                System.out.println("RefID: " + k + "Data: " + v.imprimir());
+                System.out.println("RefID: " + k + "Data: " + v.toString());
             });
             Vector<String> errores= AnalizadorLexico.listaDeErrores;
             Vector<String> warn= AnalizadorLexico.listaDeWarnings;

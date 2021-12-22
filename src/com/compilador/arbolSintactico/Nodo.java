@@ -95,8 +95,8 @@ public class Nodo {
                 AnalizadorSintactico.contadorLabel++;
                 String aux = "@Label_" + AnalizadorSintactico.contadorLabel;
                 AnalizadorSintactico.pilaLabels.push(aux);
-                AnalizadorSintactico.codigoAssembler += (aux);
-                AnalizadorSintactico.codigoAssembler += ("\n");
+                AnalizadorSintactico.codigoAssembler.append(aux);
+                AnalizadorSintactico.codigoAssembler.append("\n");
             }
 
             if ((this.left.EsHoja()) && (!this.right.EsHoja())) {
@@ -140,29 +140,29 @@ public class Nodo {
         			if(aux.charAt(0) != '_'){
                         aux = "_"+ aux;
                     }
-                    AnalizadorSintactico.codigoAssembler += ("invoke MessageBox, NULL, addr " +"cad"+ aux + ", addr " + "cad" + aux + ", MB_OK"+"\n");
+                    AnalizadorSintactico.codigoAssembler.append("invoke MessageBox, NULL, addr ").append("cad").append(aux).append(", addr ").append("cad").append(aux).append(", MB_OK\n");
         		}
         		else {
-                     AnalizadorSintactico.codigoAssembler += ("invoke MessageBox, NULL, addr _" + aux + ", addr _" + aux + ", MB_OK"+"\n");
+                     AnalizadorSintactico.codigoAssembler.append("invoke MessageBox, NULL, addr _").append(aux).append(", addr _").append(aux).append(", MB_OK\n");
         		}
             } 
         	
             if (this.getRef() == "Else") {
                 AnalizadorSintactico.contadorLabel++;
                 String aux = "@Label_" + AnalizadorSintactico.contadorLabel;
-                AnalizadorSintactico.codigoAssembler += ("JMP " + aux);
-                AnalizadorSintactico.codigoAssembler += ("\n");
-                AnalizadorSintactico.codigoAssembler += (AnalizadorSintactico.pilaLabels.pop()+":");
+                AnalizadorSintactico.codigoAssembler.append("JMP " + aux);
+                AnalizadorSintactico.codigoAssembler.append("\n");
+                AnalizadorSintactico.codigoAssembler.append(AnalizadorSintactico.pilaLabels.pop()).append(":");
                 AnalizadorSintactico.pilaLabels.push(aux);
-                AnalizadorSintactico.codigoAssembler += ("\n");
+                AnalizadorSintactico.codigoAssembler.append("\n");
                 this.left.generarCodigo(r);
-                AnalizadorSintactico.codigoAssembler += ("\n");
-                AnalizadorSintactico.codigoAssembler += (AnalizadorSintactico.pilaLabels.pop()+":");
+                AnalizadorSintactico.codigoAssembler.append("\n");
+                AnalizadorSintactico.codigoAssembler.append(AnalizadorSintactico.pilaLabels.pop()).append(":");
             } else {
                 if (this.getLeft() != null) {
                     if (this.getLeft().getRef() == "Then") {
                         this.left.generarCodigo(r);
-                        AnalizadorSintactico.codigoAssembler += (AnalizadorSintactico.pilaLabels.pop()+":");
+                        AnalizadorSintactico.codigoAssembler.append(AnalizadorSintactico.pilaLabels.pop()).append(":");
                     } else if (this.getLeft().getRef() == "BF") {
                         this.left.getLeft().generarCodigo(r);
                         if (this.getLeft().getRight() != null) {
@@ -173,25 +173,25 @@ public class Nodo {
                             	
                             	if (this.getLeft().getRight().isRegistro()){
                             		
-                                    AnalizadorSintactico.codigoAssembler += ("MOV _retFunc_" + aux + ", " + this.getLeft().getRight().getRef());
-                                    AnalizadorSintactico.codigoAssembler += ("\n");
+                                    AnalizadorSintactico.codigoAssembler.append("MOV _retFunc_").append(aux).append(", ").append(this.getLeft().getRight().getRef());
+                                    AnalizadorSintactico.codigoAssembler.append("\n");
                                 }else{
                                 	int j = this.registroLibre(r);
                                 	String auxValor = this.getLeft().getRight().getRef();
                                 	auxValor=auxValor.replace(".", "_");
-                                    AnalizadorSintactico.codigoAssembler += ("MOV " + r[j].getNombre() + ", _" + auxValor);
-                                    AnalizadorSintactico.codigoAssembler += ("\n");
-                                    AnalizadorSintactico.codigoAssembler += ("MOV _retFunc_" + aux + ", " + r[j].getNombre());
-                                    AnalizadorSintactico.codigoAssembler += ("\n");
+                                    AnalizadorSintactico.codigoAssembler.append("MOV ").append(r[j].getNombre()).append(", _").append(auxValor);
+                                    AnalizadorSintactico.codigoAssembler.append("\n");
+                                    AnalizadorSintactico.codigoAssembler.append("MOV _retFunc_").append(aux).append(", ").append(r[j].getNombre());
+                                    AnalizadorSintactico.codigoAssembler.append("\n");
                                     r[j].setLibre(true);
                                 }}
                             else if  (this.getLeft().getRight().getTipo()=="SINGLE") {
                             	String auxValor = this.getLeft().getRight().getRef();
                             	auxValor=auxValor.replace(".", "_");
-                                AnalizadorSintactico.codigoAssembler += ("FLD _" + auxValor);
-                                AnalizadorSintactico.codigoAssembler += ("\n");
-                                AnalizadorSintactico.codigoAssembler += ("FSTP _retFunc_" + aux);
-                                AnalizadorSintactico.codigoAssembler += ("\n");
+                                AnalizadorSintactico.codigoAssembler.append("FLD _").append(auxValor);
+                                AnalizadorSintactico.codigoAssembler.append("\n");
+                                AnalizadorSintactico.codigoAssembler.append("FSTP _retFunc_").append(aux);
+                                AnalizadorSintactico.codigoAssembler.append("\n");
 
                             }
                         }
@@ -208,8 +208,8 @@ public class Nodo {
         String izquierda = this.left.getRef();
 
         if (this.ref == "LF") {
-            AnalizadorSintactico.codigoAssembler += ("CALL " + this.getLeft().getRef());
-            AnalizadorSintactico.codigoAssembler += "\n";
+            AnalizadorSintactico.codigoAssembler.append("CALL ").append(this.getLeft().getRef());
+            AnalizadorSintactico.codigoAssembler.append("\n");
         }
         
         if (!this.left.isRegistro()) {
@@ -226,78 +226,78 @@ public class Nodo {
         int j = this.registroLibre(reg);
         
         if (r == ":=") {
-            AnalizadorSintactico.codigoAssembler += ("MOV " + reg[j].getNombre() + ", " + derecha);
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("MOV " + izquierda + ", " + reg[j].getNombre());
-            AnalizadorSintactico.codigoAssembler += ("\n");
+            AnalizadorSintactico.codigoAssembler.append("MOV ").append(reg[j].getNombre()).append(", ").append(derecha);
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            AnalizadorSintactico.codigoAssembler.append("MOV ").append(izquierda).append(", ").append(reg[j].getNombre());
+            AnalizadorSintactico.codigoAssembler.append("\n");
 
             
         } else if (r == "+") {
         	AnalizadorSintactico.contadorAuxLong++;
             i = AnalizadorSintactico.contadorAuxLong;
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("MOV " + reg[j].getNombre() + ", " + izquierda);
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("ADD " + reg[j].getNombre() +", "+ derecha);
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("MOV " + "@auxLong" + i+", " + reg[j].getNombre());
-            AnalizadorSintactico.codigoAssembler += ("\n");
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            AnalizadorSintactico.codigoAssembler.append("MOV ").append(reg[j].getNombre()).append(", ").append(izquierda);
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            AnalizadorSintactico.codigoAssembler.append("ADD ").append(reg[j].getNombre()).append(", ").append(derecha);
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxLong").append(i).append(", ").append(reg[j].getNombre());
+            AnalizadorSintactico.codigoAssembler.append("\n");
 
         } else if (r == "*") {
            	AnalizadorSintactico.contadorAuxLong++;
             i = AnalizadorSintactico.contadorAuxLong;
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("MOV " + reg[j].getNombre() + ", " + izquierda);
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("IMUL " + reg[j].getNombre() + ", " + derecha);
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("MOV " + "@auxLong" + i+", " + reg[j].getNombre());
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("JO @LABEL_OVF");  
-            AnalizadorSintactico.codigoAssembler += ("\n");
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            AnalizadorSintactico.codigoAssembler.append("MOV ").append(reg[j].getNombre()).append(", ").append(izquierda);
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            AnalizadorSintactico.codigoAssembler.append("IMUL ").append(reg[j].getNombre()).append(", ").append(derecha);
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxLong").append(i).append(", ").append(reg[j].getNombre());
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            AnalizadorSintactico.codigoAssembler.append("JO @LABEL_OVF");
+            AnalizadorSintactico.codigoAssembler.append("\n");
 
         } else if (r == "-") {
            	AnalizadorSintactico.contadorAuxLong++;
             i = AnalizadorSintactico.contadorAuxLong;
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("MOV " + reg[j].getNombre() + ", " + izquierda);
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("SUB " + reg[j].getNombre() + ", "+derecha);
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("MOV " + "@auxLong" + i+", " + reg[j].getNombre());
-            AnalizadorSintactico.codigoAssembler += ("\n");
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            AnalizadorSintactico.codigoAssembler.append("MOV ").append(reg[j].getNombre()).append(", ").append(izquierda);
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            AnalizadorSintactico.codigoAssembler.append("SUB ").append(reg[j].getNombre()).append(", ").append(derecha);
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxLong").append(i).append(", ").append(reg[j].getNombre());
+            AnalizadorSintactico.codigoAssembler.append("\n");
 
         } else if (r == "/") {
            	AnalizadorSintactico.contadorAuxLong++;
             i = AnalizadorSintactico.contadorAuxLong;
-        	AnalizadorSintactico.codigoAssembler += ("MOV EAX" + ", " + izquierda);
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("CMP " + derecha + ", 0");
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("JE @LABEL_DIVCERO");
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("CDQ");
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("IDIV " + derecha);
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("MOV " + "@auxLong" + i + ", EAX");
-            AnalizadorSintactico.codigoAssembler += ("\n");
+        	AnalizadorSintactico.codigoAssembler.append("MOV EAX, ").append(izquierda);
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            AnalizadorSintactico.codigoAssembler .append("CMP ").append(derecha).append(", 0");
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            AnalizadorSintactico.codigoAssembler.append("JE @LABEL_DIVCERO");
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            AnalizadorSintactico.codigoAssembler.append("CDQ");
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            AnalizadorSintactico.codigoAssembler.append("IDIV ").append(derecha);
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxLong").append(i).append(", EAX");
+            AnalizadorSintactico.codigoAssembler.append("\n");
 
         } else if ((r == "==") || (r == ">=") || (r == "<=") || (r == "<>") || (r == ">") || (r == "<")) {
         	
-            AnalizadorSintactico.codigoAssembler += ("MOV " + reg[j].getNombre() + ", " + izquierda);
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("CMP " + reg[j].getNombre() + ", " + derecha);
-            AnalizadorSintactico.codigoAssembler += ("\n");
+            AnalizadorSintactico.codigoAssembler.append("MOV ").append(reg[j].getNombre()).append(", ").append(izquierda);
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            AnalizadorSintactico.codigoAssembler.append("CMP ").append(reg[j].getNombre()).append(", ").append(derecha);
+            AnalizadorSintactico.codigoAssembler.append("\n");
 
             if (r == "==") {
                	AnalizadorSintactico.contadorAuxLong++;
                 i = AnalizadorSintactico.contadorAuxLong;
                 String aux = "@Label_" + AnalizadorSintactico.contadorLabel;
                 AnalizadorSintactico.pilaLabels.push(aux);
-                AnalizadorSintactico.codigoAssembler += ("\n");
-                AnalizadorSintactico.codigoAssembler += ("JNE " + aux);
-                AnalizadorSintactico.codigoAssembler += ("\n");
+                AnalizadorSintactico.codigoAssembler.append("\n");
+                AnalizadorSintactico.codigoAssembler.append("JNE ").append(aux);
+                AnalizadorSintactico.codigoAssembler.append("\n");
 
             }
             if (r == ">=") {
@@ -305,9 +305,9 @@ public class Nodo {
                 i = AnalizadorSintactico.contadorAuxLong;
                 String aux = "@Label_" + AnalizadorSintactico.contadorLabel;
                 AnalizadorSintactico.pilaLabels.push(aux);
-                AnalizadorSintactico.codigoAssembler += ("\n");
-                AnalizadorSintactico.codigoAssembler += ("JL " + aux);
-                AnalizadorSintactico.codigoAssembler += ("\n");
+                AnalizadorSintactico.codigoAssembler.append("\n");
+                AnalizadorSintactico.codigoAssembler.append("JL ").append(aux);
+                AnalizadorSintactico.codigoAssembler.append("\n");
 
             }
 
@@ -316,9 +316,9 @@ public class Nodo {
                 i = AnalizadorSintactico.contadorAuxLong;
                 String aux = "@Label_" + AnalizadorSintactico.contadorLabel;
                 AnalizadorSintactico.pilaLabels.push(aux);
-                AnalizadorSintactico.codigoAssembler += ("\n");
-                AnalizadorSintactico.codigoAssembler += ("JG " + aux);
-                AnalizadorSintactico.codigoAssembler += ("\n");
+                AnalizadorSintactico.codigoAssembler.append("\n");
+                AnalizadorSintactico.codigoAssembler.append("JG ").append(aux);
+                AnalizadorSintactico.codigoAssembler.append("\n");
 
             }
             if (r == "<>") {
@@ -326,9 +326,9 @@ public class Nodo {
                 i = AnalizadorSintactico.contadorAuxLong;
                 String aux = "@Label_" + AnalizadorSintactico.contadorLabel;
                 AnalizadorSintactico.pilaLabels.push(aux);
-                AnalizadorSintactico.codigoAssembler += ("\n");
-                AnalizadorSintactico.codigoAssembler += ("JE " + aux);
-                AnalizadorSintactico.codigoAssembler += ("\n");
+                AnalizadorSintactico.codigoAssembler.append("\n");
+                AnalizadorSintactico.codigoAssembler.append("JE ").append(aux);
+                AnalizadorSintactico.codigoAssembler.append("\n");
 
             }
 
@@ -337,9 +337,9 @@ public class Nodo {
                 i = AnalizadorSintactico.contadorAuxLong;
                 String aux = "@Label_" + AnalizadorSintactico.contadorLabel;
                 AnalizadorSintactico.pilaLabels.push(aux);
-                AnalizadorSintactico.codigoAssembler += ("\n");
-                AnalizadorSintactico.codigoAssembler += ("JBE " + aux);
-                AnalizadorSintactico.codigoAssembler += ("\n");
+                AnalizadorSintactico.codigoAssembler.append("\n");
+                AnalizadorSintactico.codigoAssembler.append("JBE ").append(aux);
+                AnalizadorSintactico.codigoAssembler.append("\n");
 
             }
 
@@ -348,19 +348,19 @@ public class Nodo {
                 i = AnalizadorSintactico.contadorAuxLong;
                 String aux = "@Label_" + AnalizadorSintactico.contadorLabel;
                 AnalizadorSintactico.pilaLabels.push(aux);
-                AnalizadorSintactico.codigoAssembler += ("\n");
-                AnalizadorSintactico.codigoAssembler += ("JGE " + aux);
-                AnalizadorSintactico.codigoAssembler += ("\n");
+                AnalizadorSintactico.codigoAssembler.append("\n");
+                AnalizadorSintactico.codigoAssembler.append("JGE ").append(aux);
+                AnalizadorSintactico.codigoAssembler.append("\n");
 
             }
         } else if (r == "WHILE") {
             String aux1 = (AnalizadorSintactico.pilaLabels.pop());
             String aux2 = (AnalizadorSintactico.pilaLabels.pop());
-            AnalizadorSintactico.codigoAssembler += ("JMP " + aux2);
-            AnalizadorSintactico.codigoAssembler += ("\n");
+            AnalizadorSintactico.codigoAssembler.append("JMP ").append(aux2);
+            AnalizadorSintactico.codigoAssembler.append("\n");
 
-            AnalizadorSintactico.codigoAssembler += (aux1);
-            AnalizadorSintactico.codigoAssembler += ("\n");
+            AnalizadorSintactico.codigoAssembler.append(aux1);
+            AnalizadorSintactico.codigoAssembler.append("\n");
 
             
         }
@@ -379,12 +379,12 @@ public class Nodo {
         
         
         if (derecha == "LF") {
-            AnalizadorSintactico.codigoAssembler += ("CALL " + this.right.getLeft().getRef());
-            AnalizadorSintactico.codigoAssembler += "\n";
+            AnalizadorSintactico.codigoAssembler.append("CALL ").append(this.right.getLeft().getRef());
+            AnalizadorSintactico.codigoAssembler.append("\n");
         }
         if (izquierda == "LF") {
-            AnalizadorSintactico.codigoAssembler += ("CALL " + this.left.getLeft().getRef());
-            AnalizadorSintactico.codigoAssembler += "\n";
+            AnalizadorSintactico.codigoAssembler.append("CALL ").append(this.left.getLeft().getRef());
+            AnalizadorSintactico.codigoAssembler.append("\n");
         }
         
 
@@ -419,27 +419,27 @@ public class Nodo {
         } else if (r == "/") {
             this.imprimirDivision(derecha, izquierda);
         } else if ((r == "==") || (r == ">=") || (r == "<=") || (r == "<>") || (r == ">") || (r == "<")) {
-            AnalizadorSintactico.codigoAssembler += ("FLD " + izquierda);
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("FLD " + derecha);
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("FCOM ");
-            AnalizadorSintactico.codigoAssembler += ("\n");
+            AnalizadorSintactico.codigoAssembler.append("FLD ").append(izquierda);
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            AnalizadorSintactico.codigoAssembler.append("FLD ").append(derecha);
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            AnalizadorSintactico.codigoAssembler.append("FCOM ");
+            AnalizadorSintactico.codigoAssembler.append("\n");
 
             if (r == "==") {
                 AnalizadorSintactico.contadorLabel++;
                 String aux = "@Label_" + AnalizadorSintactico.contadorLabel;
                 AnalizadorSintactico.pilaLabels.push(aux);
-                AnalizadorSintactico.codigoAssembler += ("JNE " + aux+":");
-                AnalizadorSintactico.codigoAssembler += ("\n");
+                AnalizadorSintactico.codigoAssembler.append("JNE ").append(aux);
+                AnalizadorSintactico.codigoAssembler.append("\n");
 
             }
             if (r == ">=") {
                 AnalizadorSintactico.contadorLabel++;
                 String aux = "@Label_" + AnalizadorSintactico.contadorLabel;
                 AnalizadorSintactico.pilaLabels.push(aux);
-                AnalizadorSintactico.codigoAssembler += ("JL " + aux+":");
-                AnalizadorSintactico.codigoAssembler += ("\n");
+                AnalizadorSintactico.codigoAssembler.append("JL ").append(aux);
+                AnalizadorSintactico.codigoAssembler.append("\n");
 
             }
 
@@ -447,17 +447,17 @@ public class Nodo {
                 AnalizadorSintactico.contadorLabel++;
                 String aux = "@Label_" + AnalizadorSintactico.contadorLabel;
                 AnalizadorSintactico.pilaLabels.push(aux);
-                AnalizadorSintactico.codigoAssembler += ("JG " + aux+":");
-                AnalizadorSintactico.codigoAssembler += ("\n");
+                AnalizadorSintactico.codigoAssembler.append("JG ").append(aux);
+                AnalizadorSintactico.codigoAssembler.append("\n");
 
             }
             if (r == "<>") {
                 AnalizadorSintactico.contadorLabel++;
                 String aux = "@Label_" + AnalizadorSintactico.contadorLabel;
                 AnalizadorSintactico.pilaLabels.push(aux+":");
-                AnalizadorSintactico.codigoAssembler += ("\n");
-                AnalizadorSintactico.codigoAssembler += ("JE " + aux+":");
-                AnalizadorSintactico.codigoAssembler += ("\n");
+                AnalizadorSintactico.codigoAssembler.append("\n");
+                AnalizadorSintactico.codigoAssembler.append("JE ").append(aux);
+                AnalizadorSintactico.codigoAssembler.append("\n");
 
             }
 
@@ -465,9 +465,9 @@ public class Nodo {
                 AnalizadorSintactico.contadorLabel++;
                 String aux = "@Label_" + AnalizadorSintactico.contadorLabel;
                 AnalizadorSintactico.pilaLabels.push(aux);
-                AnalizadorSintactico.codigoAssembler += ("\n");
-                AnalizadorSintactico.codigoAssembler += ("JBE " + aux+":");
-                AnalizadorSintactico.codigoAssembler += ("\n");
+                AnalizadorSintactico.codigoAssembler.append("\n");
+                AnalizadorSintactico.codigoAssembler.append("JBE ").append(aux);
+                AnalizadorSintactico.codigoAssembler.append("\n");
 
             }
 
@@ -475,9 +475,9 @@ public class Nodo {
                 AnalizadorSintactico.contadorLabel++;
                 String aux = "@Label_" + AnalizadorSintactico.contadorLabel;
                 AnalizadorSintactico.pilaLabels.push(aux);
-                AnalizadorSintactico.codigoAssembler += ("\n");
-                AnalizadorSintactico.codigoAssembler += ("JGE " + aux);
-                AnalizadorSintactico.codigoAssembler += ("\n");
+                AnalizadorSintactico.codigoAssembler.append("\n");
+                AnalizadorSintactico.codigoAssembler.append("JGE ").append(aux);
+                AnalizadorSintactico.codigoAssembler.append("\n");
 
             }
 
@@ -486,10 +486,10 @@ public class Nodo {
             String aux1 = (AnalizadorSintactico.pilaLabels.pop());
             String aux2 = (AnalizadorSintactico.pilaLabels.pop());
             aux2.replace(":", " ");
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("JMP " + aux2);
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += (aux1);
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            AnalizadorSintactico.codigoAssembler.append("JMP ").append(aux2);
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            AnalizadorSintactico.codigoAssembler.append(aux1);
         } 
 
         
@@ -511,75 +511,75 @@ public class Nodo {
     }
 
     private void imprimirAsignacion(String derecha, String izquierda) {
-            AnalizadorSintactico.codigoAssembler += ("FLD " + derecha);
-            AnalizadorSintactico.codigoAssembler += ("\n");
-            AnalizadorSintactico.codigoAssembler += ("FSTP " + izquierda);
-            AnalizadorSintactico.codigoAssembler += ("\n");
+            AnalizadorSintactico.codigoAssembler.append("FLD ").append(derecha);
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            AnalizadorSintactico.codigoAssembler.append("FSTP ").append(izquierda);
+            AnalizadorSintactico.codigoAssembler.append("\n");
 
     }
 
     private void imprimirSuma(String derecha, String izquierda) {
     	AnalizadorSintactico.contadorAuxSingle++;
     	int i=AnalizadorSintactico.contadorAuxSingle;
-        AnalizadorSintactico.codigoAssembler += ("FLD " + izquierda);
-        AnalizadorSintactico.codigoAssembler += ("\n");
-        AnalizadorSintactico.codigoAssembler += ("FLD " + derecha);
-        AnalizadorSintactico.codigoAssembler += ("\n");
-        AnalizadorSintactico.codigoAssembler += ("FADD");
-        AnalizadorSintactico.codigoAssembler += ("\n");
-        AnalizadorSintactico.codigoAssembler += ("FSTP @auxSingle"+i);
-        AnalizadorSintactico.codigoAssembler += ("\n");
+        AnalizadorSintactico.codigoAssembler.append("FLD ").append(izquierda);
+        AnalizadorSintactico.codigoAssembler.append("\n");
+        AnalizadorSintactico.codigoAssembler.append("FLD ").append(derecha);
+        AnalizadorSintactico.codigoAssembler.append("\n");
+        AnalizadorSintactico.codigoAssembler.append("FADD");
+        AnalizadorSintactico.codigoAssembler.append("\n");
+        AnalizadorSintactico.codigoAssembler.append("FSTP @auxSingle").append(i);
+        AnalizadorSintactico.codigoAssembler.append("\n");
 
     }
 
     private void imprimirResta(String derecha, String izquierda) {
     	AnalizadorSintactico.contadorAuxSingle++;
     	int i=AnalizadorSintactico.contadorAuxSingle;  
-        AnalizadorSintactico.codigoAssembler += ("FLD  " + izquierda);
-        AnalizadorSintactico.codigoAssembler += ("FLD " + derecha);
-        AnalizadorSintactico.codigoAssembler += ("\n");
-        AnalizadorSintactico.codigoAssembler += ("FSUB"); 
-        AnalizadorSintactico.codigoAssembler += ("\n");
-        AnalizadorSintactico.codigoAssembler += ("FSTP @auxSingle"+i);
-        AnalizadorSintactico.codigoAssembler += ("\n");
+        AnalizadorSintactico.codigoAssembler.append("FLD  ").append(izquierda);
+        AnalizadorSintactico.codigoAssembler.append("FLD ").append(derecha);
+        AnalizadorSintactico.codigoAssembler.append("\n");
+        AnalizadorSintactico.codigoAssembler.append("FSUB"); 
+        AnalizadorSintactico.codigoAssembler.append("\n");
+        AnalizadorSintactico.codigoAssembler.append("FSTP @auxSingle").append(i);
+        AnalizadorSintactico.codigoAssembler.append("\n");
 
     }
 
     private void imprimirMultiplicacion(String derecha, String izquierda) {
     	AnalizadorSintactico.contadorAuxSingle++;
     	int i=AnalizadorSintactico.contadorAuxSingle;  
-        AnalizadorSintactico.codigoAssembler += ("FLD " + izquierda);
-        AnalizadorSintactico.codigoAssembler += ("\n");
-        AnalizadorSintactico.codigoAssembler += ("FLD " + derecha);
-        AnalizadorSintactico.codigoAssembler += ("\n");
-        AnalizadorSintactico.codigoAssembler += ("FMUL");
-        AnalizadorSintactico.codigoAssembler += ("\n");
-        AnalizadorSintactico.codigoAssembler += ("FSTP @auxSingle"+i);
-        AnalizadorSintactico.codigoAssembler += ("\n");
+        AnalizadorSintactico.codigoAssembler.append("FLD ").append(izquierda);
+        AnalizadorSintactico.codigoAssembler.append("\n");
+        AnalizadorSintactico.codigoAssembler.append("FLD ").append(derecha);
+        AnalizadorSintactico.codigoAssembler.append("\n");
+        AnalizadorSintactico.codigoAssembler.append("FMUL");
+        AnalizadorSintactico.codigoAssembler.append("\n");
+        AnalizadorSintactico.codigoAssembler.append("FSTP @auxSingle").append(i);
+        AnalizadorSintactico.codigoAssembler.append("\n");
 
     }
 
     private void imprimirDivision(String derecha, String izquierda) {
     	AnalizadorSintactico.contadorAuxSingle++;
     	int i=AnalizadorSintactico.contadorAuxSingle;
-        AnalizadorSintactico.codigoAssembler += ("FLD " + izquierda);
-        AnalizadorSintactico.codigoAssembler += ("\n");
-        AnalizadorSintactico.codigoAssembler += ("FLD " + derecha);
-        AnalizadorSintactico.codigoAssembler += ("\n");
-        AnalizadorSintactico.codigoAssembler += ("FTST");
-        AnalizadorSintactico.codigoAssembler += ("\n");
-        AnalizadorSintactico.codigoAssembler += ("FSTSW aux_mem_2bytes");
-        AnalizadorSintactico.codigoAssembler += ("\n");
-        AnalizadorSintactico.codigoAssembler += ("MOV AX , aux_mem_2bytes");
-        AnalizadorSintactico.codigoAssembler += ("\n");
-        AnalizadorSintactico.codigoAssembler += ("SAHF");
-        AnalizadorSintactico.codigoAssembler += ("\n");
-        AnalizadorSintactico.codigoAssembler += ("JE @LABEL_DIVCERO");
-        AnalizadorSintactico.codigoAssembler += ("\n");
-        AnalizadorSintactico.codigoAssembler += ("FDIV");    
-        AnalizadorSintactico.codigoAssembler += ("\n");
-        AnalizadorSintactico.codigoAssembler += ("FSTP @auxSingle"+i);
-        AnalizadorSintactico.codigoAssembler += ("\n");
+        AnalizadorSintactico.codigoAssembler.append("FLD ").append(izquierda);
+        AnalizadorSintactico.codigoAssembler.append("\n");
+        AnalizadorSintactico.codigoAssembler.append("FLD ").append(derecha);
+        AnalizadorSintactico.codigoAssembler.append("\n");
+        AnalizadorSintactico.codigoAssembler.append("FTST");
+        AnalizadorSintactico.codigoAssembler.append("\n");
+        AnalizadorSintactico.codigoAssembler.append("FSTSW aux_mem_2bytes");
+        AnalizadorSintactico.codigoAssembler.append("\n");
+        AnalizadorSintactico.codigoAssembler.append("MOV AX , aux_mem_2bytes");
+        AnalizadorSintactico.codigoAssembler.append("\n");
+        AnalizadorSintactico.codigoAssembler.append("SAHF");
+        AnalizadorSintactico.codigoAssembler.append("\n");
+        AnalizadorSintactico.codigoAssembler.append("JE @LABEL_DIVCERO");
+        AnalizadorSintactico.codigoAssembler.append("\n");
+        AnalizadorSintactico.codigoAssembler.append("FDIV");
+        AnalizadorSintactico.codigoAssembler.append("\n");
+        AnalizadorSintactico.codigoAssembler.append("FSTP @auxSingle").append(i);
+        AnalizadorSintactico.codigoAssembler.append("\n");
 
         
     }
