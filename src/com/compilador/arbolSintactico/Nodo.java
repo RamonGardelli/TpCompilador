@@ -211,7 +211,17 @@ public class Nodo {
         String izquierda = this.left.getRef();
 
         if (this.ref == "LF") {
+            String parametroName = (AnalizadorLexico.tablaDeSimbolos.get(this.getLeft().getRef())).getNombreParametro();
+            AnalizadorSintactico.codigoAssembler.append("MOV EAX").append(", _").append(this.getRight().getRef());
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            AnalizadorSintactico.codigoAssembler.append("MOV _").append(parametroName).append(", ").append("EAX");
+            AnalizadorSintactico.codigoAssembler.append("\n");
             AnalizadorSintactico.codigoAssembler.append("CALL ").append(this.getLeft().getRef());
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            int aux = AnalizadorSintactico.flagsFunc.get(this.getLeft().getRef());
+            AnalizadorSintactico.codigoAssembler.append("MOV EAX").append(", ").append("_retFunc_").append(aux);
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            AnalizadorSintactico.codigoAssembler.append("MOV _").append(this.getRight().getRef()).append(", ").append("EAX");
             AnalizadorSintactico.codigoAssembler.append("\n");
         }
         
@@ -381,7 +391,17 @@ public class Nodo {
         String derecha = this.right.getRef();
         
         if (this.ref == "LF") {
+            String parametroName = (AnalizadorLexico.tablaDeSimbolos.get(this.getLeft().getRef())).getNombreParametro();
+            AnalizadorSintactico.codigoAssembler.append("MOV EAX").append(", _").append(this.getRight().getRef());
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            AnalizadorSintactico.codigoAssembler.append("MOV _").append(parametroName).append(", ").append("EAX");
+            AnalizadorSintactico.codigoAssembler.append("\n");
             AnalizadorSintactico.codigoAssembler.append("CALL ").append(this.getLeft().getRef());
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            int aux = AnalizadorSintactico.flagsFunc.get(this.getLeft().getRef());
+            AnalizadorSintactico.codigoAssembler.append("MOV EAX").append(", ").append("_retFunc_").append(aux);
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            AnalizadorSintactico.codigoAssembler.append("MOV _").append(this.getRight().getRef()).append(", ").append("EAX");
             AnalizadorSintactico.codigoAssembler.append("\n");
         }
         

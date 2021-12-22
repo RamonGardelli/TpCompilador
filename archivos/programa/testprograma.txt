@@ -7,7 +7,7 @@ LONG FUNC funcion ( LONG x )
        LONG z;
 
        BEGIN
-
+		PRINT(x);
              z:= 2 + x ;
 
               RETURN ( z );
