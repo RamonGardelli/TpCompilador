@@ -149,20 +149,20 @@ public class Nodo {
         	
             if (this.getRef() == "Else") {
                 AnalizadorSintactico.contadorLabel++;
-                String aux = "@Label_" + AnalizadorSintactico.contadorLabel+":";
+                String aux = "@Label_" + AnalizadorSintactico.contadorLabel;
                 AnalizadorSintactico.codigoAssembler += ("JMP " + aux);
                 AnalizadorSintactico.codigoAssembler += ("\n");
-                AnalizadorSintactico.codigoAssembler += (AnalizadorSintactico.pilaLabels.pop());
+                AnalizadorSintactico.codigoAssembler += (AnalizadorSintactico.pilaLabels.pop()+":");
                 AnalizadorSintactico.pilaLabels.push(aux);
                 AnalizadorSintactico.codigoAssembler += ("\n");
                 this.left.generarCodigo(r);
                 AnalizadorSintactico.codigoAssembler += ("\n");
-                AnalizadorSintactico.codigoAssembler += (AnalizadorSintactico.pilaLabels.pop());
+                AnalizadorSintactico.codigoAssembler += (AnalizadorSintactico.pilaLabels.pop()+":");
             } else {
                 if (this.getLeft() != null) {
                     if (this.getLeft().getRef() == "Then") {
                         this.left.generarCodigo(r);
-                        AnalizadorSintactico.codigoAssembler += (AnalizadorSintactico.pilaLabels.pop());
+                        AnalizadorSintactico.codigoAssembler += (AnalizadorSintactico.pilaLabels.pop()+":");
                     } else if (this.getLeft().getRef() == "BF") {
                         this.left.getLeft().generarCodigo(r);
                         if (this.getLeft().getRight() != null) {
@@ -430,7 +430,7 @@ public class Nodo {
                 AnalizadorSintactico.contadorLabel++;
                 String aux = "@Label_" + AnalizadorSintactico.contadorLabel;
                 AnalizadorSintactico.pilaLabels.push(aux);
-                AnalizadorSintactico.codigoAssembler += ("JNE " + aux);
+                AnalizadorSintactico.codigoAssembler += ("JNE " + aux+":");
                 AnalizadorSintactico.codigoAssembler += ("\n");
 
             }
@@ -438,7 +438,7 @@ public class Nodo {
                 AnalizadorSintactico.contadorLabel++;
                 String aux = "@Label_" + AnalizadorSintactico.contadorLabel;
                 AnalizadorSintactico.pilaLabels.push(aux);
-                AnalizadorSintactico.codigoAssembler += ("JL " + aux);
+                AnalizadorSintactico.codigoAssembler += ("JL " + aux+":");
                 AnalizadorSintactico.codigoAssembler += ("\n");
 
             }
@@ -447,16 +447,16 @@ public class Nodo {
                 AnalizadorSintactico.contadorLabel++;
                 String aux = "@Label_" + AnalizadorSintactico.contadorLabel;
                 AnalizadorSintactico.pilaLabels.push(aux);
-                AnalizadorSintactico.codigoAssembler += ("JG " + aux);
+                AnalizadorSintactico.codigoAssembler += ("JG " + aux+":");
                 AnalizadorSintactico.codigoAssembler += ("\n");
 
             }
             if (r == "<>") {
                 AnalizadorSintactico.contadorLabel++;
                 String aux = "@Label_" + AnalizadorSintactico.contadorLabel;
-                AnalizadorSintactico.pilaLabels.push(aux);
+                AnalizadorSintactico.pilaLabels.push(aux+":");
                 AnalizadorSintactico.codigoAssembler += ("\n");
-                AnalizadorSintactico.codigoAssembler += ("JE " + aux);
+                AnalizadorSintactico.codigoAssembler += ("JE " + aux+":");
                 AnalizadorSintactico.codigoAssembler += ("\n");
 
             }
@@ -466,7 +466,7 @@ public class Nodo {
                 String aux = "@Label_" + AnalizadorSintactico.contadorLabel;
                 AnalizadorSintactico.pilaLabels.push(aux);
                 AnalizadorSintactico.codigoAssembler += ("\n");
-                AnalizadorSintactico.codigoAssembler += ("JBE " + aux);
+                AnalizadorSintactico.codigoAssembler += ("JBE " + aux+":");
                 AnalizadorSintactico.codigoAssembler += ("\n");
 
             }
@@ -485,6 +485,7 @@ public class Nodo {
         } else if (r == "WHILE") {
             String aux1 = (AnalizadorSintactico.pilaLabels.pop());
             String aux2 = (AnalizadorSintactico.pilaLabels.pop());
+            aux2.replace(":", " ");
             AnalizadorSintactico.codigoAssembler += ("\n");
             AnalizadorSintactico.codigoAssembler += ("JMP " + aux2);
             AnalizadorSintactico.codigoAssembler += ("\n");
