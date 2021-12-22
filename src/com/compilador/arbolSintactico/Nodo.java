@@ -167,7 +167,7 @@ public class Nodo {
                         this.left.generarCodigo(r);
                         AnalizadorSintactico.codigoAssembler.append(AnalizadorSintactico.pilaLabels.pop()).append(":");
                     } else if (this.getLeft().getRef() == "BF") {
-                        this.left.getLeft().generarCodigo(r);
+                        	this.left.getLeft().generarCodigo(r);
                         if (this.getLeft().getRight() != null) {
                             this.left.getRight().generarCodigo(r);
                             int aux = AnalizadorSintactico.flagsFunc.get(this.getRef());
@@ -359,7 +359,7 @@ public class Nodo {
         } else if (r == "WHILE") {
             String aux1 = (AnalizadorSintactico.pilaLabels.pop());
             String aux2 = (AnalizadorSintactico.pilaLabels.pop());
-            AnalizadorSintactico.codigoAssembler.append("JMP ").append(aux2);
+            AnalizadorSintactico.codigoAssembler.append("JMP ").append(aux2+":");
             AnalizadorSintactico.codigoAssembler.append("\n");
 
             AnalizadorSintactico.codigoAssembler.append(aux1);
@@ -380,17 +380,11 @@ public class Nodo {
         String izquierda = this.left.getRef();
         String derecha = this.right.getRef();
         
-        
-        if (derecha == "LF") {
-            AnalizadorSintactico.codigoAssembler.append("CALL ").append(this.right.getLeft().getRef());
-            AnalizadorSintactico.codigoAssembler.append("\n");
-        }
-        if (izquierda == "LF") {
-            AnalizadorSintactico.codigoAssembler.append("CALL ").append(this.left.getLeft().getRef());
+        if (this.ref == "LF") {
+            AnalizadorSintactico.codigoAssembler.append("CALL ").append(this.getLeft().getRef());
             AnalizadorSintactico.codigoAssembler.append("\n");
         }
         
-
         if (!this.left.isRegistro()) {
             izquierda = "_" + izquierda;
         }
@@ -496,7 +490,7 @@ public class Nodo {
             String aux2 = (AnalizadorSintactico.pilaLabels.pop());
             aux2.replace(":", " ");
             AnalizadorSintactico.codigoAssembler.append("\n");
-            AnalizadorSintactico.codigoAssembler.append("JMP ").append(aux2);
+            AnalizadorSintactico.codigoAssembler.append("JMP ").append(aux2+":");
             AnalizadorSintactico.codigoAssembler.append("\n");
             AnalizadorSintactico.codigoAssembler.append(aux1);
         } 
