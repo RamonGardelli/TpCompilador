@@ -10,7 +10,7 @@ LONG FUNC f (LONG x)
 
              x := x +z;
 
-             
+              CONTRACT: (z > 3);
 
              z := x;
 

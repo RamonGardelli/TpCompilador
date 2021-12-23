@@ -230,8 +230,10 @@ public class Nodo {
                             if (this.getLeft().getRight().getTipo()=="LONG") {
                             	
                             	if (this.getLeft().getRight().isRegistro()){
-                            		
-                                    AnalizadorSintactico.codigoAssembler.append("MOV _retFunc_").append(aux).append(", ").append(this.getLeft().getRight().getRef());
+
+                                    AnalizadorSintactico.codigoAssembler.append("MOV EAX, ").append("_retFunc_").append(aux);
+                                    AnalizadorSintactico.codigoAssembler.append("\n");
+                                    AnalizadorSintactico.codigoAssembler.append("MOV _retFunc_").append(aux).append(", EAX");
                                     AnalizadorSintactico.codigoAssembler.append("\n");
                                 }else{
                                 	int j = this.registroLibre(r);
@@ -758,7 +760,6 @@ public class Nodo {
                 this.right.generarCodigoAndOr(r);
             }   
             else if ((this.right.getTipo() == "LONG") || (this.left.getTipo() == "LONG")) {
-            	System.out.println("MI TIPO ES: "+this.ref);
                 int i = AnalizadorSintactico.contadorAuxLong;
                 this.creacionCodigoLongAndOr(this.ref, i, r);
 	            } else if ((this.right.getTipo() == "SINGLE") || (this.left.getTipo() == "SINGLE")) {

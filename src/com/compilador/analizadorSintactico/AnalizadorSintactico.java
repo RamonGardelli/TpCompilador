@@ -94,10 +94,10 @@ public class AnalizadorSintactico {
     public static void main(String[] args) {
 
         try {
-            if (args.length != 0 || true) {
+            if (args.length != 0) {
 
-                //File filex = new File(args[0]);
-            	File filex = new File("C:\\Users\\Admin\\Desktop\\prueba\\prueba.txt");
+                File filex = new File(args[0]);
+            	//File filex = new File("C:\\Users\\Admin\\Desktop\\prueba\\prueba.txt");
                 //File filex = new File(args[0]);
             	//File filex = new File("C:\\Users\\ramon\\IdeaProjects\\TpCompilador\\archivos\\programa\\testprograma.txt");
 

@@ -134,8 +134,9 @@ sentenciaCONTRACT: CONTRACT ':' condicion  ';' {
 
             AnalizadorSintactico.agregarAnalisis("sent contract (Linea " + AnalizadorLexico.numLinea + ")");
             if($3.obj == null)
+            	System.out.println("COndicion = null \n\n\n\n");
                 break;
-            $$ =  new ParserVal(new Nodo("CONTRACT",(Nodo)$4.obj,null));
+            $$ =  new ParserVal(new Nodo("CONTRACT",(Nodo)$3.obj,null));
             ((Nodo)$$.obj).setContract(true);
             }
 		 | CONTRACT '(' condicion ')' ';'{AnalizadorSintactico.agregarError("error falta ':' (Linea " + AnalizadorLexico.numLinea + ")");}
@@ -725,12 +726,12 @@ condicion: '(' comparaciones ')' {
 				$$ = new ParserVal(new Nodo("Cond", (Nodo)$2.obj, null));}
 	 ;
 
-comparaciones: comparaciones opLogico comparacion {
+comparaciones:  comparacion opLogico comparaciones {
 				if ($1.obj != null || $3.obj != null){
-					$$ = new ParserVal (new Nodo($2.sval,(Nodo)$3.obj, (Nodo)$1.obj ));}
+					$$ = new ParserVal (new Nodo($2.sval,(Nodo)$1.obj, (Nodo)$3.obj ));}
 			}		
 	     | comparacion {$$=$1;}
-	     | comparaciones opLogico error {AnalizadorSintactico.agregarError("opLogico de mas (Linea " + AnalizadorLexico.numLinea + ")");}
+	     | opLogico comparaciones {AnalizadorSintactico.agregarError("opLogico de mas (Linea " + AnalizadorLexico.numLinea + ")");}
 	     ;
 
 comparacion: expAritmetica comparador expAritmetica
