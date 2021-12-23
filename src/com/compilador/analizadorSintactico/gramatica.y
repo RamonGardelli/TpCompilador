@@ -134,8 +134,9 @@ sentenciaCONTRACT: CONTRACT ':' condicion  ';' {
 
             AnalizadorSintactico.agregarAnalisis("sent contract (Linea " + AnalizadorLexico.numLinea + ")");
             if($3.obj == null)
+            	System.out.println("COndicion = null \n\n\n\n");
                 break;
-            $$ =  new ParserVal(new Nodo("CONTRACT",(Nodo)$4.obj,null));
+            $$ =  new ParserVal(new Nodo("CONTRACT",(Nodo)$3.obj,null));
             ((Nodo)$$.obj).setContract(true);
             }
 		 | CONTRACT '(' condicion ')' ';'{AnalizadorSintactico.agregarError("error falta ':' (Linea " + AnalizadorLexico.numLinea + ")");}

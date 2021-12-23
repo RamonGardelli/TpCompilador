@@ -108,7 +108,18 @@ public class Nodo {
 
     public void generarCodigo(Registro r[]) {
 
-        if (!(this.right == null)) {
+        if (this.ref == "TC") {
+    		this.left.generarCodigo(r);
+    		AnalizadorSintactico.codigoAssembler.append("JMP @LabelTryCatch");
+    		AnalizadorSintactico.codigoAssembler.append("\n");
+    		AnalizadorSintactico.codigoAssembler.append("@LabelCatch:");
+    		AnalizadorSintactico.codigoAssembler.append("\n");
+    		this.right.generarCodigo(r);
+    		AnalizadorSintactico.codigoAssembler.append("@LabelTryCatch:");
+    		AnalizadorSintactico.codigoAssembler.append("\n");
+    	}
+    	
+        else if (!(this.right == null)) {
             if (this.ref == "WHILE") {
                 AnalizadorSintactico.contadorLabel++;
                 String aux = "@Label_" + AnalizadorSintactico.contadorLabel;
@@ -116,6 +127,7 @@ public class Nodo {
                 AnalizadorSintactico.codigoAssembler.append(aux);
                 AnalizadorSintactico.codigoAssembler.append("\n");
             }
+           
 
             if ((this.left.EsHoja()) && (!this.right.EsHoja())) {
                 this.right.generarCodigo(r);
@@ -169,8 +181,12 @@ public class Nodo {
                   this.left.creacionCodigoSingle(this.left.ref, r);
               }
           }
-        	
-        	
+        	else if (this.ref=="CONTRACT") {
+        		this.left.generarCodigo(r);
+        		String auxLabel = ("@Label_" + AnalizadorSintactico.contadorLabel);
+                int posData = AnalizadorSintactico.codigoAssembler.lastIndexOf(auxLabel);
+                AnalizadorSintactico.codigoAssembler.replace(posData, posData+auxLabel.length(), "@LabelCatch");
+        	}	
         	else if (this.ref == "PRINT") {
  		        String aux = left.ref.replace(" ", "_");
         		if (this.left.getTipo()=="CADENA") {
@@ -179,7 +195,7 @@ public class Nodo {
                         aux = "_"+ aux;
                     }
                     int id = AnalizadorSintactico.idCadenas.get(aux);
-                    AnalizadorSintactico.codigoAssembler.append("invoke MessageBox, NULL, addr ").append("cad_").append(id).append(", addr ").append("cad_").append(id).append(", MB_OK\n");
+                    AnalizadorSintactico.codigoAssembler.append("invoke printf, cfm$(\"%s\\n\"),OFFSET ").append("cad_").append(id).append("\n");    
         		}
         		else if (this.left.getTipo().equals("ID-SINGLE")  || this.left.getTipo().equals("CTE-SINGLE") ){
                      AnalizadorSintactico.codigoAssembler.append("invoke printf, cfm$(\"%.20Lf\\n\"), _").append(aux).append("\n");
@@ -199,7 +215,8 @@ public class Nodo {
                 this.left.generarCodigo(r);
                 AnalizadorSintactico.codigoAssembler.append("\n");
                 AnalizadorSintactico.codigoAssembler.append(AnalizadorSintactico.pilaLabels.pop()).append(":");
-            } else {
+            }
+              	else {
                 if (this.getLeft() != null) {
                     if (this.getLeft().getRef() == "Then") {
                         this.left.generarCodigo(r);
