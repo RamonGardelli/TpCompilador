@@ -8,6 +8,7 @@ public class TDSObject {
     private float valor;
     private boolean esFuncion = false;
     private String nombreParametro;
+    private boolean tieneContract=false;
     
     
     
@@ -27,6 +28,13 @@ public class TDSObject {
         this.esFuncion = esFuncion;
     }
 
+    public boolean checkContract(){
+        return this.tieneContract;
+    }
+
+    public void setContract(boolean state){
+        this.tieneContract =state;
+    }
 
 
     public String getTipoParametro() {

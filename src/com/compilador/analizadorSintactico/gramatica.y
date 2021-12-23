@@ -47,12 +47,26 @@ bloqueDeclarativo:bloqueDeclarativo sentenciasDeclarativas
 bloqueEjecutable : bloqueEjecutableNormal {$$=$1;}
 				 ;
 
-bloqueTRYCATCH: TRY sentenciaCONTRACT CATCH BEGIN sentSoloEjecutables END {$$= new ParserVal (new Nodo("TC", (Nodo)$2.obj, (Nodo)$5.obj));}
-	      | sentenciaCONTRACT CATCH BEGIN sentSoloEjecutables END {AnalizadorSintactico.agregarError("error: falta TRY en (Linea " + AnalizadorLexico.numLinea + ")");}
+bloqueTRYCATCH: TRY sentSoloEjecutables CATCH BEGIN sentSoloEjecutables END {
+                                    			    if(((Nodo)$2.obj).checkContract()){
+                                        		        //((Nodo)$$.obj).setFuncContract(((Nodo)$2.obj).checkFuncContract());
+                                        		        //((Nodo)$$.obj).setContract(true);
+                                        		         $$= new ParserVal (new Nodo("TC", (Nodo)$2.obj, (Nodo)$5.obj));
+
+                                        		    }else{
+                                        		    if(AnalizadorSintactico.listaErroresSintacticos.size() == 0){
+                                        		                                            		    AnalizadorSintactico.agregarError("error: No se permite TRY Catch sin contract (Linea " + AnalizadorLexico.numLinea + ")");
+
+                                        		    }
+                                        		    }
+            //$$= new ParserVal (new Nodo("TC", (Nodo)$2.obj, (Nodo)$5.obj));
+
+            }
+	      //| sentSoloEjecutables CATCH BEGIN sentSoloEjecutables END {AnalizadorSintactico.agregarError("error: falta TRY en (Linea " + AnalizadorLexico.numLinea + ")");}
 	      | TRY CATCH BEGIN sentSoloEjecutables END {AnalizadorSintactico.agregarError("error TRY vacio (Linea " + AnalizadorLexico.numLinea + ")");}
-	      | TRY sentenciaCONTRACT BEGIN sentSoloEjecutables END {AnalizadorSintactico.agregarError("error falta CATCH (Linea " + AnalizadorLexico.numLinea + ")");}
-	      | TRY sentenciaCONTRACT CATCH sentSoloEjecutables END {AnalizadorSintactico.agregarError("error falta BEGIN (Linea " + AnalizadorLexico.numLinea + ")");}
-	      | TRY sentenciaCONTRACT CATCH BEGIN sentSoloEjecutables error {AnalizadorSintactico.agregarError("error falta END (Linea " + AnalizadorLexico.numLinea + ")");}
+	      | TRY sentSoloEjecutables BEGIN sentSoloEjecutables END {AnalizadorSintactico.agregarError("error falta CATCH (Linea " + AnalizadorLexico.numLinea + ")");}
+	      | TRY sentSoloEjecutables CATCH sentSoloEjecutables END {AnalizadorSintactico.agregarError("error falta BEGIN (Linea " + AnalizadorLexico.numLinea + ")");}
+	      | TRY sentSoloEjecutables CATCH BEGIN sentSoloEjecutables error {AnalizadorSintactico.agregarError("error falta END (Linea " + AnalizadorLexico.numLinea + ")");}
 	      ;
 		  
 
@@ -69,6 +83,9 @@ bloqueEjecutableNormal: BEGIN sentSoloEjecutables END
 bloqueEjecutableFunc: BEGIN sentEjecutableFunc RETURN '(' retorno ')' ';' END
             {
                 $$ = new ParserVal(new Nodo("BF",(Nodo)$2.obj,(Nodo)$5.obj));
+                                        if(((Nodo)$2.obj).checkContract()){
+                                            ((Nodo)$$.obj).setContract(true);
+                                        }
             }
 		    | BEGIN RETURN '(' retorno ')'  ';' END {AnalizadorSintactico.agregarError("error falta bloque ejecutable (Linea " + AnalizadorLexico.numLinea + ")");}
 		    | sentEjecutableFunc RETURN '(' retorno ')' END {AnalizadorSintactico.agregarError("error falta BEGIN (Linea " + AnalizadorLexico.numLinea + ")");}
@@ -82,9 +99,19 @@ bloqueEjecutableFunc: BEGIN sentEjecutableFunc RETURN '(' retorno ')' ';' END
 
 sentEjecutableFunc: sentEjecutablesFunc sentEjecutableFunc
                 { if (($1.obj != null) && ($2.obj != null))
-                     {$$= new ParserVal(new Nodo("S", (Nodo)$1.obj, (Nodo)$2.obj));}
-                  else if(($2.obj == null)) {$$= new ParserVal(new Nodo("S", (Nodo)$1.obj, null));}
-                       else if (($1.obj == null)) {$$= new ParserVal(new Nodo("S", null, (Nodo)$2.obj));}
+                     {$$= new ParserVal(new Nodo("S", (Nodo)$1.obj, (Nodo)$2.obj));
+                                             if(((Nodo)$1.obj).checkContract() || ((Nodo)$2.obj).checkContract()  ){
+                                                 ((Nodo)$$.obj).setContract(true);
+
+                                             }
+                     }
+                  else if(($2.obj == null)) {$$= new ParserVal(new Nodo("S", (Nodo)$1.obj, null));
+                                          if(((Nodo)$1.obj).checkContract()){
+                                              ((Nodo)$$.obj).setContract(true);
+                                          }
+                  }
+                       else if (($1.obj == null)) {$$= new ParserVal(new Nodo("S", null, (Nodo)$2.obj));
+}
                 }
           | sentEjecutablesFunc
                   {
@@ -92,12 +119,15 @@ sentEjecutableFunc: sentEjecutablesFunc sentEjecutableFunc
                        $$= new ParserVal(new Nodo("S",null, null));
                     }else{
                         $$= new ParserVal(new Nodo("S",((Nodo)$1.obj), null));
+                        if(((Nodo)$1.obj).checkContract()){
+                            ((Nodo)$$.obj).setContract(true);
+                        }
                     }
                   }
           ;
 
 sentEjecutablesFunc: sentEjecutables { $$ = $1; }
-          | bloqueTRYCATCH { $$ = $1; }
+          | sentenciaCONTRACT { $$ = $1; }
           ;
 
 sentenciaCONTRACT: CONTRACT ':' condicion  ';' {
@@ -106,6 +136,7 @@ sentenciaCONTRACT: CONTRACT ':' condicion  ';' {
             if($3.obj == null)
                 break;
             $$ =  new ParserVal(new Nodo("CONTRACT",(Nodo)$4.obj,null));
+            ((Nodo)$$.obj).setContract(true);
             }
 		 | CONTRACT '(' condicion ')' ';'{AnalizadorSintactico.agregarError("error falta ':' (Linea " + AnalizadorLexico.numLinea + ")");}
 		 | CONTRACT ':' condicion ')' ';'{AnalizadorSintactico.agregarError("error falta '(' (Linea " + AnalizadorLexico.numLinea + ")");}
@@ -119,7 +150,17 @@ sentenciaCONTRACT: CONTRACT ':' condicion  ';' {
 sentSoloEjecutables : sentEjecutables sentSoloEjecutables
                 { if (($2.obj != null) && ($1.obj != null))
                      {$$= new ParserVal(new Nodo("S", (Nodo)$1.obj, (Nodo)$2.obj));}
-                  else if(($2.obj == null)) {$$= new ParserVal(new Nodo("S", (Nodo)$1.obj, null));}
+                                             			    if(((Nodo)$1.obj).checkContract() || ((Nodo)$2.obj).checkContract() ){
+
+                                                 		        ((Nodo)$$.obj).setFuncContract(((Nodo)$1.obj).checkFuncContract());
+                                                 		        ((Nodo)$$.obj).setContract(true);
+                                                 		    }
+                  else if(($2.obj == null)) {$$= new ParserVal(new Nodo("S", (Nodo)$1.obj, null));
+                                          			    if(((Nodo)$1.obj).checkContract()){
+                                              		        ((Nodo)$$.obj).setFuncContract(((Nodo)$1.obj).checkFuncContract());
+                                              		        ((Nodo)$$.obj).setContract(true);
+                                              		    }
+                  }
                        else if (($1.obj == null)) {$$= new ParserVal(new Nodo("S", null, (Nodo)$2.obj));}
                 }
             | sentEjecutables
@@ -128,6 +169,10 @@ sentSoloEjecutables : sentEjecutables sentSoloEjecutables
                        $$= new ParserVal(new Nodo("S",null, null));
                     }else{
                        $$= new ParserVal(new Nodo("S",((Nodo)$1.obj), null));
+                                               			    if(((Nodo)$1.obj).checkContract()){
+                                                   		        ((Nodo)$$.obj).setFuncContract(((Nodo)$1.obj).checkFuncContract());
+                                                   		        ((Nodo)$$.obj).setContract(true);
+                                                   		    }
                     }
                 }
             ;
@@ -179,6 +224,11 @@ declaraFunc: declaracionFunc bloqueDeclarativo bloqueEjecutableFunc {
         AnalizadorSintactico.agregarAnalisis("Funcion reconocida en. (Linea " + AnalizadorLexico.numLinea + ")");
         AnalizadorSintactico.ambitoActual = AnalizadorSintactico.ambitoActual.substring(0,AnalizadorSintactico.ambitoActual.lastIndexOf("@"));
         $$=new ParserVal (new Nodo($1.sval+AnalizadorSintactico.ambitoActual, (Nodo)$3.obj, null));
+                                                if(((Nodo)$3.obj).checkContract()){
+                                                    ((Nodo)$$.obj).setContract(true);
+                                                     TDSObject value = AnalizadorLexico.getLexemaObject($1.sval+AnalizadorSintactico.ambitoActual);
+                                                     value.setContract(true);
+                                                }
         
         }
 	   | declaracionFunc bloqueEjecutableFunc {
@@ -219,6 +269,10 @@ expAritmetica: expAritmetica '+' termino  {
                       if (((Nodo)$1.obj).getTipo().equals(((Nodo)$3.obj).getTipo())){
                         	$$= new ParserVal(new Nodo("+", (Nodo)$1.obj, (Nodo)$3.obj));
                         	((Nodo)$$.obj).setTipo(((Nodo)$3.obj).getTipo());
+                        	                        			    if(((Nodo)$3.obj).checkContract() || ((Nodo)$1.obj).checkContract()){
+                                                        		        ((Nodo)$$.obj).setFuncContract(((Nodo)$3.obj).checkFuncContract());
+                                                        		        ((Nodo)$$.obj).setContract(true);
+                                                        		    }
                       }else{
                             AnalizadorSintactico.agregarError("Incompatibilidad de tipos + (Linea " + AnalizadorLexico.numLinea + ")");
                       }
@@ -229,6 +283,10 @@ expAritmetica: expAritmetica '+' termino  {
                       if (((Nodo)$1.obj).getTipo().equals(((Nodo)$3.obj).getTipo())){
                         	$$= new ParserVal(new Nodo("-", (Nodo)$1.obj, (Nodo)$3.obj));
                         	((Nodo)$$.obj).setTipo(((Nodo)$3.obj).getTipo());
+                        	                        			    if(((Nodo)$3.obj).checkContract() || ((Nodo)$1.obj).checkContract()){
+                                                        		        ((Nodo)$$.obj).setFuncContract(((Nodo)$3.obj).checkFuncContract());
+                                                        		        ((Nodo)$$.obj).setContract(true);
+                                                        		    }
                       }else{
                             AnalizadorSintactico.agregarError("Incompatibilidad de tipos - (Linea " + AnalizadorLexico.numLinea + ")");
                       }
@@ -248,6 +306,11 @@ termino : termino '*' factor	{
                       if (((Nodo)$1.obj).getTipo().equals(((Nodo)$3.obj).getTipo())){
                         	$$= new ParserVal(new Nodo("*", (Nodo)$1.obj, (Nodo)$3.obj));
                         	((Nodo)$$.obj).setTipo(((Nodo)$3.obj).getTipo());
+                        			    if(((Nodo)$3.obj).checkContract() || ((Nodo)$1.obj).checkContract()){
+
+                            		        ((Nodo)$$.obj).setFuncContract(((Nodo)$3.obj).checkFuncContract());
+                            		        ((Nodo)$$.obj).setContract(true);
+                            		    }
                       }else{
                             AnalizadorSintactico.agregarError("Incompatibilidad de tipos * (Linea " + AnalizadorLexico.numLinea + ")");
                       }
@@ -259,6 +322,10 @@ termino : termino '*' factor	{
                       if (((Nodo)$1.obj).getTipo().equals(((Nodo)$3.obj).getTipo())){
                         	$$= new ParserVal(new Nodo("/", (Nodo)$1.obj, (Nodo)$3.obj));
                         	((Nodo)$$.obj).setTipo(((Nodo)$3.obj).getTipo());
+                        	                        			    if(((Nodo)$3.obj).checkContract() || ((Nodo)$1.obj).checkContract()){
+                                                        		        ((Nodo)$$.obj).setFuncContract(((Nodo)$3.obj).checkFuncContract());
+                                                        		        ((Nodo)$$.obj).setContract(true);
+                                                        		    }
                       }else{
                             AnalizadorSintactico.agregarError("Incompatibilidad de tipos / (Linea " + AnalizadorLexico.numLinea + ")");
                       }
@@ -349,8 +416,18 @@ llamadoFunc: ID '(' ID ')'
 		    
 		    $$= new ParserVal(new Nodo("LF",(Nodo)aux.obj, (Nodo)aux2.obj ));
 		    ((Nodo)$$.obj).setTipo(value.getTipoContenido());
+		    if(value.checkContract()){
+
+		        ((Nodo)$$.obj).setFuncContract(variable);
+		        ((Nodo)$$.obj).setContract(true);
+		    }
 		  }else{
-             AnalizadorSintactico.agregarError("ID de Funcion no declarada (Linea " + AnalizadorLexico.numLinea + ")");
+		    if(variable == null){
+		    AnalizadorSintactico.agregarError("ID de Funcion no declarada (Linea " + AnalizadorLexico.numLinea + ")");
+		    }else{
+		        AnalizadorSintactico.agregarError("ID de parametro no existe (Linea " + AnalizadorLexico.numLinea + ")");
+		    }
+
              //error
 		  }
 		  }
@@ -409,6 +486,7 @@ sentEjecutables : asignacion  {$$=$1;}
 		| sentenciaIF {$$=$1;}
 		| sentenciaPRINT {$$=$1;}
 		| sentenciaWHILE {$$=$1;}
+		| bloqueTRYCATCH {$$=$1;}
 		;
 
 asignacion: ID ASIGN expAritmetica ';' {
@@ -426,6 +504,10 @@ asignacion: ID ASIGN expAritmetica ';' {
 					    ParserVal aux = new ParserVal(new Nodo(variable));
 					    TDSObject value = AnalizadorLexico.getLexemaObject(variable);
 					    $$= new ParserVal(new Nodo(":=", (Nodo)aux.obj, (Nodo)$3.obj));
+					                            			    if(((Nodo)$3.obj).checkContract()){
+                                                    		        ((Nodo)$$.obj).setFuncContract(((Nodo)$3.obj).checkFuncContract());
+                                                    		        ((Nodo)$$.obj).setContract(true);
+                                                    		    }
                         if(value.getTipoContenido().equals( ((Nodo)$3.obj).getTipo())){
                             ((Nodo)$$.obj).setTipo(((Nodo)aux.obj).getTipo());
                         }else{
@@ -457,6 +539,10 @@ asignacion: ID ASIGN expAritmetica ';' {
 									((Nodo)aux.obj).setTipo("SINGLE"); //Mirarlo 
 									TDSObject value = AnalizadorLexico.getLexemaObject(variable);
 									$$= new ParserVal(new Nodo(":=", (Nodo)aux.obj, (Nodo)$6.obj));
+									                        			    if(((Nodo)$6.obj).checkContract()){
+                                                                		        ((Nodo)$$.obj).setFuncContract(((Nodo)$6.obj).checkFuncContract());
+                                                                		        ((Nodo)$$.obj).setContract(true);
+                                                                		    }
 									if( (((Nodo)$6.obj).getTipo()).equals("SINGLE")){
 										((Nodo)$$.obj).setTipo(((Nodo)aux.obj).getTipo());
 									}else{
@@ -482,6 +568,10 @@ asignacion: ID ASIGN expAritmetica ';' {
         					    ParserVal aux = new ParserVal(new Nodo(variable));
         					    TDSObject value = AnalizadorLexico.getLexemaObject(variable);
         					    $$= new ParserVal(new Nodo(":=", (Nodo)aux.obj, (Nodo)$3.obj));
+        					                            			    if(((Nodo)$3.obj).checkContract()){
+                                                            		        ((Nodo)$$.obj).setFuncContract(((Nodo)$3.obj).checkFuncContract());
+                                                            		        ((Nodo)$$.obj).setContract(true);
+                                                            		    }
                                 if(value.getTipoContenido().equals( ((Nodo)$3.obj).getTipo())){
                                     ((Nodo)$$.obj).setTipo(((Nodo)aux.obj).getTipo());
                                 }else{
@@ -648,7 +738,11 @@ comparacion: expAritmetica comparador expAritmetica
 		  if($1.obj == null || $3.obj == null){
              break;
           }else{
-		  $$ = new ParserVal(new Nodo($2.sval,(Nodo) $1.obj,(Nodo)$3.obj));
+          if(((Nodo)$1.obj).getTipo().equals(((Nodo)$3.obj).getTipo())){
+          		  $$ = new ParserVal(new Nodo($2.sval,(Nodo) $1.obj,(Nodo)$3.obj));
+          }else{
+          AnalizadorSintactico.agregarError("No pueden compararse distintos tipos (Linea " + AnalizadorLexico.numLinea + ")");
+          }
 		  }
 		}
 	   | expAritmetica comparador error {AnalizadorSintactico.agregarError("falta expresion (Linea " + AnalizadorLexico.numLinea + ")");}
