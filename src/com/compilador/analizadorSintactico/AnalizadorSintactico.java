@@ -28,6 +28,8 @@ public class AnalizadorSintactico {
     public static Stack<String> pilaLabels = new Stack<String>();
 
     public static int contadorLabel=0;
+    
+    public static int contadorLabelOp=0;
 
     public static int contadorAuxLong=0;
     
@@ -52,6 +54,8 @@ public class AnalizadorSintactico {
     public static int contadorCadenas=1;
 
     public static int contadorFunc=1;
+
+	public static int contadorLabelAndOr=0;
     
     public static void agregarAnalisis(String analisis) {
         listaAnalisis.add(analisis);
