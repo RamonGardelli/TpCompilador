@@ -72,7 +72,7 @@ bloqueEjecutableFunc: BEGIN sentEjecutableFunc RETURN '(' retorno ')' ';' END
             }
 		    | BEGIN RETURN '(' retorno ')'  ';' END {AnalizadorSintactico.agregarError("error falta bloque ejecutable (Linea " + AnalizadorLexico.numLinea + ")");}
 		    | sentEjecutableFunc RETURN '(' retorno ')' END {AnalizadorSintactico.agregarError("error falta BEGIN (Linea " + AnalizadorLexico.numLinea + ")");}
-		    | BEGIN sentEjecutableFunc '(' retorno ')' END {AnalizadorSintactico.agregarError("error falta RETURN (Linea " + AnalizadorLexico.numLinea + ")");}
+		    //| BEGIN sentEjecutableFunc '(' retorno ')' END {AnalizadorSintactico.agregarError("error falta RETURN (Linea " + AnalizadorLexico.numLinea + ")");} //rompe una recursion
 		    | BEGIN sentEjecutableFunc RETURN  retorno ')' END {AnalizadorSintactico.agregarError("error falta '(' (Linea " + AnalizadorLexico.numLinea + ")");}
 		    | BEGIN sentEjecutableFunc RETURN '(' ')' END {AnalizadorSintactico.agregarError("error falta retorno (Linea " + AnalizadorLexico.numLinea + ")");}
 		    | BEGIN sentEjecutableFunc RETURN '(' retorno END {AnalizadorSintactico.agregarError("error falta ')' (Linea " + AnalizadorLexico.numLinea + ")");}
@@ -80,11 +80,11 @@ bloqueEjecutableFunc: BEGIN sentEjecutableFunc RETURN '(' retorno ')' ';' END
 
 
 
-sentEjecutableFunc: sentEjecutableFunc sentEjecutablesFunc
+sentEjecutableFunc: sentEjecutablesFunc sentEjecutableFunc
                 { if (($1.obj != null) && ($2.obj != null))
-                     {$$= new ParserVal(new Nodo("S", (Nodo)$2.obj, (Nodo)$1.obj));}
-                  else if(($1.obj == null)) {$$= new ParserVal(new Nodo("S", (Nodo)$2.obj, null));}
-                       else if (($2.obj == null)) {$$= new ParserVal(new Nodo("S", null, (Nodo)$1.obj));}
+                     {$$= new ParserVal(new Nodo("S", (Nodo)$1.obj, (Nodo)$2.obj));}
+                  else if(($2.obj == null)) {$$= new ParserVal(new Nodo("S", (Nodo)$1.obj, null));}
+                       else if (($1.obj == null)) {$$= new ParserVal(new Nodo("S", null, (Nodo)$2.obj));}
                 }
           | sentEjecutablesFunc
                   {
@@ -147,7 +147,10 @@ declaraVariable: tipo listaVariables ';' {
 	       	        AnalizadorLexico.tablaDeSimbolos.remove($1.sval);
            	        AnalizadorLexico.listaDeErrores.add("Tipo de variable debe ser en mayuscula (Linea " + (AnalizadorLexico.numLinea-1) + ")");
            	      }
-           | tipo error {AnalizadorSintactico.agregarError("error falta ';' (Linea " + (AnalizadorLexico.numLinea-1) + ")");}
+                      | tipo error {
+                      if(AnalizadorSintactico.listaErroresSintacticos.size() == 0)
+                       AnalizadorSintactico.agregarError("error falta ';' (Linea " + (AnalizadorLexico.numLinea-1) + ")");
+                       }
 	       ;
 
 listaVariables: listaVariables ',' ID {
@@ -378,6 +381,10 @@ declaracionFunc : tipo FUNC ID '(' parametro ')' {AnalizadorSintactico.agregarAn
 		AnalizadorSintactico.ambitoActual += "@"+ $3.sval;
 		    AnalizadorLexico.tablaDeSimbolos.remove($3.sval);
 		}
+				|tipo FUNC ID '('parametro ',' {AnalizadorSintactico.agregarError("Error: No se permite mas de un parametro (Linea " + AnalizadorLexico.numLinea + ")");
+                		AnalizadorSintactico.ambitoActual += "@"+ $3.sval;
+                		    AnalizadorLexico.tablaDeSimbolos.remove($3.sval);
+                		}
 		|FUNC ID '(' parametro ')' {AnalizadorSintactico.agregarError("error falta tipo (Linea " + AnalizadorLexico.numLinea + ")");}
 		|tipo ID '(' parametro ')' {AnalizadorSintactico.agregarError("error falta FUNC (Linea " + AnalizadorLexico.numLinea + ")");}
 		|tipo FUNC ID parametro ')' {AnalizadorSintactico.agregarError("error falta '(' (Linea " + AnalizadorLexico.numLinea + ")");}

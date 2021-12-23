@@ -7,8 +7,16 @@ LONG FUNC funcion ( LONG x )
        LONG z;
 
        BEGIN
-		PRINT(x);
+
+              PRINT(%en funcion%);
+
              z:= 2 + x ;
+
+              PRINT(x);
+
+              PRINT(z);
+
+              PRINT(%en funcion%);
 
               RETURN ( z );
 

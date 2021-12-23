@@ -159,8 +159,10 @@ public class AnalizadorSintactico {
                 if (!errorPrograma) {        	
                 	try {
                 		obtenerFunciones();
+                        System.out.println("Arbol de programa");
                         toString(arbol);
-                    	//toString(arbolFunc);
+                        System.out.println("Arbol de funciones");
+                        toString(arbolFunc);
                         System.out.println(" ");
                         Registro r1 = new Registro("EAX");
                         Registro r2 = new Registro("EBX");
@@ -175,9 +177,11 @@ public class AnalizadorSintactico {
                         codigoAssemblerFinal.append("\n");
                         codigoAssemblerFinal.append(".code");
                         codigoAssemblerFinal.append("\n");
-                        arbolFunciones(arbolFunc, r);
                         int posData = codigoAssemblerFinal.lastIndexOf(".code");
-                        codigoAssemblerFinal.insert(posData-1,memoriaPrograma().append(imprimirVariablesAuxiliares()));
+                        codigoAssemblerFinal.insert(posData-1,memoriaPrograma());
+                        arbolFunciones(arbolFunc, r);
+                        posData = codigoAssemblerFinal.lastIndexOf(".code");
+                        codigoAssemblerFinal.insert(posData-1,imprimirVariablesAuxiliares());
                         codigoAssemblerFinal.append(codigoAssembler);
                         codigoAssembler.setLength(0);
                         codigoAssemblerFinal.append("\n");
