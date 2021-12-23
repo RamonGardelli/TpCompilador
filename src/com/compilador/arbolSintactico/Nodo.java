@@ -130,9 +130,21 @@ public class Nodo {
             	  else if (this.getTipo()=="SINGLE")
                       this.creacionCodigoSingle(this.ref, r);
               }
+              else if (this.ref=="&&"||this.ref=="||") {
+            	  this.generarCodigoAndOr(r);
+            	  if ((this.right.getTipo() == "LONG") || (this.left.getTipo() == "LONG")) {
+                      this.creacionCodigoLong(this.ref, i, r);
+                  } else if ((this.right.getTipo() == "SINGLE") || (this.left.getTipo() == "SINGLE")) {
+                      this.creacionCodigoSingle(this.ref, r);
+                  }
+              }
             
 
         } else if (this.right == null) {
+        	if (this.ref=="Cond") {
+        		this.left.generarCodigoAndOr(r);
+        	}
+        	
         	if (this.ref == "PRINT") {
  		        String aux = left.ref.replace(" ", "_");
         		if (this.left.getTipo()=="CADENA") {
@@ -150,7 +162,7 @@ public class Nodo {
                 }
             } 
         	
-            if (this.getRef() == "Else") {
+            if (this.ref == "Else") {
                 AnalizadorSintactico.contadorLabel++;
                 String aux = "@Label_" + AnalizadorSintactico.contadorLabel;
                 AnalizadorSintactico.codigoAssembler.append("JMP " + aux);
@@ -367,7 +379,6 @@ public class Nodo {
                 AnalizadorSintactico.codigoAssembler.append("\n");
                 AnalizadorSintactico.codigoAssembler.append("JGE ").append(aux);
                 AnalizadorSintactico.codigoAssembler.append("\n");
-
             }
         } else if (r == "WHILE") {
             String aux1 = (AnalizadorSintactico.pilaLabels.pop());
@@ -376,6 +387,42 @@ public class Nodo {
             AnalizadorSintactico.codigoAssembler.append("\n");
             AnalizadorSintactico.codigoAssembler.append(aux1);
             AnalizadorSintactico.codigoAssembler.append("\n");
+        }
+        
+        if (r == "&&") {
+	        AnalizadorSintactico.contadorLabel++;
+	        String aux = "@Label_" + AnalizadorSintactico.contadorLabel;
+	        AnalizadorSintactico.pilaLabels.push(aux);
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            AnalizadorSintactico.codigoAssembler.append("CMP ").append(izquierda).append(", 0");
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            AnalizadorSintactico.codigoAssembler.append("JE ").append(aux);
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            AnalizadorSintactico.codigoAssembler.append("CMP ").append(derecha).append(", 0");
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            AnalizadorSintactico.codigoAssembler.append("JE ").append(aux);
+            AnalizadorSintactico.codigoAssembler.append("\n");
+        }
+        
+        if (r == "||") {
+      	    AnalizadorSintactico.contadorLabel++;
+	        String aux = "@Label_" + AnalizadorSintactico.contadorLabel;
+	        AnalizadorSintactico.contadorLabelAndOr++;
+            String aux2 = "@Label_" + AnalizadorSintactico.contadorLabelAndOr;
+	        AnalizadorSintactico.pilaLabels.push(aux);
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            AnalizadorSintactico.codigoAssembler.append("CMP ").append(izquierda).append(", 1");
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            AnalizadorSintactico.codigoAssembler.append("JE ").append(aux2);
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            AnalizadorSintactico.codigoAssembler.append("CMP ").append(derecha).append(", 1");
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            AnalizadorSintactico.codigoAssembler.append("JE ").append(aux2);
+            AnalizadorSintactico.codigoAssembler.append("JMP ").append(aux);
+            AnalizadorSintactico.codigoAssembler.append("@Label_ ").append(aux2).append(":");
+            AnalizadorSintactico.codigoAssembler.append("\n");
+
+
         }
   
         this.ref = "@auxLong"+i;
@@ -503,8 +550,7 @@ public class Nodo {
                 AnalizadorSintactico.codigoAssembler.append("\n");
 
             }
-
-
+            
         } else if (r == "WHILE") {
             String aux1 = (AnalizadorSintactico.pilaLabels.pop());
             String aux2 = (AnalizadorSintactico.pilaLabels.pop());
@@ -514,8 +560,42 @@ public class Nodo {
             AnalizadorSintactico.codigoAssembler.append("\n");
             AnalizadorSintactico.codigoAssembler.append(aux1);
         } 
-
         
+       if (r == "&&") {
+	          AnalizadorSintactico.contadorLabel++;
+	          String aux = "@Label_" + AnalizadorSintactico.contadorLabel;
+	          AnalizadorSintactico.pilaLabels.push(aux);
+              AnalizadorSintactico.codigoAssembler.append("\n");
+              AnalizadorSintactico.codigoAssembler.append("CMP ").append(izquierda).append(", 0");
+              AnalizadorSintactico.codigoAssembler.append("\n");
+              AnalizadorSintactico.codigoAssembler.append("JE ").append(aux);
+              AnalizadorSintactico.codigoAssembler.append("\n");
+              AnalizadorSintactico.codigoAssembler.append("CMP ").append(derecha).append(", 0");
+              AnalizadorSintactico.codigoAssembler.append("\n");
+              AnalizadorSintactico.codigoAssembler.append("JE ").append(aux);
+              AnalizadorSintactico.codigoAssembler.append("\n");
+          }
+          
+          if (r == "||") {
+        	  AnalizadorSintactico.contadorLabel++;
+	          String aux = "@Label_" + AnalizadorSintactico.contadorLabel;
+	          AnalizadorSintactico.contadorLabelAndOr++;
+              String aux2 = "@Label_" + AnalizadorSintactico.contadorLabelAndOr;
+	          AnalizadorSintactico.pilaLabels.push(aux);
+              AnalizadorSintactico.codigoAssembler.append("\n");
+              AnalizadorSintactico.codigoAssembler.append("CMP ").append(izquierda).append(", 1");
+              AnalizadorSintactico.codigoAssembler.append("\n");
+              AnalizadorSintactico.codigoAssembler.append("JE ").append(aux2);
+              AnalizadorSintactico.codigoAssembler.append("\n");
+              AnalizadorSintactico.codigoAssembler.append("CMP ").append(derecha).append(", 1");
+              AnalizadorSintactico.codigoAssembler.append("\n");
+              AnalizadorSintactico.codigoAssembler.append("JE ").append(aux2);
+              AnalizadorSintactico.codigoAssembler.append("JMP ").append(aux);
+              AnalizadorSintactico.codigoAssembler.append("@Label_ ").append(aux2).append(":");
+              AnalizadorSintactico.codigoAssembler.append("\n");
+
+
+          }
         this.ref = "@auxSingle"+AnalizadorSintactico.contadorAuxSingle;
         this.esRegistro = true;
         this.tipo = this.left.getTipo();
@@ -605,7 +685,6 @@ public class Nodo {
         AnalizadorSintactico.codigoAssembler.append("\n");    
     }
 
-    /*    
     public void generarCodigoAndOr(Registro r[]) {
 
         if (!(this.right == null)) {
@@ -633,14 +712,15 @@ public class Nodo {
                 }
                 this.right.generarCodigoAndOr(r);
             }
-            int i = AnalizadorSintactico.contadorAuxLong;
-            if ((this.right.getTipo() == "LONG") || (this.left.getTipo() == "LONG")) {
+
+            else if ((this.right.getTipo() == "LONG") || (this.left.getTipo() == "LONG")) {
+                int i = AnalizadorSintactico.contadorAuxLong;
                 this.creacionCodigoLongAndOr(this.ref, i, r);
-            } else if ((this.right.getTipo() == "SINGLE") || (this.left.getTipo() == "SINGLE")) {
-                this.creacionCodigoSingleAndOr(this.ref, r);
-            } else if ((this.ref == "WHILE")) {
-                this.creacionCodigoSingleAndOr(this.ref, r);
-            }
+	            } else if ((this.right.getTipo() == "SINGLE") || (this.left.getTipo() == "SINGLE")) {
+	                this.creacionCodigoSingleAndOr(this.ref, r);
+		            } else if ((this.ref == "WHILE")) {
+		                this.creacionCodigoSingleAndOr(this.ref, r);
+		            }
         }
     }
     
@@ -684,54 +764,54 @@ public class Nodo {
 
             
         } else if (r == "+") {
-        	AnalizadorSintactico.contadorAuxLong++;
-            i = AnalizadorSintactico.contadorAuxLong;
+        	AnalizadorSintactico.contadorAuxLongAndOr++;
+            i = AnalizadorSintactico.contadorAuxLongAndOr;
             AnalizadorSintactico.codigoAssembler.append("\n");
             AnalizadorSintactico.codigoAssembler.append("MOV ").append(reg[j].getNombre()).append(", ").append(izquierda);
             AnalizadorSintactico.codigoAssembler.append("\n");
             AnalizadorSintactico.codigoAssembler.append("ADD ").append(reg[j].getNombre()).append(", ").append(derecha);
             AnalizadorSintactico.codigoAssembler.append("\n");
-            AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxLong").append(i).append(", ").append(reg[j].getNombre());
+            AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxLongAndOr").append(i).append(", ").append(reg[j].getNombre());
             AnalizadorSintactico.codigoAssembler.append("\n");
 
         } else if (r == "*") {
-           	AnalizadorSintactico.contadorAuxLong++;
-            i = AnalizadorSintactico.contadorAuxLong;
+           	AnalizadorSintactico.contadorAuxLongAndOr++;
+            i = AnalizadorSintactico.contadorAuxLongAndOr;
             AnalizadorSintactico.codigoAssembler.append("\n");
             AnalizadorSintactico.codigoAssembler.append("MOV ").append(reg[j].getNombre()).append(", ").append(izquierda);
             AnalizadorSintactico.codigoAssembler.append("\n");
             AnalizadorSintactico.codigoAssembler.append("IMUL ").append(reg[j].getNombre()).append(", ").append(derecha);
             AnalizadorSintactico.codigoAssembler.append("\n");
-            AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxLong").append(i).append(", ").append(reg[j].getNombre());
+            AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxLongAndOr").append(i).append(", ").append(reg[j].getNombre());
             AnalizadorSintactico.codigoAssembler.append("\n");
-            AnalizadorSintactico.codigoAssembler.append("JO @LABEL_OVF");
+            AnalizadorSintactico.codigoAssembler.append("JO @LabelAndOr_OVF");
             AnalizadorSintactico.codigoAssembler.append("\n");
 
         } else if (r == "-") {
-           	AnalizadorSintactico.contadorAuxLong++;
-            i = AnalizadorSintactico.contadorAuxLong;
+           	AnalizadorSintactico.contadorAuxLongAndOr++;
+            i = AnalizadorSintactico.contadorAuxLongAndOr;
             AnalizadorSintactico.codigoAssembler.append("\n");
             AnalizadorSintactico.codigoAssembler.append("MOV ").append(reg[j].getNombre()).append(", ").append(izquierda);
             AnalizadorSintactico.codigoAssembler.append("\n");
             AnalizadorSintactico.codigoAssembler.append("SUB ").append(reg[j].getNombre()).append(", ").append(derecha);
             AnalizadorSintactico.codigoAssembler.append("\n");
-            AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxLong").append(i).append(", ").append(reg[j].getNombre());
+            AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxLongAndOr").append(i).append(", ").append(reg[j].getNombre());
             AnalizadorSintactico.codigoAssembler.append("\n");
 
         } else if (r == "/") {
-           	AnalizadorSintactico.contadorAuxLong++;
-            i = AnalizadorSintactico.contadorAuxLong;
+           	AnalizadorSintactico.contadorAuxLongAndOr++;
+            i = AnalizadorSintactico.contadorAuxLongAndOr;
         	AnalizadorSintactico.codigoAssembler.append("MOV EAX, ").append(izquierda);
             AnalizadorSintactico.codigoAssembler.append("\n");
             AnalizadorSintactico.codigoAssembler .append("CMP ").append(derecha).append(", 0");
             AnalizadorSintactico.codigoAssembler.append("\n");
-            AnalizadorSintactico.codigoAssembler.append("JE @LABEL_DIVCERO");
+            AnalizadorSintactico.codigoAssembler.append("JE @LabelAndOr_DIVCERO");
             AnalizadorSintactico.codigoAssembler.append("\n");
             AnalizadorSintactico.codigoAssembler.append("CDQ");
             AnalizadorSintactico.codigoAssembler.append("\n");
             AnalizadorSintactico.codigoAssembler.append("IDIV ").append(derecha);
             AnalizadorSintactico.codigoAssembler.append("\n");
-            AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxLong").append(i).append(", EAX");
+            AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxLongAndOr").append(i).append(", EAX");
             AnalizadorSintactico.codigoAssembler.append("\n");
 
         } else if ((r == "==") || (r == ">=") || (r == "<=") || (r == "<>") || (r == ">") || (r == "<")) {
@@ -741,40 +821,42 @@ public class Nodo {
             AnalizadorSintactico.codigoAssembler.append("CMP ").append(reg[j].getNombre()).append(", ").append(derecha);
             AnalizadorSintactico.codigoAssembler.append("\n");
 
-           	AnalizadorSintactico.contadorAuxLong++;
-            i = AnalizadorSintactico.contadorAuxLong;
+           	AnalizadorSintactico.contadorAuxLongAndOr++;
+            i = AnalizadorSintactico.contadorAuxLongAndOr;
             
             if (r == "==") {
                 AnalizadorSintactico.contadorLabelAndOr++;
-                String aux = "@Label_" + AnalizadorSintactico.contadorLabelAndOr;
+                String aux = "@LabelAndOr_" + AnalizadorSintactico.contadorLabelAndOr;
                 AnalizadorSintactico.contadorLabelAndOr++;
-                String aux2="@Label_" + AnalizadorSintactico.contadorLabelAndOr;
+                String aux2="@LabelAndOr_" + AnalizadorSintactico.contadorLabelAndOr;
                 AnalizadorSintactico.codigoAssembler.append("JNE ").append(aux);
                 AnalizadorSintactico.codigoAssembler.append("\n");
-                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingle"+AnalizadorSintactico.contadorAuxLong+", 1");
+                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxLongAndOr"+AnalizadorSintactico.contadorAuxLongAndOr+", 1");
                 AnalizadorSintactico.codigoAssembler.append("\n");
-                AnalizadorSintactico.codigoAssembler.append("JMP").append(aux2);
+                AnalizadorSintactico.codigoAssembler.append("JMP ").append(aux2);
                 AnalizadorSintactico.codigoAssembler.append("\n");
                 AnalizadorSintactico.codigoAssembler.append(aux).append(":");
                 AnalizadorSintactico.codigoAssembler.append("\n");
-                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingle").append(AnalizadorSintactico.contadorAuxLong).append(", 0");
+                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxLongAndOr").append(AnalizadorSintactico.contadorAuxLongAndOr).append(", 0");
                 AnalizadorSintactico.codigoAssembler.append("\n");
                 AnalizadorSintactico.codigoAssembler.append(aux2).append(":");
+                AnalizadorSintactico.codigoAssembler.append("\n");
+
             }
             if (r == ">=") {
                 AnalizadorSintactico.contadorLabelAndOr++;
-                String aux = "@Label_" + AnalizadorSintactico.contadorLabelAndOr;
+                String aux = "@LabelAndOr_" + AnalizadorSintactico.contadorLabelAndOr;
                 AnalizadorSintactico.contadorLabelAndOr++;
-                String aux2="@Label_" + AnalizadorSintactico.contadorLabelAndOr;
+                String aux2="@LabelAndOr_" + AnalizadorSintactico.contadorLabelAndOr;
                 AnalizadorSintactico.codigoAssembler.append("JB ").append(aux);
                 AnalizadorSintactico.codigoAssembler.append("\n");
-                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingle"+AnalizadorSintactico.contadorAuxLong+", 1");
+                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxLongAndOr"+AnalizadorSintactico.contadorAuxLongAndOr+", 1");
                 AnalizadorSintactico.codigoAssembler.append("\n");
-                AnalizadorSintactico.codigoAssembler.append("JMP").append(aux2);
+                AnalizadorSintactico.codigoAssembler.append("JMP ").append(aux2);
                 AnalizadorSintactico.codigoAssembler.append("\n");
                 AnalizadorSintactico.codigoAssembler.append(aux).append(":");
                 AnalizadorSintactico.codigoAssembler.append("\n");
-                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingle").append(AnalizadorSintactico.contadorAuxLong).append(", 0");
+                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxLongAndOr").append(AnalizadorSintactico.contadorAuxLongAndOr).append(", 0");
                 AnalizadorSintactico.codigoAssembler.append("\n");
                 AnalizadorSintactico.codigoAssembler.append(aux2).append(":");
 
@@ -782,79 +864,87 @@ public class Nodo {
 
             if (r == "<=") {
                 AnalizadorSintactico.contadorLabelAndOr++;
-                String aux = "@Label_" + AnalizadorSintactico.contadorLabelAndOr;
+                String aux = "@LabelAndOr_" + AnalizadorSintactico.contadorLabelAndOr;
                 AnalizadorSintactico.contadorLabelAndOr++;
-                String aux2="@Label_" + AnalizadorSintactico.contadorLabelAndOr;
+                String aux2="@LabelAndOr_" + AnalizadorSintactico.contadorLabelAndOr;
                 AnalizadorSintactico.codigoAssembler.append("JA ").append(aux);
                 AnalizadorSintactico.codigoAssembler.append("\n");
-                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingle"+AnalizadorSintactico.contadorAuxLong+", 1");
+                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxLongAndOr"+AnalizadorSintactico.contadorAuxLongAndOr+", 1");
                 AnalizadorSintactico.codigoAssembler.append("\n");
-                AnalizadorSintactico.codigoAssembler.append("JMP").append(aux2);
+                AnalizadorSintactico.codigoAssembler.append("JMP ").append(aux2);
                 AnalizadorSintactico.codigoAssembler.append("\n");
                 AnalizadorSintactico.codigoAssembler.append(aux).append(":");
                 AnalizadorSintactico.codigoAssembler.append("\n");
-                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingle").append(AnalizadorSintactico.contadorAuxLong).append(", 0");
+                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxLongAndOr").append(AnalizadorSintactico.contadorAuxLongAndOr).append(", 0");
                 AnalizadorSintactico.codigoAssembler.append("\n");
                 AnalizadorSintactico.codigoAssembler.append(aux2).append(":");
+                AnalizadorSintactico.codigoAssembler.append("\n");
+
 
             }
             if (r == "<>") {
                 AnalizadorSintactico.contadorLabelAndOr++;
-                String aux = "@Label_" + AnalizadorSintactico.contadorLabelAndOr;
+                String aux = "@LabelAndOr_" + AnalizadorSintactico.contadorLabelAndOr;
                 AnalizadorSintactico.contadorLabelAndOr++;
-                String aux2="@Label_" + AnalizadorSintactico.contadorLabelAndOr;
+                String aux2="@LabelAndOr_" + AnalizadorSintactico.contadorLabelAndOr;
                 AnalizadorSintactico.codigoAssembler.append("\n");
                 AnalizadorSintactico.codigoAssembler.append("JE ").append(aux);
                 AnalizadorSintactico.codigoAssembler.append("\n");
-                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingle"+AnalizadorSintactico.contadorAuxLong+", 1");
+                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxLongAndOr"+AnalizadorSintactico.contadorAuxLongAndOr+", 1");
                 AnalizadorSintactico.codigoAssembler.append("\n");
-                AnalizadorSintactico.codigoAssembler.append("JMP").append(aux2);
+                AnalizadorSintactico.codigoAssembler.append("JMP ").append(aux2);
                 AnalizadorSintactico.codigoAssembler.append("\n");
                 AnalizadorSintactico.codigoAssembler.append(aux).append(":");
                 AnalizadorSintactico.codigoAssembler.append("\n");
-                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingle").append(AnalizadorSintactico.contadorAuxLong).append(", 0");
+                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxLongAndOr").append(AnalizadorSintactico.contadorAuxLongAndOr).append(", 0");
                 AnalizadorSintactico.codigoAssembler.append("\n");
                 AnalizadorSintactico.codigoAssembler.append(aux2).append(":");
+                AnalizadorSintactico.codigoAssembler.append("\n");
+
 
             }
 
             if (r == ">") {
                 AnalizadorSintactico.contadorLabelAndOr++;
-                String aux = "@Label_" + AnalizadorSintactico.contadorLabelAndOr;
+                String aux = "@LabelAndOr_" + AnalizadorSintactico.contadorLabelAndOr;
                 AnalizadorSintactico.contadorLabelAndOr++;
-                String aux2="@Label_" + AnalizadorSintactico.contadorLabelAndOr;
+                String aux2="@LabelAndOr_" + AnalizadorSintactico.contadorLabelAndOr;
                 AnalizadorSintactico.codigoAssembler.append("\n");
                 AnalizadorSintactico.codigoAssembler.append("JBE ").append(aux);
                 AnalizadorSintactico.codigoAssembler.append("\n");
-                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingle"+AnalizadorSintactico.contadorAuxLong+", 1");
+                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxLongAndOr"+AnalizadorSintactico.contadorAuxLongAndOr+", 1");
                 AnalizadorSintactico.codigoAssembler.append("\n");
-                AnalizadorSintactico.codigoAssembler.append("JMP").append(aux2);
+                AnalizadorSintactico.codigoAssembler.append("JMP ").append(aux2);
                 AnalizadorSintactico.codigoAssembler.append("\n");
                 AnalizadorSintactico.codigoAssembler.append(aux).append(":");
                 AnalizadorSintactico.codigoAssembler.append("\n");
-                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingle").append(AnalizadorSintactico.contadorAuxLong).append(", 0");
+                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxLongAndOr").append(AnalizadorSintactico.contadorAuxLongAndOr).append(", 0");
                 AnalizadorSintactico.codigoAssembler.append("\n");
                 AnalizadorSintactico.codigoAssembler.append(aux2).append(":");
+                AnalizadorSintactico.codigoAssembler.append("\n");
+
 
             }
 
             if (r == "<") {
                 AnalizadorSintactico.contadorLabelAndOr++;
-                String aux = "@Label_" + AnalizadorSintactico.contadorLabelAndOr;
+                String aux = "@LabelAndOr_" + AnalizadorSintactico.contadorLabelAndOr;
                 AnalizadorSintactico.contadorLabelAndOr++;
-                String aux2="@Label_" + AnalizadorSintactico.contadorLabelAndOr;
+                String aux2="@LabelAndOr_" + AnalizadorSintactico.contadorLabelAndOr;
                 AnalizadorSintactico.codigoAssembler.append("\n");
                 AnalizadorSintactico.codigoAssembler.append("JAE ").append(aux);
                 AnalizadorSintactico.codigoAssembler.append("\n");
-                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingle"+AnalizadorSintactico.contadorAuxLong+", 1");
+                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxLongAndOr"+AnalizadorSintactico.contadorAuxLongAndOr+", 1");
                 AnalizadorSintactico.codigoAssembler.append("\n");
-                AnalizadorSintactico.codigoAssembler.append("JMP").append(aux2);
+                AnalizadorSintactico.codigoAssembler.append("JMP ").append(aux2);
                 AnalizadorSintactico.codigoAssembler.append("\n");
                 AnalizadorSintactico.codigoAssembler.append(aux).append(":");
                 AnalizadorSintactico.codigoAssembler.append("\n");
-                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingle").append(AnalizadorSintactico.contadorAuxLong).append(", 0");
+                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxLongAndOr").append(AnalizadorSintactico.contadorAuxLongAndOr).append(", 0");
                 AnalizadorSintactico.codigoAssembler.append("\n");
                 AnalizadorSintactico.codigoAssembler.append(aux2).append(":");
+                AnalizadorSintactico.codigoAssembler.append("\n");
+
             }
 
 
@@ -870,31 +960,37 @@ public class Nodo {
         
         if (r == "&&") {
             AnalizadorSintactico.contadorLabelAndOr++;
-            String aux = "@Label_" + AnalizadorSintactico.contadorLabelAndOr;
+            String aux = "@LabelAndOr_" + AnalizadorSintactico.contadorLabelAndOr;
             AnalizadorSintactico.contadorLabelAndOr++;
-            String aux2="@Label_" + AnalizadorSintactico.contadorLabelAndOr;
+            String aux2="@LabelAndOr_" + AnalizadorSintactico.contadorLabelAndOr;
+            String aux3 = "@LabelAndOr_" + AnalizadorSintactico.contadorLabel;
+            AnalizadorSintactico.pilaLabels.push(aux3);
             AnalizadorSintactico.codigoAssembler.append("\n");
             AnalizadorSintactico.codigoAssembler.append("CMP ").append(izquierda).append(", 0");
             AnalizadorSintactico.codigoAssembler.append("JE ").append(aux);
             AnalizadorSintactico.codigoAssembler.append("CMP ").append(derecha).append(", 0");
             AnalizadorSintactico.codigoAssembler.append("JE ").append(aux);
-            AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingle"+AnalizadorSintactico.contadorAuxLong+", 1");
+            AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxLongAndOr"+AnalizadorSintactico.contadorAuxLongAndOr+", 1");
             AnalizadorSintactico.codigoAssembler.append("\n");
-            AnalizadorSintactico.codigoAssembler.append("JMP").append(aux2);
+            AnalizadorSintactico.codigoAssembler.append("JMP ").append(aux2);
             AnalizadorSintactico.codigoAssembler.append("\n");
             AnalizadorSintactico.codigoAssembler.append(aux).append(":");
             AnalizadorSintactico.codigoAssembler.append("\n");
-            AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingle").append(AnalizadorSintactico.contadorAuxLong).append(", 0");
+            AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxLongAndOr").append(AnalizadorSintactico.contadorAuxLongAndOr).append(", 0");
             AnalizadorSintactico.codigoAssembler.append("\n");
             AnalizadorSintactico.codigoAssembler.append(aux2).append(":");
+            AnalizadorSintactico.codigoAssembler.append("\n");
+
 
         }
         
         if (r == "||") {
             AnalizadorSintactico.contadorLabelAndOr++;
-            String aux = "@Label_" + AnalizadorSintactico.contadorLabelAndOr;
+            String aux = "@LabelAndOr_" + AnalizadorSintactico.contadorLabelAndOr;
             AnalizadorSintactico.contadorLabelAndOr++;
-            String aux2="@Label_" + AnalizadorSintactico.contadorLabelAndOr;
+            String aux2="@LabelAndOr_" + AnalizadorSintactico.contadorLabelAndOr;
+            String aux3 = "@LabelAndOr_" + AnalizadorSintactico.contadorLabel;
+            AnalizadorSintactico.pilaLabels.push(aux3);
             AnalizadorSintactico.codigoAssembler.append("\n");
             AnalizadorSintactico.codigoAssembler.append("CMP ").append(izquierda).append(", 1");
             AnalizadorSintactico.codigoAssembler.append("\n");
@@ -904,19 +1000,21 @@ public class Nodo {
             AnalizadorSintactico.codigoAssembler.append("\n");
             AnalizadorSintactico.codigoAssembler.append("JE ").append(aux);
             AnalizadorSintactico.codigoAssembler.append("\n");
-            AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingle"+AnalizadorSintactico.contadorAuxLong+", 0");
+            AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxLongAndOr"+AnalizadorSintactico.contadorAuxLongAndOr+", 0");
             AnalizadorSintactico.codigoAssembler.append("\n");
-            AnalizadorSintactico.codigoAssembler.append("JMP").append(aux2);
+            AnalizadorSintactico.codigoAssembler.append("JMP ").append(aux2);
             AnalizadorSintactico.codigoAssembler.append("\n");
             AnalizadorSintactico.codigoAssembler.append(aux).append(":");
             AnalizadorSintactico.codigoAssembler.append("\n");
-            AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingle").append(AnalizadorSintactico.contadorAuxLong).append(", 1");
+            AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxLongAndOr").append(AnalizadorSintactico.contadorAuxLongAndOr).append(", 1");
             AnalizadorSintactico.codigoAssembler.append("\n");
             AnalizadorSintactico.codigoAssembler.append(aux2).append(":");
+            AnalizadorSintactico.codigoAssembler.append("\n");
+
 
         }
         
-        this.ref = "@auxLong"+i;
+        this.ref = "@auxLongAndOr"+i;
         this.esRegistro = true;
         this.tipo = this.left.getTipo();
         reg[j].setLibre(true);
@@ -986,119 +1084,131 @@ public class Nodo {
             AnalizadorSintactico.codigoAssembler.append("\n");
             AnalizadorSintactico.codigoAssembler.append("SAHF");
             AnalizadorSintactico.codigoAssembler.append("\n");
-           	AnalizadorSintactico.contadorAuxSingle++;
+           	AnalizadorSintactico.contadorAuxSingleAndOr++;
 
             if (r == "==") {
                 AnalizadorSintactico.contadorLabelAndOr++;
-                String aux = "@Label_" + AnalizadorSintactico.contadorLabelAndOr;
-                AnalizadorSintactico.contadorLabel++;
-                String aux2="@Label_" + AnalizadorSintactico.contadorLabelAndOr;
+                String aux = "@LabelAndOr_" + AnalizadorSintactico.contadorLabelAndOr;
+                AnalizadorSintactico.contadorLabelAndOr++;
+                String aux2="@LabelAndOr_" + AnalizadorSintactico.contadorLabelAndOr;
                 AnalizadorSintactico.codigoAssembler.append("JNE ").append(aux);
                 AnalizadorSintactico.codigoAssembler.append("\n");
-                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingle"+AnalizadorSintactico.contadorAuxSingle+", 1");
+                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingleAndOr"+AnalizadorSintactico.contadorAuxSingleAndOr+", 1");
                 AnalizadorSintactico.codigoAssembler.append("\n");
                 AnalizadorSintactico.codigoAssembler.append("JMP").append(aux2);
                 AnalizadorSintactico.codigoAssembler.append("\n");
                 AnalizadorSintactico.codigoAssembler.append(aux).append(":");
                 AnalizadorSintactico.codigoAssembler.append("\n");
-                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingle").append(AnalizadorSintactico.contadorAuxSingle).append(", 0");
+                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingleAndOr").append(AnalizadorSintactico.contadorAuxSingleAndOr).append(", 0");
                 AnalizadorSintactico.codigoAssembler.append("\n");
-                AnalizadorSintactico.codigoAssembler.append(aux2).append(":");
+                AnalizadorSintactico.codigoAssembler.append(aux2).append(":");           
+                AnalizadorSintactico.codigoAssembler.append("\n");
+
             }
             if (r == ">=") {
                 AnalizadorSintactico.contadorLabelAndOr++;
-                String aux = "@Label_" + AnalizadorSintactico.contadorLabelAndOr;
-                AnalizadorSintactico.contadorLabel++;
-                String aux2="@Label_" + AnalizadorSintactico.contadorLabelAndOr;
+                String aux = "@LabelAndOr_" + AnalizadorSintactico.contadorLabelAndOr;
+                AnalizadorSintactico.contadorLabelAndOr++;
+                String aux2="@LabelAndOr_" + AnalizadorSintactico.contadorLabelAndOr;
                 AnalizadorSintactico.codigoAssembler.append("JB ").append(aux);
                 AnalizadorSintactico.codigoAssembler.append("\n");
-                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingle"+AnalizadorSintactico.contadorAuxSingle+", 1");
+                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingleAndOr"+AnalizadorSintactico.contadorAuxSingleAndOr+", 1");
                 AnalizadorSintactico.codigoAssembler.append("\n");
                 AnalizadorSintactico.codigoAssembler.append("JMP").append(aux2);
                 AnalizadorSintactico.codigoAssembler.append("\n");
                 AnalizadorSintactico.codigoAssembler.append(aux).append(":");
                 AnalizadorSintactico.codigoAssembler.append("\n");
-                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingle").append(AnalizadorSintactico.contadorAuxSingle).append(", 0");
+                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingleAndOr").append(AnalizadorSintactico.contadorAuxSingleAndOr).append(", 0");
                 AnalizadorSintactico.codigoAssembler.append("\n");
-                AnalizadorSintactico.codigoAssembler.append(aux2).append(":");
+                AnalizadorSintactico.codigoAssembler.append(aux2).append(":");           
+                AnalizadorSintactico.codigoAssembler.append("\n");
+
 
             }
 
             if (r == "<=") {
                 AnalizadorSintactico.contadorLabelAndOr++;
-                String aux = "@Label_" + AnalizadorSintactico.contadorLabelAndOr;
-                AnalizadorSintactico.contadorLabel++;
-                String aux2="@Label_" + AnalizadorSintactico.contadorLabelAndOr;
+                String aux = "@LabelAndOr_" + AnalizadorSintactico.contadorLabelAndOr;
+                AnalizadorSintactico.contadorLabelAndOr++;
+                String aux2="@LabelAndOr_" + AnalizadorSintactico.contadorLabelAndOr;
                 AnalizadorSintactico.codigoAssembler.append("JA ").append(aux);
                 AnalizadorSintactico.codigoAssembler.append("\n");
-                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingle"+AnalizadorSintactico.contadorAuxSingle+", 1");
+                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingleAndOr"+AnalizadorSintactico.contadorAuxSingleAndOr+", 1");
                 AnalizadorSintactico.codigoAssembler.append("\n");
                 AnalizadorSintactico.codigoAssembler.append("JMP").append(aux2);
                 AnalizadorSintactico.codigoAssembler.append("\n");
                 AnalizadorSintactico.codigoAssembler.append(aux).append(":");
                 AnalizadorSintactico.codigoAssembler.append("\n");
-                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingle").append(AnalizadorSintactico.contadorAuxSingle).append(", 0");
+                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingleAndOr").append(AnalizadorSintactico.contadorAuxSingleAndOr).append(", 0");
                 AnalizadorSintactico.codigoAssembler.append("\n");
                 AnalizadorSintactico.codigoAssembler.append(aux2).append(":");
+                AnalizadorSintactico.codigoAssembler.append("\n");
+
 
             }
             if (r == "<>") {
                 AnalizadorSintactico.contadorLabelAndOr++;
-                String aux = "@Label_" + AnalizadorSintactico.contadorLabelAndOr;
+                String aux = "@LabelAndOr_" + AnalizadorSintactico.contadorLabelAndOr;
                 AnalizadorSintactico.contadorLabelAndOr++;
-                String aux2="@Label_" + AnalizadorSintactico.contadorLabelAndOr;
+                String aux2="@LabelAndOr_" + AnalizadorSintactico.contadorLabelAndOr;
                 AnalizadorSintactico.codigoAssembler.append("\n");
                 AnalizadorSintactico.codigoAssembler.append("JE ").append(aux);
                 AnalizadorSintactico.codigoAssembler.append("\n");
-                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingle"+AnalizadorSintactico.contadorAuxSingle+", 1");
+                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingleAndOr"+AnalizadorSintactico.contadorAuxSingleAndOr+", 1");
                 AnalizadorSintactico.codigoAssembler.append("\n");
                 AnalizadorSintactico.codigoAssembler.append("JMP").append(aux2);
                 AnalizadorSintactico.codigoAssembler.append("\n");
                 AnalizadorSintactico.codigoAssembler.append(aux).append(":");
                 AnalizadorSintactico.codigoAssembler.append("\n");
-                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingle").append(AnalizadorSintactico.contadorAuxSingle).append(", 0");
+                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingleAndOr").append(AnalizadorSintactico.contadorAuxSingleAndOr).append(", 0");
                 AnalizadorSintactico.codigoAssembler.append("\n");
                 AnalizadorSintactico.codigoAssembler.append(aux2).append(":");
+                AnalizadorSintactico.codigoAssembler.append("\n");
+
 
             }
 
             if (r == ">") {
                 AnalizadorSintactico.contadorLabelAndOr++;
-                String aux = "@Label_" + AnalizadorSintactico.contadorLabelAndOr;
+                String aux = "@LabelAndOr_" + AnalizadorSintactico.contadorLabelAndOr;
                 AnalizadorSintactico.contadorLabelAndOr++;
-                String aux2="@Label_" + AnalizadorSintactico.contadorLabelAndOr;
+                String aux2="@LabelAndOr_" + AnalizadorSintactico.contadorLabelAndOr;
                 AnalizadorSintactico.codigoAssembler.append("\n");
                 AnalizadorSintactico.codigoAssembler.append("JBE ").append(aux);
                 AnalizadorSintactico.codigoAssembler.append("\n");
-                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingle"+AnalizadorSintactico.contadorAuxSingle+", 1");
+                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingleAndOr"+AnalizadorSintactico.contadorAuxSingleAndOr+", 1");
                 AnalizadorSintactico.codigoAssembler.append("\n");
-                AnalizadorSintactico.codigoAssembler.append("JMP").append(aux2);
+                AnalizadorSintactico.codigoAssembler.append("JMP ").append(aux2);
                 AnalizadorSintactico.codigoAssembler.append("\n");
                 AnalizadorSintactico.codigoAssembler.append(aux).append(":");
                 AnalizadorSintactico.codigoAssembler.append("\n");
-                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingle").append(AnalizadorSintactico.contadorAuxSingle).append(", 0");
+                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingleAndOr").append(AnalizadorSintactico.contadorAuxSingleAndOr).append(", 0");
                 AnalizadorSintactico.codigoAssembler.append("\n");
                 AnalizadorSintactico.codigoAssembler.append(aux2).append(":");
+                AnalizadorSintactico.codigoAssembler.append("\n");
+
 
             }
 
             if (r == "<") {
                 AnalizadorSintactico.contadorLabelAndOr++;
-                String aux = "@Label_" + AnalizadorSintactico.contadorLabelAndOr;
+                String aux = "@LabelAndOr_" + AnalizadorSintactico.contadorLabelAndOr;
                 AnalizadorSintactico.contadorLabelAndOr++;
-                String aux2="@Label_" + AnalizadorSintactico.contadorLabelAndOr;
+                String aux2="@LabelAndOr_" + AnalizadorSintactico.contadorLabelAndOr;
                 AnalizadorSintactico.codigoAssembler.append("\n");
                 AnalizadorSintactico.codigoAssembler.append("JAE ").append(aux);
                 AnalizadorSintactico.codigoAssembler.append("\n");
-                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingle"+AnalizadorSintactico.contadorAuxSingle+", 1");
+                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingleAndOr"+AnalizadorSintactico.contadorAuxSingleAndOr+", 1");
                 AnalizadorSintactico.codigoAssembler.append("\n");
-                AnalizadorSintactico.codigoAssembler.append("JMP").append(aux2);
+                AnalizadorSintactico.codigoAssembler.append("JMP ").append(aux2);
                 AnalizadorSintactico.codigoAssembler.append("\n");
                 AnalizadorSintactico.codigoAssembler.append(aux).append(":");
                 AnalizadorSintactico.codigoAssembler.append("\n");
-                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingle").append(AnalizadorSintactico.contadorAuxSingle).append(", 0");
+                AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingleAndOr").append(AnalizadorSintactico.contadorAuxSingleAndOr).append(", 0");
                 AnalizadorSintactico.codigoAssembler.append("\n");
                 AnalizadorSintactico.codigoAssembler.append(aux2).append(":");
+                AnalizadorSintactico.codigoAssembler.append("\n");
+
             }
 
 
@@ -1110,35 +1220,47 @@ public class Nodo {
             AnalizadorSintactico.codigoAssembler.append("JMP ").append(aux2+":");
             AnalizadorSintactico.codigoAssembler.append("\n");
             AnalizadorSintactico.codigoAssembler.append(aux1);
+            AnalizadorSintactico.codigoAssembler.append("\n");
+
         } 
         
         if (r == "&&") {
             AnalizadorSintactico.contadorLabelAndOr++;
-            String aux = "@Label_" + AnalizadorSintactico.contadorLabelAndOr;
+            String aux = "@LabelAndOr_" + AnalizadorSintactico.contadorLabelAndOr;
             AnalizadorSintactico.contadorLabelAndOr++;
-            String aux2="@Label_" + AnalizadorSintactico.contadorLabelAndOr;
+            String aux2="@LabelAndOr_" + AnalizadorSintactico.contadorLabelAndOr;
+            String aux3 = "@LabelAndOr_" + AnalizadorSintactico.contadorLabel;
+            AnalizadorSintactico.pilaLabels.push(aux3);
             AnalizadorSintactico.codigoAssembler.append("\n");
             AnalizadorSintactico.codigoAssembler.append("CMP ").append(izquierda).append(", 0");
-            AnalizadorSintactico.codigoAssembler.append("JE ").append(aux);
-            AnalizadorSintactico.codigoAssembler.append("CMP ").append(derecha).append(", 0");
-            AnalizadorSintactico.codigoAssembler.append("JE ").append(aux);
-            AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingle"+AnalizadorSintactico.contadorAuxSingle+", 1");
             AnalizadorSintactico.codigoAssembler.append("\n");
-            AnalizadorSintactico.codigoAssembler.append("JMP").append(aux2);
+            AnalizadorSintactico.codigoAssembler.append("JE ").append(aux);
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            AnalizadorSintactico.codigoAssembler.append("CMP ").append(derecha).append(", 0");
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            AnalizadorSintactico.codigoAssembler.append("JE ").append(aux);
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingleAndOr"+AnalizadorSintactico.contadorAuxSingleAndOr+", 1");
+            AnalizadorSintactico.codigoAssembler.append("\n");
+            AnalizadorSintactico.codigoAssembler.append("JMP ").append(aux2);
             AnalizadorSintactico.codigoAssembler.append("\n");
             AnalizadorSintactico.codigoAssembler.append(aux).append(":");
             AnalizadorSintactico.codigoAssembler.append("\n");
-            AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingle").append(AnalizadorSintactico.contadorAuxSingle).append(", 0");
+            AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingleAndOr").append(AnalizadorSintactico.contadorAuxSingleAndOr).append(", 0");
             AnalizadorSintactico.codigoAssembler.append("\n");
             AnalizadorSintactico.codigoAssembler.append(aux2).append(":");
+            AnalizadorSintactico.codigoAssembler.append("\n");
+
 
         }
         
         if (r == "||") {
             AnalizadorSintactico.contadorLabelAndOr++;
-            String aux = "@Label_" + AnalizadorSintactico.contadorLabelAndOr;
+            String aux = "@LabelAndOr_" + AnalizadorSintactico.contadorLabelAndOr;
             AnalizadorSintactico.contadorLabelAndOr++;
-            String aux2="@Label_" + AnalizadorSintactico.contadorLabelAndOr;
+            String aux2="@LabelAndOr_" + AnalizadorSintactico.contadorLabelAndOr;
+            String aux3 = "@LabelAndOr_" + AnalizadorSintactico.contadorLabel;
+            AnalizadorSintactico.pilaLabels.push(aux3);
             AnalizadorSintactico.codigoAssembler.append("\n");
             AnalizadorSintactico.codigoAssembler.append("CMP ").append(izquierda).append(", 1");
             AnalizadorSintactico.codigoAssembler.append("\n");
@@ -1148,24 +1270,25 @@ public class Nodo {
             AnalizadorSintactico.codigoAssembler.append("\n");
             AnalizadorSintactico.codigoAssembler.append("JE ").append(aux);
             AnalizadorSintactico.codigoAssembler.append("\n");
-            AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingle"+AnalizadorSintactico.contadorAuxSingle+", 0");
+            AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingleAndOr"+AnalizadorSintactico.contadorAuxSingleAndOr+", 0");
             AnalizadorSintactico.codigoAssembler.append("\n");
-            AnalizadorSintactico.codigoAssembler.append("JMP").append(aux2);
+            AnalizadorSintactico.codigoAssembler.append("JMP ").append(aux2);
             AnalizadorSintactico.codigoAssembler.append("\n");
             AnalizadorSintactico.codigoAssembler.append(aux).append(":");
             AnalizadorSintactico.codigoAssembler.append("\n");
-            AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingle").append(AnalizadorSintactico.contadorAuxSingle).append(", 1");
+            AnalizadorSintactico.codigoAssembler.append("MOV ").append("@auxSingleAndOr").append(AnalizadorSintactico.contadorAuxSingleAndOr).append(", 1");
             AnalizadorSintactico.codigoAssembler.append("\n");
             AnalizadorSintactico.codigoAssembler.append(aux2).append(":");
+            AnalizadorSintactico.codigoAssembler.append("\n");
+
 
         }
         
-        this.ref = "@auxSingle"+AnalizadorSintactico.contadorAuxSingle;
+        this.ref = "@auxSingleAndOr"+AnalizadorSintactico.contadorAuxSingleAndOr;
         this.esRegistro = true;
         this.tipo = this.left.getTipo();
         this.left = null;
         this.right = null;
     }
-*/
 }
 

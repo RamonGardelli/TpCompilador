@@ -56,6 +56,11 @@ public class AnalizadorSintactico {
     public static int contadorFunc=1;
 
 	public static int contadorLabelAndOr=0;
+
+	public static int contadorAuxLongAndOr=0;
+	
+	public static int contadorAuxSingleAndOr=0;
+
     
     public static void agregarAnalisis(String analisis) {
         listaAnalisis.add(analisis);
@@ -94,9 +99,9 @@ public class AnalizadorSintactico {
             if (args.length != 0 || true) {
 
                 //File filex = new File(args[0]);
-            	//File filex = new File("C:\\Users\\Admin\\Desktop\\prueba\\prueba.txt");
+            	File filex = new File("C:\\Users\\Admin\\Desktop\\prueba\\prueba.txt");
                 //File filex = new File(args[0]);
-            	File filex = new File("C:\\Users\\ramon\\IdeaProjects\\TpCompilador\\archivos\\programa\\testprograma.txt");
+            	//File filex = new File("C:\\Users\\ramon\\IdeaProjects\\TpCompilador\\archivos\\programa\\testprograma.txt");
 
 
                 String originalPath = filex.getAbsoluteFile().getParent() + File.separator;
@@ -175,6 +180,7 @@ public class AnalizadorSintactico {
                         Registro[] r = {r1, r2, r3, r4};
                         codigoAssembler.append("\n");
                         creacionAssembler();
+                        StringBuilder memoriaData = new StringBuilder(memoriaPrograma());
                         arbol.generarCodigo(r);
                         StringBuilder codigoprograma = new StringBuilder(codigoAssembler);
                         codigoAssembler.setLength(0);
@@ -182,7 +188,7 @@ public class AnalizadorSintactico {
                         codigoAssemblerFinal.append(".code");
                         codigoAssemblerFinal.append("\n");
                         int posData = codigoAssemblerFinal.lastIndexOf(".code");
-                        codigoAssemblerFinal.insert(posData-1,memoriaPrograma());
+                        codigoAssemblerFinal.insert(posData-1,memoriaData);
                         arbolFunciones(arbolFunc, r);
                         posData = codigoAssemblerFinal.lastIndexOf(".code");
                         codigoAssemblerFinal.insert(posData-1,imprimirVariablesAuxiliares());
@@ -352,6 +358,12 @@ public class AnalizadorSintactico {
         }
         for (int k=1; k<=AnalizadorSintactico.contadorAuxSingle;k++) {
             auxRet.append("@auxSingle").append(k).append(" DQ ? \n");
+        }
+        for (int k=1; k<=AnalizadorSintactico.contadorAuxLongAndOr;k++) {
+            auxRet.append("@auxLongAndOr").append(k).append(" DB ? \n");
+        }
+        for (int k=1; k<=AnalizadorSintactico.contadorAuxSingleAndOr;k++) {
+            auxRet.append("@auxSingleAndOr").append(k).append(" DB ? \n");
         }
         return auxRet;
     }
