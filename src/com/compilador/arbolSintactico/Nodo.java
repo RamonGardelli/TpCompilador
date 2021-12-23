@@ -14,12 +14,30 @@ public class Nodo {
     private String ref; //referencia a tabla de simbolo o simplemente operacion/valor aritmetico. Lo determina si es hoja.
     private String tipo;
     private boolean esRegistro;
+    private String funcContract;
+    private boolean tieneContract;
 
     public Nodo(String aritmetic, Nodo reglaDer1, Nodo reglaDer2) {
         this.ref = aritmetic;
         this.left = reglaDer1;
         this.right = reglaDer2;
         this.esRegistro = false;
+    }
+
+    public boolean checkContract(){
+        return this.tieneContract;
+    }
+
+    public void setContract(boolean state){
+        this.tieneContract =state;
+    }
+
+    public String checkFuncContract(){
+        return this.funcContract;
+    }
+
+    public void setFuncContract(String state){
+        this.funcContract =state;
     }
 
     public boolean isRegistro() {

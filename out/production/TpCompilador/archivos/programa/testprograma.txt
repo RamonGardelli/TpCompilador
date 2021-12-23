@@ -2,15 +2,19 @@ ejemplo
 
 LONG x;
 
-LONG FUNC funcion ( LONG x )
+LONG FUNC f (LONG x)
 
-       LONG z;
+             LONG y, z;
 
-       BEGIN
-		PRINT(x);
-             z:= 2 + x ;
+             BEGIN
 
-              RETURN ( z );
+             x := x +z;
+
+             
+
+             z := x;
+
+             RETURN (x + 1);
 
        END
 
@@ -20,12 +24,18 @@ BEGIN
 
       
 
-       x := 3;
+TRY
 
-       PRINT(x);
+       x := f(x) * 4 ;
 
-       x := funcion(x);
+CATCH
 
-       PRINT(x);
+BEGIN
+
+       PRINT(%en el catch%);
+
+       x := 10;
+
+END
 
 END

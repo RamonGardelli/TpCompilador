@@ -99,9 +99,9 @@ public class AnalizadorSintactico {
             if (args.length != 0 || true) {
 
                 //File filex = new File(args[0]);
-            	File filex = new File("C:\\Users\\Admin\\Desktop\\prueba\\prueba.txt");
+            	//File filex = new File("C:\\Users\\Admin\\Desktop\\prueba\\prueba.txt");
                 //File filex = new File(args[0]);
-            	//File filex = new File("C:\\Users\\ramon\\IdeaProjects\\TpCompilador\\archivos\\programa\\testprograma.txt");
+            	File filex = new File("C:\\Users\\ramon\\IdeaProjects\\TpCompilador\\archivos\\programa\\testprograma.txt");
 
 
                 String originalPath = filex.getAbsoluteFile().getParent() + File.separator;
@@ -118,6 +118,7 @@ public class AnalizadorSintactico {
 
                 } else {
                     System.out.println("Parser no finalizo");
+                    errorPrograma = true;
                 }
 
                 String archivoAlName = originalPath + fileName + "_analisisLexico.txt";
